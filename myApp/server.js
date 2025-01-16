@@ -87,7 +87,7 @@ ioClient.on('connection', (socket) => {
 
     if (isRepresentativeConnected) {
         socket.emit('message', {
-            name: "Sistema",
+            name: "Franklin",
             message: "Un representante se ha conectado y está disponible.",
             user_type: "system"
         });
@@ -151,7 +151,7 @@ ioRep.on('connection', (socket) => {
     isRepresentativeConnected = true;
 
     ioClient.emit('message', {
-        name: "Sistema",
+        name: "Franklin",
         message: "Un representante se ha conectado y está disponible.",
         user_type: "system"
     });
