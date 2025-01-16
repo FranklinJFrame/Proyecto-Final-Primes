@@ -6,14 +6,12 @@
     <title>Chat de Soporte</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Estilos generales */
         body {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* Contenedor del chat flotante */
         .chat-container {
             position: fixed;
             bottom: 20px;
@@ -73,32 +71,33 @@
         }
 
         .chat-container {
-    display: none; /* Ocultar por defecto */
-}
+            display: none;
+        }
 
+        .question {
+            font-weight: bold;
+            color: #333;
+        }
     </style>
 </head>
 <body>
-    <!-- Botón flotante para abrir el chat -->
     <button id="openChatButton" style="position: fixed; bottom: 20px; right: 20px; z-index: 1100; background-color: transparent; border: none;">
         <img src="/images/icono-vector-chat_676179-133.avif" alt="Chat en Vivo" style="width: 60px; height: 60px;">
     </button>
-    
 
-    <!-- Contenedor flotante del chat -->
     <div class="chat-container">
         <div class="chat-header">
             Chat de Soporte
         </div>
         <div id="messages" class="chat-body">
-            <!-- Mensajes se cargarán aquí -->
+            <!-- Mensajes y preguntas se cargarán aquí -->
         </div>
         <div class="chat-footer">
-            <div class="mb-2">
-                <input type="text" id="name" class="form-control" placeholder="Escribe tu nombre">
+            <div id="question-container" style="margin-bottom: 10px; display: none;">
+                <p class="question" id="current-question"></p>
             </div>
             <div class="input-group">
-                <textarea id="message" class="form-control" placeholder="Escribe tu mensaje" rows="1"></textarea>
+                <textarea id="message" class="form-control" placeholder="Escribe tu mensaje o respuesta" rows="1"></textarea>
                 <button id="send" class="btn btn-primary">Enviar</button>
             </div>
         </div>
@@ -108,6 +107,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
+        let isAnsweringQuestions = false;
 
         $(() => {
             $("#send").click(sendMessage);
@@ -117,10 +117,16 @@
                     e.preventDefault();
                 }
             });
-            getMessages();
         });
 
         socket.on('message', addMessage);
+        socket.on('question', displayQuestion);
+        socket.on('questions-complete', () => {
+            isAnsweringQuestions = false;
+            $("#current-question").text('');
+            $("#question-container").hide();
+            alert('Gracias por responder las preguntas. Un representante estará con usted pronto.');
+        });
 
         function addMessage(message) {
             const messageClass = message.user_type === 'client' ? 'client-message' : 'representative-message';
@@ -135,26 +141,30 @@
             $("#messages").scrollTop($("#messages")[0].scrollHeight);
         }
 
-        function getMessages() {
-            $.get('/messages', (data) => {
-                $("#messages").empty();
-                data.reverse().forEach(addMessage);
-            });
+        function displayQuestion(question) {
+            isAnsweringQuestions = true;
+            $("#question-container").show();
+            $("#current-question").text(question);
         }
 
         function sendMessage() {
-            if (!$("#name").val() || !$("#message").val()) {
-                alert('Por favor completa todos los campos');
+            if (!$("#message").val()) {
+                alert('Por favor completa el campo de texto');
                 return;
             }
 
-            const message = {
-                name: $("#name").val(),
-                message: $("#message").val()
-            };
-
-            postMessage(message);
+            const messageText = $("#message").val();
             $("#message").val('');
+
+            if (isAnsweringQuestions) {
+                socket.emit('answer', { user_id: 1, answer: messageText }); // Reemplaza user_id: 1 con el id real del usuario
+            } else {
+                const message = {
+                    name: "Cliente", // Cambiar esto según el nombre real del cliente
+                    message: messageText
+                };
+                postMessage(message);
+            }
         }
 
         function postMessage(message) {
@@ -162,36 +172,33 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-    const openChatButton = document.getElementById('openChatButton');
-    const chatContainer = document.querySelector('.chat-container');
+            const openChatButton = document.getElementById('openChatButton');
+            const chatContainer = document.querySelector('.chat-container');
 
-    // Mostrar el chat al hacer clic en el botón flotante
-    openChatButton.addEventListener('click', () => {
-        chatContainer.style.display = 'block';
-        openChatButton.style.display = 'none'; // Ocultar el botón de "Chat en Vivo"
-    });
+            openChatButton.addEventListener('click', () => {
+                chatContainer.style.display = 'block';
+                openChatButton.style.display = 'none';
+                socket.emit('first-message', { user_id: 1 }); // Reemplaza user_id: 1 con el id real del usuario
+            });
 
-    // Opcional: Agregar un botón de cierre dentro del chat
-    const closeButton = document.createElement('button');
-    closeButton.textContent = 'Cerrar Chat';
-    closeButton.style.position = 'absolute';
-    closeButton.style.top = '10px';
-    closeButton.style.right = '10px';
-    closeButton.style.backgroundColor = '#007bff';
-    closeButton.style.color = '#fff';
-    closeButton.style.border = 'none';
-    closeButton.style.padding = '5px 10px';
-    closeButton.style.borderRadius = '5px';
-    closeButton.style.cursor = 'pointer';
-    chatContainer.appendChild(closeButton);
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'Cerrar Chat';
+            closeButton.style.position = 'absolute';
+            closeButton.style.top = '10px';
+            closeButton.style.right = '10px';
+            closeButton.style.backgroundColor = '#007bff';
+            closeButton.style.color = '#fff';
+            closeButton.style.border = 'none';
+            closeButton.style.padding = '5px 10px';
+            closeButton.style.borderRadius = '5px';
+            closeButton.style.cursor = 'pointer';
+            chatContainer.appendChild(closeButton);
 
-    // Cerrar el chat al hacer clic en el botón de cierre
-    closeButton.addEventListener('click', () => {
-        chatContainer.style.display = 'none';
-        openChatButton.style.display = 'block'; // Volver a mostrar el botón de "Chat en Vivo"
-    });
-});
-
+            closeButton.addEventListener('click', () => {
+                chatContainer.style.display = 'none';
+                openChatButton.style.display = 'block';
+            });
+        });
     </script>
 </body>
 </html>
