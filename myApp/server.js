@@ -59,14 +59,9 @@ appRep.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'publicrepresentante', 'index.html'));
 });
 
-// Ruta para obtener preguntas
-app.get('/questions', (req, res) => {
-    res.json(predefinedQuestions);
-});
-
 // Ruta para guardar respuestas
 app.post('/answers', (req, res) => {
-    const { user_id, answers } = req.body; // `answers` es un array de objetos { question, answer }
+    const { user_id, answers } = req.body;
 
     const values = answers.map((ans) => [user_id, ans.question, ans.answer]);
     const query = 'INSERT INTO pre_questions (user_id, question, answer) VALUES ?';
@@ -81,91 +76,50 @@ app.post('/answers', (req, res) => {
     });
 });
 
-// Ruta para que el representante obtenga respuestas del cliente
-appRep.get('/client-answers/:user_id', (req, res) => {
-    const { user_id } = req.params;
-
-    const query = 'SELECT question, answer FROM pre_questions WHERE user_id = ?';
-    connection.query(query, [user_id], (err, results) => {
-        if (err) {
-            console.error('Error fetching answers:', err);
-            res.sendStatus(500);
-            return;
-        }
-        res.json(results);
-    });
-});
-
-// Ruta de inicio de sesión
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-
-    // Verificar usuario en la base de datos
-    const query = 'SELECT * FROM users WHERE username = ? AND password = ?';
-    connection.query(query, [username, password], (err, results) => {
-        if (err) {
-            console.error('Error querying the database:', err);
-            return res.status(500).json({ success: false, message: 'Error interno del servidor' });
-        }
-
-        if (results.length > 0) {
-            const user = results[0];
-            // Redirigir según el rol
-            const redirectUrl = user.role === 'client' ? 'http://localhost:3000' : 'http://localhost:3001';
-            res.json({ success: true, redirectUrl });
-        } else {
-            res.json({ success: false, message: 'Usuario o contraseña incorrectos' });
-        }
-    });
-});
-
-// Rutas compartidas
-function setupRoutes(app, io, userType) {
-    app.get('/messages', (req, res) => {
-        connection.query('SELECT * FROM messages ORDER BY created_at DESC LIMIT 100', (err, results) => {
-            if (err) {
-                console.error('Error fetching messages:', err);
-                res.sendStatus(500);
-                return;
-            }
-            res.send(results);
-        });
-    });
-
-    app.post('/messages', (req, res) => {
-        const message = {
-            name: req.body.name,
-            message: req.body.message,
-            user_type: userType
-        };
-
-        connection.query('INSERT INTO messages SET ?', message, (err, results) => {
-            if (err) {
-                console.error('Error saving message:', err);
-                res.sendStatus(500);
-                return;
-            }
-
-            console.log('Message saved to database');
-            ioClient.emit('message', message);
-            ioRep.emit('message', message);
-            res.sendStatus(200);
-        });
-    });
-}
-
-// Configurar rutas para ambos servidores
-setupRoutes(app, ioClient, 'client');
-setupRoutes(appRep, ioRep, 'representative');
-
 // Socket.io handlers
+const activeQuestions = {};
+
 ioClient.on('connection', (socket) => {
     console.log('Client connected');
 
-    // Simular retraso antes de conectar al representante
-    setTimeout(() => {
-        socket.emit('ready-to-connect'); // Notificar al cliente que puede conectarse al representante
-    }, 10000); // 10 segundos de retraso
+    socket.on('first-message', ({ user_id }) => {
+        if (!activeQuestions[user_id]) {
+            activeQuestions[user_id] = { index: 0, answers: [] };
+        }
+
+        const currentQuestion = predefinedQuestions[0];
+        socket.emit('question', currentQuestion);
+    });
+
+    socket.on('answer', ({ user_id, answer }) => {
+        if (!activeQuestions[user_id]) {
+            return;
+        }
+
+        const { index, answers } = activeQuestions[user_id];
+        answers.push({ question: predefinedQuestions[index], answer });
+
+        if (index + 1 < predefinedQuestions.length) {
+            activeQuestions[user_id].index++;
+            const nextQuestion = predefinedQuestions[index + 1];
+            socket.emit('question', nextQuestion);
+        } else {
+            // Guardar respuestas en la base de datos
+            const query = 'INSERT INTO pre_questions (user_id, question, answer) VALUES ?';
+            const values = answers.map((ans) => [user_id, ans.question, ans.answer]);
+
+            connection.query(query, [values], (err) => {
+                if (err) {
+                    console.error('Error saving answers:', err);
+                }
+            });
+
+            socket.emit('questions-complete');
+            ioRep.emit('client-answers', { user_id, answers });
+
+            delete activeQuestions[user_id];
+        }
+    });
 });
 
 ioRep.on('connection', (socket) => {
