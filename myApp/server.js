@@ -38,6 +38,14 @@ connection.connect((err) => {
     console.log('Connected to MySQL successfully');
 });
 
+// Preguntas predefinidas
+const predefinedQuestions = [
+    "¿Cuál es el problema que está experimentando?",
+    "¿Cuánto tiempo lleva enfrentando este problema?",
+    "¿Ha intentado alguna solución por su cuenta?",
+    "¿Qué sistema operativo o dispositivo está utilizando?"
+];
+
 // Rutas específicas para cada vista
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
@@ -49,6 +57,43 @@ app.get('/', (req, res) => {
 
 appRep.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'publicrepresentante', 'index.html'));
+});
+
+// Ruta para obtener preguntas
+app.get('/questions', (req, res) => {
+    res.json(predefinedQuestions);
+});
+
+// Ruta para guardar respuestas
+app.post('/answers', (req, res) => {
+    const { user_id, answers } = req.body; // `answers` es un array de objetos { question, answer }
+
+    const values = answers.map((ans) => [user_id, ans.question, ans.answer]);
+    const query = 'INSERT INTO pre_questions (user_id, question, answer) VALUES ?';
+
+    connection.query(query, [values], (err) => {
+        if (err) {
+            console.error('Error saving answers:', err);
+            res.sendStatus(500);
+            return;
+        }
+        res.sendStatus(200);
+    });
+});
+
+// Ruta para que el representante obtenga respuestas del cliente
+appRep.get('/client-answers/:user_id', (req, res) => {
+    const { user_id } = req.params;
+
+    const query = 'SELECT question, answer FROM pre_questions WHERE user_id = ?';
+    connection.query(query, [user_id], (err, results) => {
+        if (err) {
+            console.error('Error fetching answers:', err);
+            res.sendStatus(500);
+            return;
+        }
+        res.json(results);
+    });
 });
 
 // Ruta de inicio de sesión
@@ -116,6 +161,11 @@ setupRoutes(appRep, ioRep, 'representative');
 // Socket.io handlers
 ioClient.on('connection', (socket) => {
     console.log('Client connected');
+
+    // Simular retraso antes de conectar al representante
+    setTimeout(() => {
+        socket.emit('ready-to-connect'); // Notificar al cliente que puede conectarse al representante
+    }, 10000); // 10 segundos de retraso
 });
 
 ioRep.on('connection', (socket) => {
