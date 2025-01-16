@@ -46,6 +46,9 @@ const predefinedQuestions = [
     "¿Qué sistema operativo o dispositivo está utilizando?"
 ];
 
+// Variables globales
+let isRepresentativeConnected = false;
+
 // Rutas específicas para cada vista
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
@@ -81,6 +84,14 @@ const activeQuestions = {};
 
 ioClient.on('connection', (socket) => {
     console.log('Client connected');
+
+    if (isRepresentativeConnected) {
+        socket.emit('message', {
+            name: "Sistema",
+            message: "Un representante se ha conectado y está disponible.",
+            user_type: "system"
+        });
+    }
 
     socket.on('first-message', ({ user_id }) => {
         if (!activeQuestions[user_id]) {
@@ -120,10 +131,34 @@ ioClient.on('connection', (socket) => {
             delete activeQuestions[user_id];
         }
     });
+
+    socket.on('message', (message) => {
+        const query = 'INSERT INTO messages (name, message, user_type) VALUES (?, ?, ?)';
+        connection.query(query, [message.name, message.message, message.user_type], (err) => {
+            if (err) {
+                console.error('Error saving message:', err);
+                return;
+            }
+            ioClient.emit('message', message);
+            ioRep.emit('message', message);
+        });
+    });
 });
 
 ioRep.on('connection', (socket) => {
     console.log('Representative connected');
+    isRepresentativeConnected = true;
+
+    ioClient.emit('message', {
+        name: "Sistema",
+        message: "Un representante se ha conectado y está disponible.",
+        user_type: "system"
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Representative disconnected');
+        isRepresentativeConnected = false;
+    });
 });
 
 // Iniciar servidores
