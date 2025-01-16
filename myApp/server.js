@@ -139,6 +139,7 @@ ioClient.on('connection', (socket) => {
                 console.error('Error saving message:', err);
                 return;
             }
+            // Emitir el mensaje a todos los sockets conectados
             ioClient.emit('message', message);
             ioRep.emit('message', message);
         });
@@ -153,6 +154,19 @@ ioRep.on('connection', (socket) => {
         name: "Sistema",
         message: "Un representante se ha conectado y está disponible.",
         user_type: "system"
+    });
+
+    socket.on('message', (message) => {
+        const query = 'INSERT INTO messages (name, message, user_type) VALUES (?, ?, ?)';
+        connection.query(query, [message.name, message.message, message.user_type], (err) => {
+            if (err) {
+                console.error('Error saving message:', err);
+                return;
+            }
+            // Emitir el mensaje a todos los sockets conectados
+            ioClient.emit('message', message);
+            ioRep.emit('message', message);
+        });
     });
 
     socket.on('disconnect', () => {
@@ -177,4 +191,3 @@ process.on('SIGINT', () => {
         process.exit();
     });
 });
-
