@@ -10,13 +10,19 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 50px;
         }
 
         .chat-container {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 300px;
+            width: 350px;
             background: #fff;
             border: 1px solid #ddd;
             border-radius: 10px;
@@ -26,162 +32,110 @@
         }
 
         .chat-header {
-            background: #007bff;
+            background-color: #007bff;
             color: #fff;
             padding: 10px;
             text-align: center;
-            font-size: 1rem;
+            font-weight: bold;
         }
 
         .chat-body {
-            height: 250px;
-            overflow-y: auto;
             padding: 10px;
-            background: #f8f9fa;
+            height: 300px;
+            overflow-y: auto;
         }
 
         .chat-footer {
             padding: 10px;
-            border-top: 1px solid #ddd;
+            background-color: #f1f1f1;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-footer input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .chat-footer button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .chat-footer button:hover {
+            background-color: #0056b3;
         }
 
         .message {
             margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 8px;
         }
 
-        .client-message {
-            background: #e8e8e8;
-            text-align: left;
+        .message .name {
+            font-weight: bold;
         }
 
-        .representative-message {
-            background: #dcf8c6;
-            text-align: left;
+        .message .text {
+            margin-left: 10px;
         }
 
-        .timestamp {
-            font-size: 0.7rem;
-            color: #666;
-        }
-
-        .input-group textarea {
-            resize: none;
-        }
-
-        .chat-container {
-            display: none;
+        .message.system {
+            text-align: center;
+            color: #888;
         }
     </style>
 </head>
 <body>
-    <button id="openChatButton" style="position: fixed; bottom: 20px; right: 20px; z-index: 1100; background-color: transparent; border: none;">
-        <img src="/images/icono-vector-chat_676179-133.avif" alt="Chat en Vivo" style="width: 60px; height: 60px;">
-    </button>
-
-    <div class="chat-container">
-        <div class="chat-header">
-            Panel de Representante
-        </div>
-        <div id="messages" class="chat-body">
-            <!-- Mensajes se cargarán aquí -->
-        </div>
-        <div class="chat-footer">
-            <div class="input-group">
-                <textarea id="message" class="form-control" placeholder="Escribe tu respuesta" rows="1"></textarea>
-                <button id="send" class="btn btn-success">Responder</button>
+    <div class="container">
+        <h1 class="text-center">Panel de Representante</h1>
+        <div class="chat-container">
+            <div class="chat-header">
+                Chat
+            </div>
+            <div class="chat-body" id="chat-body">
+                <!-- Mensajes del chat -->
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="message-input" placeholder="Escribe un mensaje...">
+                <button id="send-button">Enviar</button>
             </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
 
-        $(() => {
-            $("#send").click(sendMessage);
-            $("#message").keypress(e => {
-                if (e.which === 13 && !e.shiftKey) {
-                    sendMessage();
-                    e.preventDefault();
-                }
-            });
+        const chatBody = document.getElementById('chat-body');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (message.trim()) {
+                socket.emit('message', { name: 'Representante', message, user_type: 'representative' });
+                messageInput.value = '';
+            }
         });
 
-        socket.on('message', addMessage);
-        socket.on('client-answers', displayClientAnswers);
-
-        function addMessage(message) {
-            const messageClass = message.user_type === 'client' ? 'client-message' : 'representative-message';
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            $("#messages").append(`
-                <div class="message ${messageClass}">
-                    <strong>${message.name}</strong>
-                    <p>${message.message}</p>
-                    <span class="timestamp">${time}</span>
-                </div>
-            `);
-            $("#messages").scrollTop($("#messages")[0].scrollHeight);
-        }
-
-        function displayClientAnswers({ user_id, answers }) {
-            $("#messages").append('<div class="message client-message"><strong>Respuestas del cliente:</strong></div>');
-            answers.forEach(({ question, answer }) => {
-                $("#messages").append(`
-                    <div class="message client-message">
-                        <p><strong>${question}</strong></p>
-                        <p>${answer}</p>
-                    </div>
-                `);
-            });
-            $("#messages").scrollTop($("#messages")[0].scrollHeight);
-        }
-
-        function sendMessage() {
-            if (!$("#message").val()) {
-                alert('Por favor completa el campo de texto');
-                return;
+        socket.on('message', (message) => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            if (message.user_type === 'system') {
+                messageElement.classList.add('system');
+                messageElement.textContent = message.message;
+            } else {
+                messageElement.innerHTML = `<span class="name">${message.name}:</span> <span class="text">${message.message}</span>`;
             }
-
-            const message = {
-                name: "Representante", // Cambiar esto según el nombre real del representante
-                message: $("#message").val(),
-                user_type: "representative"
-            };
-
-            $("#message").val('');
-            socket.emit('message', message);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const openChatButton = document.getElementById('openChatButton');
-            const chatContainer = document.querySelector('.chat-container');
-
-            openChatButton.addEventListener('click', () => {
-                chatContainer.style.display = 'block';
-                openChatButton.style.display = 'none';
-                socket.emit('representative-connected');
-            });
-
-            const closeButton = document.createElement('button');
-            closeButton.textContent = 'Cerrar Chat';
-            closeButton.style.position = 'absolute';
-            closeButton.style.top = '10px';
-            closeButton.style.right = '10px';
-            closeButton.style.backgroundColor = '#007bff';
-            closeButton.style.color = '#fff';
-            closeButton.style.border = 'none';
-            closeButton.style.padding = '5px 10px';
-            closeButton.style.borderRadius = '5px';
-            closeButton.style.cursor = 'pointer';
-            chatContainer.appendChild(closeButton);
-
-            closeButton.addEventListener('click', () => {
-                chatContainer.style.display = 'none';
-                openChatButton.style.display = 'block';
-            });
+            chatBody.appendChild(messageElement);
+            chatBody.scrollTop = chatBody.scrollHeight;
         });
     </script>
 </body>
