@@ -105,100 +105,100 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io();
-        let isAnsweringQuestions = false;
 
-        $(() => {
-            $("#send").click(sendMessage);
-            $("#message").keypress(e => {
-                if (e.which === 13 && !e.shiftKey) {
-                    sendMessage();
-                    e.preventDefault();
-                }
-            });
+<!-- Mantener todo el HTML y CSS igual, solo modificar la sección del script -->
+<script>
+    const socket = io();
+    let isAnsweringQuestions = false;
+
+    $(() => {
+        $("#openChatButton").click(() => {
+            $(".chat-container").toggle();
+            $("#openChatButton").toggle(); // Agregar esta línea para ocultar el botón
         });
 
-        socket.on('message', addMessage);
-        socket.on('question', displayQuestion);
-        socket.on('questions-complete', () => {
-            isAnsweringQuestions = false;
-            $("#current-question").text('');
-            $("#question-container").hide();
-            alert('Gracias por responder las preguntas. Un representante estará con usted pronto.');
-        });
-
-        function addMessage(message) {
-            const messageClass = message.user_type === 'client' ? 'client-message' : 'representative-message';
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            $("#messages").append(`
-                <div class="message ${messageClass}">
-                    <strong>${message.name}</strong>
-                    <p>${message.message}</p>
-                    <span class="timestamp">${time}</span>
-                </div>
-            `);
-            $("#messages").scrollTop($("#messages")[0].scrollHeight);
-        }
-
-        function displayQuestion(question) {
-            isAnsweringQuestions = true;
-            $("#question-container").show();
-            $("#current-question").text(question);
-        }
-
-        function sendMessage() {
-            if (!$("#message").val()) {
-                alert('Por favor completa el campo de texto');
-                return;
+        $("#send").click(sendMessage);
+        $("#message").keypress(e => {
+            if (e.which === 13 && !e.shiftKey) {
+                sendMessage();
+                e.preventDefault();
             }
-
-            const messageText = $("#message").val();
-            $("#message").val('');
-
-            if (isAnsweringQuestions) {
-                socket.emit('answer', { user_id: 1, answer: messageText }); // Reemplaza user_id: 1 con el id real del usuario
-            } else {
-                const message = {
-                    name: "Cliente", // Cambiar esto según el nombre real del cliente
-                    message: messageText
-                };
-                postMessage(message);
-            }
-        }
-
-        function postMessage(message) {
-            $.post('/messages', message);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const openChatButton = document.getElementById('openChatButton');
-            const chatContainer = document.querySelector('.chat-container');
-
-            openChatButton.addEventListener('click', () => {
-                chatContainer.style.display = 'block';
-                openChatButton.style.display = 'none';
-                socket.emit('first-message', { user_id: 1 }); // Reemplaza user_id: 1 con el id real del usuario
-            });
-
-            const closeButton = document.createElement('button');
-            closeButton.textContent = 'Cerrar Chat';
-            closeButton.style.position = 'absolute';
-            closeButton.style.top = '10px';
-            closeButton.style.right = '10px';
-            closeButton.style.backgroundColor = '#007bff';
-            closeButton.style.color = '#fff';
-            closeButton.style.border = 'none';
-            closeButton.style.padding = '5px 10px';
-            closeButton.style.borderRadius = '5px';
-            closeButton.style.cursor = 'pointer';
-            chatContainer.appendChild(closeButton);
-
-            closeButton.addEventListener('click', () => {
-                chatContainer.style.display = 'none';
-                openChatButton.style.display = 'block';
-            });
         });
+
+        // Iniciar el chat con preguntas predefinidas
+        socket.emit('first-message', { user_id: 1 });
+
+        // Prueba: Emitir un mensaje de ejemplo al cargar la página
+        socket.emit('message', {
+            name: 'Cliente de Prueba',
+            message: 'Mensaje de prueba desde el cliente.',
+            user_type: 'client'
+        });
+    });
+
+    socket.on('message', addMessage);
+    socket.on('question', displayQuestion);
+    socket.on('questions-complete', () => {
+        isAnsweringQuestions = false;
+        $("#current-question").text('');
+        $("#question-container").hide();
+        alert('Gracias por responder las preguntas. Un representante estará con usted pronto.');
+    });
+
+    function addMessage(message) {
+        const messageClass = message.user_type === 'client' ? 'client-message' : 'representative-message';
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        $("#messages").append(`
+            <div class="message ${messageClass}">
+                <strong>${message.name}</strong>
+                <p>${message.message}</p>
+                <span class="timestamp">${time}</span>
+            </div>
+        `);
+        $("#messages").scrollTop($("#messages")[0].scrollHeight);
+    }
+
+    function displayQuestion(question) {
+        isAnsweringQuestions = true;
+        $("#question-container").show();
+        $("#current-question").text(question);
+        addMessage({
+            name: "Sistema",
+            message: question,
+            user_type: "system"
+        });
+    }
+
+    function sendMessage() {
+        const messageText = $("#message").val().trim();
+        if (!messageText) {
+            alert('Por favor completa el campo de texto');
+            return;
+        }
+
+        if (isAnsweringQuestions) {
+            const message = {
+                name: "Cliente",
+                message: messageText,
+                user_type: "client"
+            };
+            addMessage(message);
+            socket.emit('answer', { user_id: 1, answer: messageText });
+        } else {
+            const message = {
+                name: "Cliente",
+                message: messageText,
+                user_type: "client"
+            };
+            // Mostrar el mensaje localmente
+            addMessage(message);
+            // Enviar el mensaje al servidor
+            socket.emit('message', message);
+        }
+
+        $("#message").val('');
+    }
+
     </script>
 </body>
 </html>

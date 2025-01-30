@@ -99,14 +99,29 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
+        let currentUserId = null;
 
         $(() => {
+            $("#openChatButton").click(() => {
+                $(".chat-container").toggle();
+                $("#openChatButton").toggle(); // Agregar esta línea para ocultar el botón
+            });
+
             $("#send").click(sendMessage);
             $("#message").keypress(e => {
                 if (e.which === 13 && !e.shiftKey) {
                     sendMessage();
                     e.preventDefault();
                 }
+            });
+
+            // Iniciar el chat con preguntas predefinidas
+            socket.emit('first-message', { user_id: 1 });
+            // Prueba: Emitir un mensaje de ejemplo al cargar la página
+            socket.emit('message', {
+                name: 'Representante de Prueba',
+                message: 'Mensaje de prueba desde el representante.',
+                user_type: 'representative'
             });
         });
 
@@ -127,12 +142,13 @@
         }
 
         function displayClientAnswers({ user_id, answers }) {
+            currentUserId = user_id;
             $("#messages").append('<div class="message client-message"><strong>Respuestas del cliente:</strong></div>');
             answers.forEach(({ question, answer }) => {
                 $("#messages").append(`
                     <div class="message client-message">
-                        <p><strong>${question}</strong></p>
-                        <p>${answer}</p>
+                        <p><strong>Pregunta: ${question}</strong></p>
+                        <p>Respuesta: ${answer}</p>
                     </div>
                 `);
             });
@@ -140,49 +156,26 @@
         }
 
         function sendMessage() {
-            if (!$("#message").val()) {
+            const messageText = $("#message").val().trim();
+            if (!messageText) {
                 alert('Por favor completa el campo de texto');
                 return;
             }
 
             const message = {
-                name: "Representante", // Cambiar esto según el nombre real del representante
-                message: $("#message").val(),
+                name: "Representante",
+                message: messageText,
                 user_type: "representative"
             };
 
-            $("#message").val('');
+            // Agregar el mensaje localmente
+            addMessage(message);
+            
+            // Enviar el mensaje al servidor
             socket.emit('message', message);
+            
+            $("#message").val('');
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const openChatButton = document.getElementById('openChatButton');
-            const chatContainer = document.querySelector('.chat-container');
-
-            openChatButton.addEventListener('click', () => {
-                chatContainer.style.display = 'block';
-                openChatButton.style.display = 'none';
-                socket.emit('representative-connected');
-            });
-
-            const closeButton = document.createElement('button');
-            closeButton.textContent = 'Cerrar Chat';
-            closeButton.style.position = 'absolute';
-            closeButton.style.top = '10px';
-            closeButton.style.right = '10px';
-            closeButton.style.backgroundColor = '#007bff';
-            closeButton.style.color = '#fff';
-            closeButton.style.border = 'none';
-            closeButton.style.padding = '5px 10px';
-            closeButton.style.borderRadius = '5px';
-            closeButton.style.cursor = 'pointer';
-            chatContainer.appendChild(closeButton);
-
-            closeButton.addEventListener('click', () => {
-                chatContainer.style.display = 'none';
-                openChatButton.style.display = 'block';
-            });
-        });
     </script>
 </body>
 </html>

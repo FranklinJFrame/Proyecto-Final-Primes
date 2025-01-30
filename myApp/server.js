@@ -49,6 +49,9 @@ const predefinedQuestions = [
 // Variables globales
 let isRepresentativeConnected = false;
 
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Rutas específicas para cada vista
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
@@ -61,6 +64,9 @@ app.get('/', (req, res) => {
 appRep.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'publicrepresentante', 'index.html'));
 });
+
+
+
 
 // Ruta para guardar respuestas
 app.post('/answers', (req, res) => {
@@ -126,7 +132,7 @@ ioClient.on('connection', (socket) => {
             });
 
             socket.emit('questions-complete');
-            ioRep.emit('client-answers', { user_id, answers });
+            ioRep.emit('client-answers', { user_id, answers }); // Enviar respuestas al representante
 
             delete activeQuestions[user_id];
         }
@@ -139,11 +145,12 @@ ioClient.on('connection', (socket) => {
                 console.error('Error saving message:', err);
                 return;
             }
-            // Emitir el mensaje a todos los sockets conectados
+            // Emitir el mensaje a todos los clientes y representantes
             ioClient.emit('message', message);
             ioRep.emit('message', message);
         });
     });
+
 });
 
 ioRep.on('connection', (socket) => {
@@ -151,7 +158,7 @@ ioRep.on('connection', (socket) => {
     isRepresentativeConnected = true;
 
     ioClient.emit('message', {
-        name: "Franklin",
+        name: "Sistema",
         message: "Un representante se ha conectado y está disponible.",
         user_type: "system"
     });
@@ -163,11 +170,12 @@ ioRep.on('connection', (socket) => {
                 console.error('Error saving message:', err);
                 return;
             }
-            // Emitir el mensaje a todos los sockets conectados
+            // Emitir el mensaje a todos los clientes y representantes
             ioClient.emit('message', message);
             ioRep.emit('message', message);
         });
     });
+
 
     socket.on('disconnect', () => {
         console.log('Representative disconnected');
