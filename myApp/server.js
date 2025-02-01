@@ -52,37 +52,63 @@ let isRepresentativeConnected = false;
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Agregar esta nueva ruta para el login
+app.post('/login', (req, res) => {
+    const { username, password, userType } = req.body;
+
+    // Query para buscar el usuario
+    const query = 'SELECT * FROM users WHERE username = ? AND password = ? AND user_type = ?';
+    
+    connection.query(query, [username, password, userType], (err, results) => {
+        if (err) {
+            console.error('Error en login:', err);
+            return res.json({ success: false, message: 'Error en el servidor' });
+        }
+
+        if (results.length > 0) {
+            res.json({
+                success: true,
+                userId: results[0].id,
+                userType: results[0].user_type
+            });
+        } else {
+            res.json({
+                success: false,
+                message: 'Usuario o contraseña incorrectos'
+            });
+        }
+    });
+});
+
+// Modificar las rutas existentes para protegerlas
 // Rutas específicas para cada vista
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
+// Modificar las rutas existentes para redirigir al login si no hay sesión
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'publiccliente', 'indexcliente.html'));
 });
 
-appRep.get('/', (req, res) => {
+app.get('/representative', (req, res) => {
     res.sendFile(path.join(__dirname, 'publicrepresentante', 'index.html'));
 });
-
-
-
 
 // Ruta para guardar respuestas
 app.post('/answers', (req, res) => {
     const { user_id, answers } = req.body;
-
-    const values = answers.map((ans) => [user_id, ans.question, ans.answer]);
+            const values = answers.map((ans) => [user_id, ans.question, ans.answer]);
     const query = 'INSERT INTO pre_questions (user_id, question, answer) VALUES ?';
 
-    connection.query(query, [values], (err) => {
-        if (err) {
-            console.error('Error saving answers:', err);
+            connection.query(query, [values], (err) => {
+                if (err) {
+                    console.error('Error saving answers:', err);
             res.sendStatus(500);
             return;
         }
         res.sendStatus(200);
-    });
+            });
 });
 
 // Socket.io handlers
@@ -94,9 +120,9 @@ ioClient.on('connection', (socket) => {
     if (isRepresentativeConnected) {
         socket.emit('message', {
             name: "Franklin",
-            message: "Un representante se ha conectado y está disponible.",
-            user_type: "system"
-        });
+        message: "Un representante se ha conectado y está disponible.",
+        user_type: "system"
+    });
     }
 
     socket.on('first-message', ({ user_id }) => {
@@ -110,8 +136,8 @@ ioClient.on('connection', (socket) => {
 
     socket.on('answer', ({ user_id, answer }) => {
         if (!activeQuestions[user_id]) {
-            return;
-        }
+                return;
+            }
 
         const { index, answers } = activeQuestions[user_id];
         answers.push({ question: predefinedQuestions[index], answer });
@@ -129,7 +155,7 @@ ioClient.on('connection', (socket) => {
                 if (err) {
                     console.error('Error saving answers:', err);
                 }
-            });
+    });
 
             socket.emit('questions-complete');
             ioRep.emit('client-answers', { user_id, answers }); // Enviar respuestas al representante
@@ -145,9 +171,8 @@ ioClient.on('connection', (socket) => {
                 console.error('Error saving message:', err);
                 return;
             }
-            // Emitir el mensaje a todos los clientes y representantes
-            ioClient.emit('message', message);
-            ioRep.emit('message', message);
+            // Solo emitir al otro servidor
+            // Emitir solo al representante
         });
     });
 
@@ -170,9 +195,8 @@ ioRep.on('connection', (socket) => {
                 console.error('Error saving message:', err);
                 return;
             }
-            // Emitir el mensaje a todos los clientes y representantes
-            ioClient.emit('message', message);
-            ioRep.emit('message', message);
+            // Solo emitir al otro servidor
+            // Emitir solo al cliente
         });
     });
 
@@ -181,7 +205,7 @@ ioRep.on('connection', (socket) => {
         console.log('Representative disconnected');
         isRepresentativeConnected = false;
     });
-});
+    // ... resto del código
 
 // Iniciar servidores
 serverClient.listen(3000, () => {
@@ -199,3 +223,4 @@ process.on('SIGINT', () => {
         process.exit();
     });
 });
+
