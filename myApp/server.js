@@ -91,43 +91,51 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'publiccliente', 'indexcliente.html'));
 });
 
-app.get('/representative', (req, res) => {
+appRep.use(express.static(path.join(__dirname, 'publicrepresentante')));
+
+appRep.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'publicrepresentante', 'index.html'));
 });
-
 // Ruta para guardar respuestas
 app.post('/answers', (req, res) => {
     const { user_id, answers } = req.body;
-            const values = answers.map((ans) => [user_id, ans.question, ans.answer]);
+    const values = answers.map((ans) => [user_id, ans.question, ans.answer]);
     const query = 'INSERT INTO pre_questions (user_id, question, answer) VALUES ?';
 
-            connection.query(query, [values], (err) => {
-                if (err) {
-                    console.error('Error saving answers:', err);
+    connection.query(query, [values], (err) => {
+        if (err) {
+            console.error('Error saving answers:', err);
             res.sendStatus(500);
             return;
         }
         res.sendStatus(200);
-            });
+    });
 });
 
 // Socket.io handlers
+// ... (mantener el código anterior igual)
+
+// Socket.io handlers
 const activeQuestions = {};
+const clientAnswers = new Map(); // Para almacenar las respuestas de cada cliente
 
 ioClient.on('connection', (socket) => {
     console.log('Client connected');
+    let clientId = null;
 
     if (isRepresentativeConnected) {
         socket.emit('message', {
-            name: "Franklin",
-        message: "Un representante se ha conectado y está disponible.",
-        user_type: "system"
-    });
+            name: "Sistema",
+            message: "Un representante se ha conectado y está disponible.",
+            user_type: "system"
+        });
     }
 
     socket.on('first-message', ({ user_id }) => {
+        clientId = user_id;
         if (!activeQuestions[user_id]) {
             activeQuestions[user_id] = { index: 0, answers: [] };
+            clientAnswers.set(user_id, []); // Inicializar arreglo de respuestas para este cliente
         }
 
         const currentQuestion = predefinedQuestions[0];
@@ -136,11 +144,16 @@ ioClient.on('connection', (socket) => {
 
     socket.on('answer', ({ user_id, answer }) => {
         if (!activeQuestions[user_id]) {
-                return;
-            }
+            return;
+        }
 
         const { index, answers } = activeQuestions[user_id];
-        answers.push({ question: predefinedQuestions[index], answer });
+        const currentAnswer = {
+            question: predefinedQuestions[index],
+            answer: answer
+        };
+        answers.push(currentAnswer);
+        clientAnswers.get(user_id).push(currentAnswer);
 
         if (index + 1 < predefinedQuestions.length) {
             activeQuestions[user_id].index++;
@@ -155,33 +168,50 @@ ioClient.on('connection', (socket) => {
                 if (err) {
                     console.error('Error saving answers:', err);
                 }
-    });
+            });
 
             socket.emit('questions-complete');
-            ioRep.emit('client-answers', { user_id, answers }); // Enviar respuestas al representante
+            
+            // Enviar todas las respuestas acumuladas al representante
+            const allAnswers = clientAnswers.get(user_id);
+            ioRep.emit('client-answers', { 
+                user_id, 
+                answers: allAnswers,
+                complete: true // Indicar que las preguntas están completas
+            });
 
             delete activeQuestions[user_id];
         }
     });
 
     socket.on('message', (message) => {
+        // Solo permitir mensajes si el cliente ya completó las preguntas
+        if (!clientId || activeQuestions[clientId]) {
+            return; // No permitir mensajes si aún hay preguntas pendientes
+        }
+
         const query = 'INSERT INTO messages (name, message, user_type) VALUES (?, ?, ?)';
         connection.query(query, [message.name, message.message, message.user_type], (err) => {
             if (err) {
                 console.error('Error saving message:', err);
                 return;
             }
-            // Solo emitir al otro servidor
-            // Emitir solo al representante
+            ioRep.emit('message', message);
         });
     });
 
+    socket.on('disconnect', () => {
+        if (clientId) {
+            clientAnswers.delete(clientId);
+        }
+    });
 });
 
 ioRep.on('connection', (socket) => {
     console.log('Representative connected');
     isRepresentativeConnected = true;
 
+    // Enviar mensaje de conexión a todos los clientes
     ioClient.emit('message', {
         name: "Sistema",
         message: "Un representante se ha conectado y está disponible.",
@@ -195,17 +225,22 @@ ioRep.on('connection', (socket) => {
                 console.error('Error saving message:', err);
                 return;
             }
-            // Solo emitir al otro servidor
-            // Emitir solo al cliente
+            ioClient.emit('message', message);
         });
     });
-
 
     socket.on('disconnect', () => {
         console.log('Representative disconnected');
         isRepresentativeConnected = false;
+        
+        ioClient.emit('message', {
+            name: "Sistema",
+            message: "El representante se ha desconectado.",
+            user_type: "system"
+        });
     });
-    // ... resto del código
+});
+
 
 // Iniciar servidores
 serverClient.listen(3000, () => {
@@ -223,4 +258,3 @@ process.on('SIGINT', () => {
         process.exit();
     });
 });
-

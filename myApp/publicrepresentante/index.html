@@ -61,6 +61,11 @@
             text-align: left;
         }
 
+        .system-message {
+            background: #f0f0f0;
+            text-align: center;
+        }
+
         .timestamp {
             font-size: 0.7rem;
             color: #666;
@@ -98,7 +103,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io();
+        const socket = io('http://localhost:3001');
         let currentUserId = null;
 
         $(() => {
@@ -141,9 +146,9 @@
             $("#messages").scrollTop($("#messages")[0].scrollHeight);
         }
 
-        function displayClientAnswers({ user_id, answers }) {
+        function displayClientAnswers({ user_id, answers, complete }) {
             currentUserId = user_id;
-            $("#messages").append('<div class="message client-message"><strong>Respuestas del cliente:</strong></div>');
+            $("#messages").append('<div class="message system-message"><strong>Respuestas del cliente:</strong></div>');
             answers.forEach(({ question, answer }) => {
                 $("#messages").append(`
                     <div class="message client-message">
@@ -152,6 +157,15 @@
                     </div>
                 `);
             });
+            
+            if (complete) {
+                $("#messages").append(`
+                    <div class="message system-message">
+                        <p><strong>El cliente ha completado todas las preguntas y está listo para chatear.</strong></p>
+                    </div>
+                `);
+            }
+            
             $("#messages").scrollTop($("#messages")[0].scrollHeight);
         }
 

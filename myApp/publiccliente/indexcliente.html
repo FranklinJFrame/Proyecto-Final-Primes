@@ -106,9 +106,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 
-<!-- Mantener todo el HTML y CSS igual, solo modificar la sección del script -->
-<script>
-    const socket = io();
+    <script>
+        const socket = io('http://localhost:3000');
     let isAnsweringQuestions = false;
 
     $(() => {
@@ -198,7 +197,6 @@
 
         $("#message").val('');
     }
-
     </script>
 </body>
 </html>
