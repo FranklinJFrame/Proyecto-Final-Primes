@@ -13,7 +13,7 @@ const path = require('path');
 const ioClient = socketIO(serverClient);
 const ioRep = socketIO(serverRep);
 
-// Middleware
+
 app.use(express.static(__dirname));
 appRep.use(express.static(__dirname));
 app.use(bodyParser.json());
@@ -23,10 +23,10 @@ appRep.use(bodyParser.urlencoded({ extended: false }));
 
 // Configuración MySQL
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'franklin',
-    database: 'angel1'
+    host: 'bg4rlsf9y6czzopoaxua-mysql.services.clever-cloud.com',
+    user: 'ukukirf39lt6jhio',
+    password: 'qy86fvwGgHBt0XFCGR3r',
+    database: 'bg4rlsf9y6czzopoaxua'
 });
 
 // Conectar a MySQL
