@@ -36,7 +36,6 @@
             font-size: 1.2rem;
             font-weight: bold;
             border-bottom: 1px solid #ddd;
-            position: relative;
         }
 
         .chat-body {
@@ -128,22 +127,6 @@
         #openChatButton img:hover {
             transform: scale(1.1);
         }
-
-        .close-chat-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close-chat-btn:hover {
-            color: #ffdddd;
-        }
     </style>
 </head>
 <body>
@@ -154,7 +137,6 @@
     <div class="chat-container">
         <div class="chat-header">
             Panel de Representante
-            <button id="closeChatButton" class="close-chat-btn">X</button>
         </div>
         <div id="messages" class="chat-body">
             <!-- Mensajes se cargarán aquí -->
@@ -175,13 +157,8 @@
 
         $(() => {
             $("#openChatButton").click(() => {
-                $(".chat-container").show();
-                $("#openChatButton").hide();
-            });
-
-            $("#closeChatButton").click(() => {
-                $(".chat-container").hide();
-                $("#openChatButton").show();
+                $(".chat-container").toggle();
+                $("#openChatButton").toggle();
             });
 
             $("#send").click(sendMessage);
