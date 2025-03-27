@@ -10,84 +10,151 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
         }
 
         .chat-container {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            width: 300px;
-            background: #fff;
+            width: 350px;
+            background: #ffffff;
             border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             z-index: 1000;
+            display: none;
         }
 
         .chat-header {
-            background: #007bff;
+            background: linear-gradient(90deg, #28a745, #218838);
             color: #fff;
-            padding: 10px;
+            padding: 15px;
             text-align: center;
-            font-size: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            position: relative;
         }
 
         .chat-body {
-            height: 250px;
+            height: 300px;
             overflow-y: auto;
-            padding: 10px;
+            padding: 15px;
             background: #f8f9fa;
         }
 
         .chat-footer {
-            padding: 10px;
+            padding: 15px;
             border-top: 1px solid #ddd;
+            background: #ffffff;
         }
 
         .message {
-            margin-bottom: 10px;
-            padding: 8px;
-            border-radius: 8px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .client-message {
-            background: #e8e8e8;
+            background: #d1f7c4;
             text-align: left;
+            border: 1px solid #b2e6a8;
         }
 
         .representative-message {
-            background: #dcf8c6;
+            background: #e8e8e8;
             text-align: left;
+            border: 1px solid #d6d6d6;
         }
 
         .system-message {
-            background: #f0f0f0;
+            background: #ffeeba;
             text-align: center;
+            border: 1px solid #ffdd99;
+            font-style: italic;
         }
 
         .timestamp {
             font-size: 0.7rem;
             color: #666;
+            display: block;
+            margin-top: 5px;
+            text-align: right;
         }
 
         .input-group textarea {
             resize: none;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            padding: 10px;
         }
 
-        .chat-container {
-            display: none;
+        .input-group button {
+            border-radius: 10px;
+            background: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+        }
+
+        .input-group button:hover {
+            background: #218838;
+        }
+
+        #openChatButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1100;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        #openChatButton img {
+            width: 60px;
+            height: 60px;
+            transition: transform 0.3s ease;
+        }
+
+        #openChatButton img:hover {
+            transform: scale(1.1);
+        }
+
+        .close-chat-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-chat-btn:hover {
+            color: #ffdddd;
         }
     </style>
 </head>
 <body>
-    <button id="openChatButton" style="position: fixed; bottom: 20px; right: 20px; z-index: 1100; background-color: transparent; border: none;">
-        <img src="/images/icono-vector-chat_676179-133.avif" alt="Chat en Vivo" style="width: 60px; height: 60px;">
+    <button id="openChatButton">
+        <img src="/images/icono-vector-chat_676179-133.avif" alt="Chat en Vivo">
     </button>
 
     <div class="chat-container">
         <div class="chat-header">
             Panel de Representante
+            <button id="closeChatButton" class="close-chat-btn">X</button>
         </div>
         <div id="messages" class="chat-body">
             <!-- Mensajes se cargarán aquí -->
@@ -108,8 +175,13 @@
 
         $(() => {
             $("#openChatButton").click(() => {
-                $(".chat-container").toggle();
-                $("#openChatButton").toggle(); // Agregar esta línea para ocultar el botón
+                $(".chat-container").show();
+                $("#openChatButton").hide();
+            });
+
+            $("#closeChatButton").click(() => {
+                $(".chat-container").hide();
+                $("#openChatButton").show();
             });
 
             $("#send").click(sendMessage);
@@ -120,9 +192,8 @@
                 }
             });
 
-            // Iniciar el chat con preguntas predefinidas
             socket.emit('first-message', { user_id: 1 });
-            // Prueba: Emitir un mensaje de ejemplo al cargar la página
+
             socket.emit('message', {
                 name: 'Representante de Prueba',
                 message: 'Mensaje de prueba desde el representante.',
@@ -134,7 +205,9 @@
         socket.on('client-answers', displayClientAnswers);
 
         function addMessage(message) {
-            const messageClass = message.user_type === 'client' ? 'client-message' : 'representative-message';
+            const messageClass = message.user_type === 'client' ? 'client-message' : 
+                                 message.user_type === 'system' ? 'system-message' : 
+                                 'representative-message';
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             $("#messages").append(`
                 <div class="message ${messageClass}">
@@ -182,12 +255,8 @@
                 user_type: "representative"
             };
 
-            // Agregar el mensaje localmente
             addMessage(message);
-            
-            // Enviar el mensaje al servidor
             socket.emit('message', message);
-            
             $("#message").val('');
         }
     </script>
