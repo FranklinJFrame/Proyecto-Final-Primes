@@ -80,13 +80,8 @@ app.post('/login', (req, res) => {
     });
 });
 
-// Modificar las rutas existentes para protegerlas
-// Rutas específicas para cada vista
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
 
-// Modificar las rutas existentes para redirigir al login si no hay sesión
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'publiccliente', 'indexcliente.html'));
 });
