@@ -1,7 +1,3 @@
-<script src="resources/js/jquery.min.js"></script>
-
-
-
 <h1> Hola esto funciona desde un controlador</h1>
 
 <p>
