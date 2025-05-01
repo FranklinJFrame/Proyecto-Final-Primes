@@ -10,5 +10,3 @@ Route::get('/', function () {
 use App\Http\Controllers\UserController;
 
 Route::get('/frankas', [UserController::class, 'index']);
-
-// Esteroñanklin
