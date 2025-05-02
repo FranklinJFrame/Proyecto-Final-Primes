@@ -13,7 +13,6 @@
             })
         </script>
 
-        {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
             (function() {
                 const appearance = '{{ $appearance ?? "system" }}';
@@ -57,10 +56,6 @@
     <body class="font-sans antialiased">
         @inertia
 
-        {{-- Incluir el archivo jquery.js --}}
-        
-
-        {{-- Script de prueba para verificar jQuery --}}
         <script>
             $(document).ready(function() {
                 console.log("jQuery está funcionando correctamente.");
