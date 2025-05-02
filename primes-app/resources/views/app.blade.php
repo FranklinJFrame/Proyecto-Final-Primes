@@ -3,7 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script src="{{ asset('js/jquery.js') }}"></script>
+        <script src="{{ asset('assets/jquery.js') }}"></script>
+        
 
 
         <script>
@@ -57,7 +58,7 @@
         @inertia
 
         {{-- Incluir el archivo jquery.js --}}
-        <script src="{{ asset('assets/jquery.js') }}"></script>
+        
 
         {{-- Script de prueba para verificar jQuery --}}
         <script>
