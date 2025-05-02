@@ -18,6 +18,7 @@
                 }
             })();
         </script>
+    
 
         {{-- Inline style to set the HTML background color based on our theme in app.css --}}
         <style>
@@ -46,5 +47,16 @@
     </head>
     <body class="font-sans antialiased">
         @inertia
+
+        {{-- Incluir el archivo jquery.js --}}
+        <script src="{{ asset('assets/jquery.js') }}"></script>
+
+        {{-- Script de prueba para verificar jQuery --}}
+        <script>
+            $(document).ready(function() {
+                console.log("jQuery está funcionando correctamente.");
+                alert("¡jQuery está funcionando!");
+            });
+        </script>
     </body>
 </html>
