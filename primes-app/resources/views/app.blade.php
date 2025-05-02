@@ -3,6 +3,14 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="{{ asset('js/jquery.js') }}"></script>
+
+
+        <script>
+            $(function() {
+                console.log('me gusta tu mama')
+            })
+        </script>
 
         {{-- Inline script to detect system dark mode preference and apply it immediately --}}
         <script>
