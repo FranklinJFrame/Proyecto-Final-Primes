@@ -3,6 +3,23 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+use App\Http\Controllers\{
+    ClienteController,
+    ProductoController,
+    PedidoController,
+    CategoriaProductoController,
+    EstadoPedidoController,
+    MetodoPagoController,
+    PagoController,
+    DireccionController,
+    PaisController,
+    ProvinciaController,
+    CiudadController,
+    CodigoPostalController,
+    DetallePedidoController
+};
+
+
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
