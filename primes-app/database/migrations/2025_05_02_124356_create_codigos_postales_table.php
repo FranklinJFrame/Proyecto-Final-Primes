@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('codigos_postales', function (Blueprint $table) {
-            $table->id('CodigoPostalID');
+            $table->id();
             $table->string('Codigo', 20);
             $table->foreignId('CiudadID')->constrained('ciudades');
             $table->timestamps();

@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pagos', function (Blueprint $table) {
-            $table->id('PagoID');
+            $table->id();
             $table->foreignId('PedidoID')->constrained('pedidos');
-            $table->foreignId('MetodoPagoID')->constrained('metodo_pagos');
+            $table->foreignId('MetodoPagoID')->constrained('metodos_pagos');
             $table->dateTime('FechaPago')->useCurrent();
             $table->decimal('Monto', 10, 2);
             $table->string('ReferenciaPago', 255)->nullable();
