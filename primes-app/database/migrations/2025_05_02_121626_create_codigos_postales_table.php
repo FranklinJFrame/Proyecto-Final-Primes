@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('codigos_postales', function (Blueprint $table) {
             $table->id('CodigoPostalID');
             $table->string('Codigo', 20);
-            $table->foreignId('CiudadID')->constrained('ciudades');
+            $table->unsignedBigInteger('CiudadID');
+            $table->foreign('CiudadID')->references('CiudadID')->on('ciudades')->onDelete('cascade');
             $table->timestamps();
         });
     }

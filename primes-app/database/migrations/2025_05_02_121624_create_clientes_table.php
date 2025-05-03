@@ -16,10 +16,6 @@ return new class extends Migration
             $table->string('Nombre');
             $table->string('Apellido');
             $table->date('FechaNacimiento');
-            $table->string('Email');
-            $table->string('Contrase\u00f1a');
-            $table->string('Telefono');
-            $table->timestamps();
         });
     }
 

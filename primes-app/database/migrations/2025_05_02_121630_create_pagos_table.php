@@ -12,13 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pagos', function (Blueprint $table) {
-            $table->id('PagoID');
-            $table->foreignId('PedidoID')->constrained('pedidos');
-            $table->foreignId('MetodoPagoID')->constrained('metodo_pagos');
-            $table->dateTime('FechaPago')->useCurrent();
-            $table->decimal('Monto', 10, 2);
-            $table->string('ReferenciaPago', 255)->nullable();
-            $table->timestamps();
+            $table->id('PagoID');  // Definición de la clave primaria para 'pagos'
+            $table->unsignedBigInteger('PedidoID');  // Definición de la columna 'PedidoID'
+            $table->unsignedBigInteger('MetodoPagoID');  // Definición de la columna 'MetodoPagoID'
+            $table->dateTime('FechaPago')->useCurrent();  // Fecha del pago con valor por defecto
+            $table->decimal('Monto', 10, 2);  // Monto del pago
+            $table->string('ReferenciaPago', 255)->nullable();  // Referencia opcional del pago
+            
+            // Definir las claves foráneas correctamente
+            $table->foreign('PedidoID')->references('PedidoID')->on('pedidos')->onDelete('cascade');
+            $table->foreign('MetodoPagoID')->references('MetodoPagoID')->on('metodos_pagos')->onDelete('cascade');
         });
     }
 

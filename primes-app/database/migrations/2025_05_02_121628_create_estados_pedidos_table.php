@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('NombreEstado', 50);
             $table->timestamps();
         });
+
+
     }
 
     /**

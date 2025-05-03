@@ -15,11 +15,9 @@ return new class extends Migration
             $table->id('DireccionID');
             $table->string('NumeroExterior', 50);
             $table->string('Calle');
-            $table->foreignId('ClienteID')->constrained('clientes');
-            $table->foreignId('CodigoPostalID')->constrained('codigos_postales');
-            $table->string('Colonia');
-            $table->string('Referencias', 500)->nullable();
-            $table->timestamps();
+            $table->unsignedBigInteger('ClienteID');
+            $table->foreign('ClienteID')->references('ClienteID')->on('clientes')->onDelete('cascade');
+            $table->timestamps(); // Agregado
         });
     }
 

@@ -13,11 +13,14 @@ return new class extends Migration
     {
         Schema::create('detalles_pedidos', function (Blueprint $table) {
             $table->id('DetalleID');
-            $table->foreignId('PedidoID')->constrained('pedidos');
-            $table->foreignId('ProductoID')->constrained('productos');
+            $table->unsignedBigInteger('PedidoID');
+            $table->foreign('PedidoID')->references('PedidoID')->on('pedidos')->onDelete('cascade');
+            
+            // Cambié de foreignId a unsignedBigInteger y referencié ProductoID
+            $table->unsignedBigInteger('ProductoID');
+            $table->foreign('ProductoID')->references('ProductoID')->on('productos')->onDelete('cascade');
+            
             $table->integer('Cantidad');
-            $table->decimal('PrecioUnitario', 10, 2);
-            $table->decimal('Subtotal', 10, 2);
             $table->timestamps();
         });
     }

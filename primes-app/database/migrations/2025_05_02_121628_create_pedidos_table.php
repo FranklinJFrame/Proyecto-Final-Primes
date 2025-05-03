@@ -13,10 +13,18 @@ return new class extends Migration
     {
         Schema::create('pedidos', function (Blueprint $table) {
             $table->id('PedidoID');
-            $table->foreignId('ClienteID')->constrained('clientes');
+            
+            $table->unsignedBigInteger('ClienteID');
+            $table->foreign('ClienteID')->references('ClienteID')->on('clientes')->onDelete('cascade');
+
             $table->dateTime('FechaPedido')->useCurrent();
-            $table->foreignId('DireccionEntregaID')->constrained('direcciones');
-            $table->foreignId('EstadoID')->constrained('estado_pedidos');
+
+            $table->unsignedBigInteger('DireccionEntregaID');
+            $table->foreign('DireccionEntregaID')->references('DireccionID')->on('direcciones')->onDelete('cascade');
+
+            $table->unsignedBigInteger('EstadoID');
+            $table->foreign('EstadoID')->references('EstadoID')->on('estados_pedidos')->onDelete('cascade');  // Cambio realizado aquí
+
             $table->decimal('Total', 10, 2);
             $table->timestamps();
         });
