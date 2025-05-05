@@ -49,17 +49,36 @@ Forms\Components\TextInput::make('password')
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name') 
+                ->searchable(),
+                Tables\Columns\TextColumn::make('email')
+                ->searchable(),
+                Tables\Columns\TextColumn::make('verifacion_email')
+                ->dateTime()
+                ->sortable(),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable(),
+
+
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
+
             ])
+            
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    
                 ]),
             ]);
     }
