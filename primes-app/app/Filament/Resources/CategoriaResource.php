@@ -3,15 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CategoriaResource\Pages;
-use App\Filament\Resources\CategoriaResource\RelationManagers;
 use App\Models\Categoria;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class CategoriaResource extends Resource
 {
@@ -25,14 +23,27 @@ class CategoriaResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('nombre')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->reactive() // Reactivo para que actualice el slug automáticamente
+                    ->debounce(500) // Espera 500ms después de que el usuario deje de escribir
+                    ->afterStateUpdated(function ($state, $set) {
+                        $set('slug', Str::slug($state)); // Genera el slug automáticamente
+                    }),
+
                 Forms\Components\TextInput::make('slug')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('imagen')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->disabled() // Deshabilitado para evitar que el usuario lo edite manualmente
+                    ->dehydrated() // Asegura que el valor se guarde en la base de datos
+                    ->unique(Categoria::class, 'slug', ignoreRecord: true),
+
+                Forms\Components\FileUpload::make('imagen')
+                    ->image()
+                    ->directory('categorias'),
+
                 Forms\Components\Toggle::make('esta_activa')
-                    ->required(),
+                    ->required()
+                    ->default(true),
             ]);
     }
 
@@ -42,16 +53,21 @@ class CategoriaResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('imagen')
                     ->searchable(),
+
                 Tables\Columns\IconColumn::make('esta_activa')
                     ->boolean(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
