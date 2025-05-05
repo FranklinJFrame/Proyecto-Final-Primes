@@ -12,21 +12,35 @@ class Producto extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'categoria_id',
-        'marca_id',
         'nombre',
         'slug',
-        'imagenes',
         'descripcion',
+        'imagenes',
         'precio',
-        'esta_activo',
-        'es_destacado',
-        'en_stock',
-        'en_oferta',
+        'moneda',
+        'categoria_id',
+        'marca_id',
     ];
     protected $casts = [
         'imagenes' => 'array',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($producto) {
+            if (empty($producto->slug)) {
+                $producto->slug = \Illuminate\Support\Str::slug($producto->nombre);
+            }
+        });
+
+        static::updating(function ($producto) {
+            if (empty($producto->slug)) {
+                $producto->slug = \Illuminate\Support\Str::slug($producto->nombre);
+            }
+        });
+    }
 
     public function categoria()
     {
@@ -37,9 +51,9 @@ class Producto extends Model
     {
         return $this->belongsTo(Marca::class);
     }
-public function pedido_productos()
-{
-    return $this->hasMany(PedidoProducto::class);
 
-}
+    public function pedido_productos()
+    {
+        return $this->hasMany(PedidoProducto::class);
+    }
 }
