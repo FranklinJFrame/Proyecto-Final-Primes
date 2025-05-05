@@ -26,11 +26,11 @@ class Pedidos extends Model
     }
     public function productos()
     {
-        return $this->hasMany(pedido_productos::class);
+        return $this->hasMany(PedidoProductos::class);
     }
 
     public function direccion()
     {
-        return $this->hasOne(direccions::class);
+        return $this->hasOne(Direccions::class);
     }
 }

@@ -25,7 +25,7 @@ class Direccion extends Model
         return $this->belongsTo(Pedido::class); 
     }
 
-    public function getFullNameAtribute()
+    public function getFullNameAttribute()
     {
         return "{$this->nombre} {$this->apellido}";
     }

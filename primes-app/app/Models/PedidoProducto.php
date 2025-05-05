@@ -19,7 +19,7 @@ class PedidoProducto extends Model
 
     public function pedido()
     {
-        return $this->belongsTo(Pedidos::class);
+        return $this->belongsTo(Pedido::class);
     }
 
     public function producto()

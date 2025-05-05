@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Producto;
 
 class Marca extends Model
 {
@@ -13,7 +15,7 @@ class Marca extends Model
         'imagen',
         'esta_activa',
     ];
-    public function productos()
+    public function producto()
     {
         return $this->hasMany(Producto::class);
     }

@@ -8,7 +8,7 @@ use App\Models\Producto;
 
 class Categoria extends Model
 {
-    use hasFactory;
+    use HasFactory;
     protected $fillable = [
         'nombre',
         'slug',
