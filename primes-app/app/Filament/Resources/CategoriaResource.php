@@ -19,7 +19,7 @@ class CategoriaResource extends Resource
 {
     protected static ?string $model = Categoria::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
     public static function form(Form $form): Form
     {
@@ -28,22 +28,24 @@ class CategoriaResource extends Resource
                 Forms\Components\TextInput::make('nombre')
                     ->required()
                     ->maxLength(255)
-                    ->reactive() // Reactivo para que actualice el slug automáticamente
-                    ->debounce(500) // Espera 500ms después de que el usuario deje de escribir
+                    ->reactive() 
+                    ->debounce(500)
                     ->afterStateUpdated(function ($state, $set) {
-                        $set('slug', Str::slug($state)); // Genera el slug automáticamente
+                        $set('slug', Str::slug($state)); 
                     }),
 
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->maxLength(255)
-                    ->disabled() // Deshabilitado para evitar que el usuario lo edite manualmente
-                    ->dehydrated() // Asegura que el valor se guarde en la base de datos
+                    ->disabled() 
+                    ->dehydrated() 
                     ->unique(Categoria::class, 'slug', ignoreRecord: true),
 
                 Forms\Components\FileUpload::make('imagen')
                     ->image()
-                    ->directory('categorias'),
+                    ->directory('categorias') // Directorio donde se guardarán las imágenes
+                    ->imagePreviewHeight('150') // Altura de la vista previa de la imagen
+                    ->label('Imagen de la Categoría'),
 
                 Forms\Components\Toggle::make('esta_activa')
                     ->required()
@@ -61,8 +63,10 @@ class CategoriaResource extends Resource
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('imagen')
-                    ->searchable(),
+                Tables\Columns\ImageColumn::make('imagen')
+                    ->label('Imagen')
+                    ->disk('public') // Especifica el disco donde se almacenan las imágenes
+                    ->size(50), // Tamaño de la imagen en la tabla
 
                 Tables\Columns\IconColumn::make('esta_activa')
                     ->boolean(),
