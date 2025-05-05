@@ -34,8 +34,8 @@ class UserResource extends Resource
                     ->required(),
 
 
-                Forms\Components\DateTimePicker::make('verifacion_email')
--> label('Verificacion de Correo')
+                Forms\Components\DateTimePicker::make('email_verified_at')
+-> label('email_verified_at')
 ->default(now()),
 
 Forms\Components\TextInput::make('password')
@@ -53,7 +53,7 @@ Forms\Components\TextInput::make('password')
                 ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                 ->searchable(),
-                Tables\Columns\TextColumn::make('verifacion_email')
+                Tables\Columns\TextColumn::make('email_verified_at')
                 ->dateTime()
                 ->sortable(),
 
