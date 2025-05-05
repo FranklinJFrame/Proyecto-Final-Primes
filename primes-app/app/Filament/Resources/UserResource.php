@@ -32,6 +32,16 @@ class UserResource extends Resource
                     ->maxLength(255)
                     ->unique(ignoreRecord: true)
                     ->required(),
+
+
+                Forms\Components\DateTimePicker::make('verifacion_email')
+-> label('Verificacion de Correo')
+->default(now()),
+
+Forms\Components\TextInput::make('password')
+    ->password()
+    ->dehydrated(fn($state) => filled($state))
+    ->required(fn ($livewire): bool => $livewire instanceof Pages\CreateUser)
             ]);
     }
 
