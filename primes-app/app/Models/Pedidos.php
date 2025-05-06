@@ -26,11 +26,12 @@ class Pedidos extends Model
     }
     public function productos()
     {
-        return $this->hasMany(PedidoProductos::class);
+        return $this->hasMany(PedidoProducto::class, 'pedido_id'); 
     }
+    
 
     public function direccion()
     {
-        return $this->hasOne(Direccions::class);
+        return $this->hasOne(Direccion::class);
     }
 }

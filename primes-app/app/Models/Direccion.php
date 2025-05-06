@@ -14,7 +14,7 @@ class Direccion extends Model
         'nombre',
         'apellido',
         'telefono',
-        'direccion_calle', // Cambiado de 'direccion' a 'direccion_calle' para coincidir con la migración
+        'direccion_calle', 
         'ciudad',
         'estado',
         'codigo_postal',
@@ -22,7 +22,7 @@ class Direccion extends Model
 
     public function pedido()
     {
-        return $this->belongsTo(Pedido::class); 
+        return $this->belongsTo(Pedidos::class); 
     }
 
     public function getFullNameAttribute()

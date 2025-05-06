@@ -5,18 +5,25 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PedidosResource\Pages;
 use App\Filament\Resources\PedidosResource\RelationManagers;
 use App\Models\Pedidos;
+use App\Models\PedidoProductos;
+use App\Models\Producto;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\Colors;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\ToggleButtons;
-use Filament\Tables\Actions\Colors;
+
+
 class PedidosResource extends Resource
 {
     protected static ?string $model = Pedidos::class;
@@ -96,11 +103,52 @@ class PedidosResource extends Resource
                                 ->required()
                                 ->prefixIcon('heroicon-o-truck'),
 
-                            Forms\Components\Textarea::make('notas')
+                                Forms\Components\Textarea::make('notas')
                                 ->label('Notas')
                                 ->placeholder('Notas adicionales sobre el pedido')
                                 ->rows(3)
                                 ->columnSpanFull(),
+                            ]),
+                        
+
+                        Section::make('Detalles del Pedido')->schema([
+                            Repeater::make('productos')
+                            ->relationship()
+                            ->schema([
+
+                                Select::make('producto_id')
+                                    ->label('Producto')
+                                    ->relationship('producto', 'nombre')
+                                    ->searchable()
+                                    ->preload()
+                                    ->required()
+                                    ->columnSpan(4),
+                         
+
+                                TextInput::make('cantidad')
+                                    ->numeric()
+                                    ->default(1)
+                                    ->required()
+                                    ->columnSpan(1),
+
+
+                                TextInput::make('precio_unitario')
+                                    ->numeric()
+                                    ->prefix('$')
+                                    ->required()
+                                    ->columnSpan(2),
+
+
+                                TextInput::make('precio_total')
+                                    ->numeric()
+                                    ->prefix('$')
+                                    ->required()
+                                    ->columnSpan(2),
+
+
+                            ])
+                            ->columns(3)
+                            ->columnSpanFull(),
                         ])
                         
                         ->columns(2)
