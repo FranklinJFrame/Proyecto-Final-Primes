@@ -9,6 +9,10 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\DeleteAction;
 
 class ProductoResource extends Resource
 {
@@ -29,10 +33,10 @@ class ProductoResource extends Resource
                                     ->label('Name')
                                     ->required()
                                     ->maxLength(255)
-                                    ->reactive() // Hacer que el campo sea reactivo
-                                    ->debounce(500) // Esperar 500ms antes de ejecutar el evento
+                                    ->reactive()
+                                    ->debounce(500)
                                     ->afterStateUpdated(function ($state, $set) {
-                                        $set('slug', \Illuminate\Support\Str::slug($state)); // Generar el slug automáticamente
+                                        $set('slug', \Illuminate\Support\Str::slug($state));
                                     }),
 
                                 Forms\Components\TextInput::make('slug')
@@ -40,7 +44,7 @@ class ProductoResource extends Resource
                                     ->required()
                                     ->maxLength(255)
                                     ->disabled()
-                                    ->dehydrated(), // Asegúrate de que el valor se envíe al guardar
+                                    ->dehydrated(),
 
                                 Forms\Components\MarkdownEditor::make('descripcion')
                                     ->label('Description')
@@ -71,7 +75,7 @@ class ProductoResource extends Resource
                                     ->prefix('$'),
 
                                 Forms\Components\Select::make('moneda')
-                                    ->label('Currency') // Etiqueta en inglés
+                                    ->label('Tipo de Moneda')
                                     ->options([
                                         'USD' => 'US Dollar',
                                         'EUR' => 'Euro',
@@ -84,15 +88,14 @@ class ProductoResource extends Resource
                                         'SEK' => 'Swedish Krona',
                                         'NZD' => 'New Zealand Dollar',
                                         'DOP' => 'Dominican Peso',
-                                        // Agrega más monedas según sea necesario
                                     ])
-                                    ->searchable() // Permitir búsqueda en el select
+                                    ->searchable()
                                     ->required(),
                             ])
                             ->columnSpan(1),
 
                         // Categorías y Marcas
-                        Forms\Components\Section::make('Categorias y Marcas')
+                        Forms\Components\Section::make('Marcas y Categorías')
                             ->schema([
                                 Forms\Components\Select::make('categoria_id')
                                     ->label('Categoria')
@@ -109,6 +112,29 @@ class ProductoResource extends Resource
                                     ->relationship('marca', 'nombre'),
                             ])
                             ->columnSpan(1),
+
+                        // Estado
+                        Forms\Components\Section::make('Status')
+                            ->schema([
+                                Forms\Components\Toggle::make('en_stock')
+                                    ->label('en_stock')
+                                    ->required()
+                                    ->default(true),
+
+                                Forms\Components\Toggle::make('esta_activo')
+                                    ->label('esta_activo')
+                                    ->required()
+                                    ->default(true),
+
+                                Forms\Components\Toggle::make('es_destacado')
+                                    ->label('es_destacado')
+                                    ->default(false),
+
+                                Forms\Components\Toggle::make('en_oferta')
+                                    ->label('en_oferta')
+                                    ->default(false),
+                            ])
+                            ->columnSpan(1),
                     ])
                     ->columns(3),
             ]);
@@ -118,42 +144,56 @@ class ProductoResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('imagenes')
+                    ->label('Images') // Etiqueta para la columna
+                    ->disk('public') // Especifica el disco donde se almacenan las imágenes
+                    ->size(50), // Tamaño de las imágenes en la tabla
+
                 Tables\Columns\TextColumn::make('categoria_id')
-                    ->numeric()
+                    ->label('Category')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('marca_id')
-                    ->numeric()
+                    ->label('Brand')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('nombre')
+                    ->label('Name')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('slug')
+                    ->label('Slug')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('precio')
+                    ->label('Price')
                     ->numeric()
                     ->sortable(),
 
                 Tables\Columns\IconColumn::make('esta_activo')
+                    ->label('Is Active')
                     ->boolean(),
 
                 Tables\Columns\IconColumn::make('es_destacado')
+                    ->label('Is Featured')
                     ->boolean(),
 
                 Tables\Columns\IconColumn::make('en_stock')
+                    ->label('In Stock')
                     ->boolean(),
 
                 Tables\Columns\IconColumn::make('en_oferta')
+                    ->label('On Sale')
                     ->boolean(),
 
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Updated At')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -162,12 +202,14 @@ class ProductoResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
