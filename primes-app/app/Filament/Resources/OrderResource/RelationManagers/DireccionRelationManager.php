@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
 
 class DireccionRelationManager extends RelationManager
 {
@@ -59,7 +60,19 @@ class DireccionRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('direccion_calle')
             ->columns([
-                Tables\Columns\TextColumn::make('direccion_calle'),
+                TextColumn::make('nombre_completo')
+             ->label('Nombre Completo')
+             ->formatStateUsing(fn ($record) => "{$record->nombre} {$record->apellido}"),
+
+                TextColumn::make('telefono'),
+                    
+                TextColumn::make('ciudad'),
+
+                TextColumn::make('estado'),
+
+                TextColumn::make('codigo_postal'),
+                
+                TextColumn::make('direccion_calle')
             ])
             ->filters([
                 //
