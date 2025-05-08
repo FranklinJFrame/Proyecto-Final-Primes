@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PedidosResource\Pages;
 use App\Filament\Resources\PedidosResource\RelationManagers;
+use App\Filament\Resources\OrderResource\RelationManagers\DireccionRelationManager;
 use App\Models\Pedidos;
 use App\Models\PedidoProductos;
 use App\Models\Producto;
@@ -32,7 +33,6 @@ use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
-
 
 class PedidosResource extends Resource
 {
@@ -339,9 +339,19 @@ class PedidosResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+        DireccionRelationManager::class
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): string|array|null {
+        return static::getModel()::count() > 10 ? 'success' : 'danger';
+    }
+
 
     public static function getPages(): array
     {

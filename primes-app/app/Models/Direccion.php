@@ -10,7 +10,7 @@ class Direccion extends Model
     use HasFactory;
 
     protected $fillable = [
-        'pedido_id',
+        'pedidos_id',
         'nombre',
         'apellido',
         'telefono',
@@ -21,9 +21,9 @@ class Direccion extends Model
     ];
 
     public function pedido()
-    {
-        return $this->belongsTo(Pedidos::class); 
-    }
+                            {
+    return $this->belongsTo(Pedido::class); // sin S
+}
 
     public function getFullNameAttribute()
     {
