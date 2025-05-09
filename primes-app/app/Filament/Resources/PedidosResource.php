@@ -214,6 +214,9 @@ class PedidosResource extends Resource
                                 $costoEnvio = $get('costo_envio') ?? 0;
                                 $total += $costoEnvio;
 
+                                // Guardar el total en el campo total_general
+                                $set('total_general', $total);
+
                                 $moneda = $get('moneda') ?? 'DOP';
                                 
                                 return match($moneda) {
@@ -225,6 +228,9 @@ class PedidosResource extends Resource
                                 };
                             })
                             ->columnSpanFull(),
+
+                            // También necesitas agregar un campo Hidden para almacenar el total_general
+                            Hidden::make('total_general'),
                         ])
                         ->columnSpanFull(),
                 ])->columnSpanFull(),
