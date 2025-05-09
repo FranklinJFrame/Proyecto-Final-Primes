@@ -20,6 +20,10 @@ class MarcaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-folder-open';
 
+    protected static ?string $recordTitleAttribute = 'nombre';
+
+    protected static ?int $navigationSort = 2;
+
     public static function form(Form $form): Form
     {
         return $form

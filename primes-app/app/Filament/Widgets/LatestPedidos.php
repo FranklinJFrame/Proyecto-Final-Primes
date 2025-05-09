@@ -1,37 +1,36 @@
 <?php
 
-namespace App\Filament\Resources\UserResource\RelationManagers;
-use App\Filament\Resources\PedidosResource;
-use App\Models\Pedidos;
-use Filament\Tables\Actions\Action;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
+namespace App\Filament\Widgets;
+
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Widgets\TableWidget as BaseWidget;
+use App\Filament\Resources\PedidosResource;
+use App\Models\Pedidos; // Agregado
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\Action; // Agregado
 
-class PedidosRelationManager extends RelationManager
+class LatestPedidos extends BaseWidget
 {
-    protected static string $relationship = 'pedidos';
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                //
-            ]);
-    }
+    protected int | string | array $columnSpan = 'full';
+    protected static ? int $sort = 2;
+
+
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('id')
+            ->query(PedidosResource::getEloquentQuery())
+            ->defaultPaginationPageOption(5)
+            ->defaultSort('created_at', 'desc')
+            
             ->columns([
-               TextColumn::make('id')
+                TextColumn::make('id')
                ->label('Pedido ID')
+               ->searchable(),
+
+               TextColumn::make('user.name')
                ->searchable(),
 
                TextColumn::Make('total_general')
@@ -68,26 +67,11 @@ class PedidosRelationManager extends RelationManager
                ->label('Fecha de Pedido')
                ->dateTime()
 
-
-            ])
-            ->filters([
-                //
-            ])
-            ->headerActions([
-                //Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Action::make('Ver Pedido')
-                ->url(fn (Pedidos $record):string => PedidosResource::getUrl('view', ['record' => $record]))
-                ->color('info')
-                ->icon('heroicon-o-eye'),
-        
-                 Tables\Actions\DeleteAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                ->url(fn(Pedidos $record): string => PedidosResource::getUrl('view', ['record' => $record]))
+                ->icon('heroicon-m-eye')
             ]);
     }
 }
