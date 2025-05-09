@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\UserResource\RelationManagers\PedidosRelationManager;
 
 class UserResource extends Resource
 {
@@ -86,7 +87,7 @@ Forms\Components\TextInput::make('password')
     public static function getRelations(): array
     {
         return [
-            //
+            PedidosRelationManager::class,
         ];
     }
 
