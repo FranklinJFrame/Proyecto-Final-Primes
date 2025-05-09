@@ -61,8 +61,11 @@ class DireccionRelationManager extends RelationManager
             ->recordTitleAttribute('direccion_calle')
             ->columns([
                 TextColumn::make('nombre_completo')
-             ->label('Nombre Completo')
-             ->formatStateUsing(fn ($record) => "{$record->nombre} {$record->apellido}"),
+                ->label('Nombre Completo')
+                ->searchable(['nombre', 'apellido'])
+                ->sortable(),
+
+
 
                 TextColumn::make('telefono'),
                     

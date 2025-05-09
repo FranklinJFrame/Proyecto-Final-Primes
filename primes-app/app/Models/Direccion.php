@@ -29,4 +29,10 @@ class Direccion extends Model
     {
         return "{$this->nombre} {$this->apellido}";
     }
+
+    public function getNombreCompletoAttribute(): string
+{
+    return "{$this->nombre} {$this->apellido}";
 }
+}
+

@@ -277,11 +277,6 @@ class PedidosResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('pedido.costo_envio')
-                    ->label('Costo de Envío')
-                    ->money('DOP')
-                    ->sortable(),
-
                 Tables\Columns\TextColumn::make('metodo_envio')
                     ->label('Método de Envío')
                     ->badge()
