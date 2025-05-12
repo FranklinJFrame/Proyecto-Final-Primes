@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('direccions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pedido_id')->constrained('pedidos')->cascadeOnDelete();
+            $table->foreignId('pedidos_id')->constrained('pedidos')->cascadeOnDelete();
             $table->string('nombre')->nullable();
             $table->string('apellido')->nullable();
             $table->string('telefono')->nullable();
