@@ -1,10 +1,28 @@
 <?php
 
-use App\Livewire\HomePage;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-//primes-app\app\Livewire\HomePage.php
-Route::get('/', HomePage::class);
+
+use App\Http\Controllers\{
+    ClienteController,
+    ProductoController,
+    PedidoController,
+    CategoriaProductoController,
+    EstadoPedidoController,
+    MetodoPagoController,
+    PagoController,
+    DireccionController,
+    PaisController,
+    ProvinciaController,
+    CiudadController,
+    CodigoPostalController,
+    DetallePedidoController
+};
+
+
+Route::get('/', function () {
+    return Inertia::render('welcome');
+})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
