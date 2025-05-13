@@ -4,10 +4,11 @@ module.exports = {
     './src/**/*.{html,js,jsx,ts,tsx}', // Adjust this path based on your project structure
     'node_modules/preline/dist/*.js',
   ],
+   // Specify the dark mode strategy
   theme: {
     extend: {},
   },
   plugins: [
-    require('preline//plugin'), // Ensure this line is present
+  // Ensure this line is present
   ],
 };
