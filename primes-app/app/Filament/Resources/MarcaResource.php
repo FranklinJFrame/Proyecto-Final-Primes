@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Filament\Resources;
-
+use Filament\Tables\Columns\ImageColumn;
 use App\Filament\Resources\MarcaResource\Pages;
 use App\Models\Marca;
 use Filament\Forms;

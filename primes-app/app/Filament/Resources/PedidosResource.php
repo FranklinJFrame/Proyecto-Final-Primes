@@ -33,6 +33,7 @@ use Filament\Tables\Columns\TextColumn\TextColumnSize;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Columns\ImageColumn;
 
 class PedidosResource extends Resource
 {
