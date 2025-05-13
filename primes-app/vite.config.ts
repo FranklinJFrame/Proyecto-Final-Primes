@@ -1,4 +1,3 @@
-import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
 import { resolve } from 'node:path';
@@ -12,7 +11,7 @@ export default defineConfig({
             refresh: true,
         }),
         react(),
-        tailwindcss(),
+        // ❌ REMOVE: tailwindcss()
     ],
     esbuild: {
         jsx: 'automatic',
@@ -23,6 +22,6 @@ export default defineConfig({
         },
     },
     optimizeDeps: {
-        exclude: ['vanilla-calendar-pro'], // Excluye el paquete
+        exclude: ['vanilla-calendar-pro'],
     },
 });

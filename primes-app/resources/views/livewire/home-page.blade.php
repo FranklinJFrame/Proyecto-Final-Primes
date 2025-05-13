@@ -1,3 +1,4 @@
-<div>
-    <h1 class='text-4xl text-red-500'>Tengo paz a diario</h1>
+
+<div class="bg-blue-500 text-white p-9">
+    Tailwind is working!
 </div>
