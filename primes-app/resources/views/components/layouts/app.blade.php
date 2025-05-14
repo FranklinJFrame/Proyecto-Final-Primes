@@ -7,11 +7,15 @@
         <title>{{ $title ?? 'Page Title' }}</title>
         @vite(['resources/css/app.css', 'resources/js/app.js']) <!-- Correct file reference -->
         @livewireStyles
+        <script src="https://cdn.tailwindcss.com"></script>
+
     </head>
     <body class="bg-slate-200 dark:bg-slate-700">
+        @livewire('partials.navbar')
         <main>
             {{ $slot }}
         </main>
+        @livewire('partials.footer')
         @livewireScripts
     </body>
 </html>
