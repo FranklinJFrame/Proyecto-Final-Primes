@@ -151,7 +151,7 @@ class ProductoResource extends Resource
                 Tables\Columns\ImageColumn::make('imagenes')
                     ->label('Images') // Etiqueta para la columna
                     ->disk('public') // Especifica el disco donde se almacenan las imágenes
-                    ->size(50), // Tamaño de las imágenes en la tabla
+                    ->size(80), // Tamaño de las imágenes en la tabla
 
                 Tables\Columns\TextColumn::make('categoria_id')
                     ->label('Category')

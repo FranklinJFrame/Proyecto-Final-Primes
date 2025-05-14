@@ -47,7 +47,7 @@ class CategoriaResource extends Resource
                 Forms\Components\FileUpload::make('imagen')
                     ->image()
                     ->directory('categorias') // Directorio donde se guardarán las imágenes
-                    ->imagePreviewHeight('150') // Altura de la vista previa de la imagen
+                    ->imagePreviewHeight('450') // Altura de la vista previa de la imagen
                     ->label('Imagen de la Categoría'),
 
                 Forms\Components\Toggle::make('esta_activa')
@@ -69,7 +69,7 @@ class CategoriaResource extends Resource
                 Tables\Columns\ImageColumn::make('imagen')
                     ->label('Imagen')
                     ->disk('public') // Especifica el disco donde se almacenan las imágenes
-                    ->size(50), // Tamaño de la imagen en la tabla
+                    ->size(80), // Tamaño de la imagen en la tabla
 
                 Tables\Columns\IconColumn::make('esta_activa')
                     ->boolean(),

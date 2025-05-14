@@ -71,7 +71,7 @@ class MarcaResource extends Resource
                 Tables\Columns\ImageColumn::make('imagen')
                     ->label('Imagen')
                     ->disk('public') // Especifica el disco donde se almacenan las imágenes
-                    ->size(100), // Aumentar el tamaño de la imagen en la tabla
+                    ->size(80), // Aumentar el tamaño de la imagen en la tabla
 
                 Tables\Columns\IconColumn::make('esta_activa')
                     ->boolean(),
