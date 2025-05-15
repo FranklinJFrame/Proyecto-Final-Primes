@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\CategoriaResource\RelationManagers\CategoriasCompatiblesRelationManager;
 use App\Filament\Resources\CategoriaResource\Pages;
 use App\Models\Categoria;
 use Filament\Forms;
@@ -53,6 +54,8 @@ class CategoriaResource extends Resource
                 Forms\Components\Toggle::make('esta_activa')
                     ->required()
                     ->default(true),
+
+                    
             ]);
     }
 
@@ -104,7 +107,7 @@ class CategoriaResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            CategoriasCompatiblesRelationManager::class
         ];
     }
 
@@ -117,3 +120,5 @@ class CategoriaResource extends Resource
         ];
     }
 }
+
+

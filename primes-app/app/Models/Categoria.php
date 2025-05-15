@@ -21,4 +21,8 @@ class Categoria extends Model
     {
         return $this->hasMany(Producto::class);
     }
+
+    public function categoriasCompatibles() {
+        return $this->hasMany(CategoriasCompatible::class);
+    }
 }
