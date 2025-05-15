@@ -43,13 +43,17 @@ class CategoriaResource extends Resource
                     ->maxLength(255)
                     ->disabled() 
                     ->dehydrated() 
-                    ->unique(Categoria::class, 'slug', ignoreRecord: true),
+                    ->rule('unique:categorias,slug'),
 
                 Forms\Components\FileUpload::make('imagen')
                     ->image()
                     ->directory('categorias') // Directorio donde se guardarán las imágenes
                     ->imagePreviewHeight('450') // Altura de la vista previa de la imagen
                     ->label('Imagen de la Categoría'),
+
+                    Forms\Components\Toggle::make('is_compatible_device')
+    ->label('¿Es dispositivo compatible?')
+    ->default(true),
 
                 Forms\Components\Toggle::make('esta_activa')
                     ->required()
@@ -63,6 +67,12 @@ class CategoriaResource extends Resource
     {
         return $table
             ->columns([
+
+                Tables\Columns\IconColumn::make('is_compatible_device')
+    ->label('Compatible')
+    ->boolean(),
+
+
                 Tables\Columns\TextColumn::make('nombre')
                     ->searchable(),
 
