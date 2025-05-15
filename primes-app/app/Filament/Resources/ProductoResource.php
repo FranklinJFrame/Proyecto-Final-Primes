@@ -147,6 +147,11 @@ class ProductoResource extends Resource
                                 Forms\Components\Toggle::make('en_oferta')
                                     ->label('en_oferta')
                                     ->default(false),
+                                    
+                                Forms\Components\Toggle::make('es_devolucible')
+                                    ->label('Es devolucible')
+                                    ->helperText('Indica si el producto puede ser devuelto después de la compra')
+                                    ->default(true),
                             ])
                             ->columnSpan(2),
                     ])
@@ -189,16 +194,24 @@ class ProductoResource extends Resource
                     ->boolean(),
 
                 Tables\Columns\IconColumn::make('es_destacado')
-                    ->label('Is Featured')
+                    ->label('Es Destacado')
                     ->boolean(),
 
                 Tables\Columns\IconColumn::make('en_stock')
-                    ->label('In Stock')
+                    ->label('En Stock')
                     ->boolean(),
 
                 Tables\Columns\IconColumn::make('en_oferta')
-                    ->label('On Sale')
+                    ->label('En oferta')
                     ->boolean(),
+                    
+                Tables\Columns\IconColumn::make('es_devolucible')
+                    ->label('Es Devolucible')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger'),
 
                 Tables\Columns\TextColumn::make('cantidad')
                     ->label('Stock')
