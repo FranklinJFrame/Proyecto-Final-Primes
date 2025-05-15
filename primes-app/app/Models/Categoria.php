@@ -14,8 +14,9 @@ class Categoria extends Model
         'slug',
         'imagen',
         'esta_activa',
+        'is_compatible_device',
     ];
-
+    
 
     public function productos()
     {
