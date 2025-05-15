@@ -12,6 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        
+        $this->crearTablaProductos();
+    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+    {
         Schema::create('productos', function (Blueprint $tabla) {
             $tabla->id();
             $tabla->foreignId('categoria_id')->constrained('categorias')->cascadeOnDelete();
@@ -29,8 +34,7 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Revertir las migraciones.
+
      */
     public function down(): void
     {

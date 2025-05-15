@@ -14,7 +14,9 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\ImageColumn;
-
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 
 class ProductoResource extends Resource
 {
@@ -96,7 +98,7 @@ class ProductoResource extends Resource
                                     ->searchable()
                                     ->required(),
                             ])
-                            ->columnSpan(1),
+                            ->columnSpan(2),
 
                         // Categorías y Marcas
                         Forms\Components\Section::make('Marcas y Categorías')
@@ -115,11 +117,19 @@ class ProductoResource extends Resource
                                     ->preload()
                                     ->relationship('marca', 'nombre'),
                             ])
-                            ->columnSpan(1),
+                            ->columnSpan(2),
 
                         // Estado
                         Forms\Components\Section::make('Status')
                             ->schema([
+                                Forms\Components\TextInput::make('cantidad')
+                                    ->label('Cantidad en Stock')
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->step(1),
+
                                 Forms\Components\Toggle::make('en_stock')
                                     ->label('en_stock')
                                     ->required()
@@ -138,7 +148,7 @@ class ProductoResource extends Resource
                                     ->label('en_oferta')
                                     ->default(false),
                             ])
-                            ->columnSpan(1),
+                            ->columnSpan(2),
                     ])
                     ->columns(3),
             ]);
@@ -189,6 +199,23 @@ class ProductoResource extends Resource
                 Tables\Columns\IconColumn::make('en_oferta')
                     ->label('On Sale')
                     ->boolean(),
+
+                Tables\Columns\TextColumn::make('cantidad')
+                    ->label('Stock')
+                    ->numeric()
+                    ->sortable()
+                    ->color(fn ( $record): string => 
+                        $record->cantidad <= 5
+                            ? 'danger'
+                            : ($record->cantidad <= 10 
+                                ? 'warning' 
+                                : 'success'))
+                    ->description(fn ( $record): string => 
+                        $record->cantidad <= 5
+                            ? '¡Stock Bajo!'
+                            : ($record->cantidad <= 10 
+                                ? 'Stock Limitado' 
+                                : 'Stock Disponible')),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Created At')

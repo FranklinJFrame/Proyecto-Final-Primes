@@ -20,6 +20,7 @@ class Producto extends Model
         'moneda',
         'categoria_id',
         'marca_id',
+        'cantidad', // Asegurando que está incluido
     ];
     protected $casts = [
         'imagenes' => 'array',
