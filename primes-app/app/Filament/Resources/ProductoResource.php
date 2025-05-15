@@ -149,7 +149,7 @@ class ProductoResource extends Resource
                                     ->default(false),
                                     
                                 Forms\Components\Toggle::make('es_devolucible')
-                                    ->label('Es devolucible')
+                                    ->label('Es Devoluble')
                                     ->helperText('Indica si el producto puede ser devuelto después de la compra')
                                     ->default(true),
                             ])
@@ -206,7 +206,7 @@ class ProductoResource extends Resource
                     ->boolean(),
                     
                 Tables\Columns\IconColumn::make('es_devolucible')
-                    ->label('Es Devolucible')
+                    ->label('Es Devoluble')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
