@@ -14,7 +14,6 @@ use App\Livewire\Auth\ForgotPasswordPage;
 use App\Livewire\Auth\ResetPasswordPage;
 use App\Livewire\CancelPage;
 use App\Livewire\SuccessPage;
-
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 //primes-app\app\Livewire\HomePage.php

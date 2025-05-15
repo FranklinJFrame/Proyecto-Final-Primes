@@ -7,7 +7,7 @@
             <h1 class="block text-2xl font-bold text-gray-800 dark:text-white">Regístrate</h1>
             <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
               ¿Ya tienes una cuenta?
-              <a class="text-blue-600 decoration-2 hover:underline font-medium dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/login">
+              <a wire:navigate class="text-blue-600 decoration-2 hover:underline font-medium dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" href="/login">
                 Inicia sesión aquí
               </a>
             </p>
