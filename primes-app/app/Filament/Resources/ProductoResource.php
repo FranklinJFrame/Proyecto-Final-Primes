@@ -14,7 +14,9 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Columns\ImageColumn;
-
+use Filament\Forms\Get;
+use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 
 class ProductoResource extends Resource
 {
@@ -96,7 +98,7 @@ class ProductoResource extends Resource
                                     ->searchable()
                                     ->required(),
                             ])
-                            ->columnSpan(1),
+                            ->columnSpan(2),
 
                         // Categorías y Marcas
                         Forms\Components\Section::make('Marcas y Categorías')
@@ -115,11 +117,19 @@ class ProductoResource extends Resource
                                     ->preload()
                                     ->relationship('marca', 'nombre'),
                             ])
-                            ->columnSpan(1),
+                            ->columnSpan(2),
 
                         // Estado
                         Forms\Components\Section::make('Status')
                             ->schema([
+                                Forms\Components\TextInput::make('cantidad')
+                                    ->label('Cantidad en Stock')
+                                    ->numeric()
+                                    ->required()
+                                    ->default(0)
+                                    ->minValue(0)
+                                    ->step(1),
+
                                 Forms\Components\Toggle::make('en_stock')
                                     ->label('en_stock')
                                     ->required()
@@ -137,8 +147,13 @@ class ProductoResource extends Resource
                                 Forms\Components\Toggle::make('en_oferta')
                                     ->label('en_oferta')
                                     ->default(false),
+                                    
+                                Forms\Components\Toggle::make('es_devolucible')
+                                    ->label('Es devolucible')
+                                    ->helperText('Indica si el producto puede ser devuelto después de la compra')
+                                    ->default(true),
                             ])
-                            ->columnSpan(1),
+                            ->columnSpan(2),
                     ])
                     ->columns(3),
             ]);
@@ -151,7 +166,7 @@ class ProductoResource extends Resource
                 Tables\Columns\ImageColumn::make('imagenes')
                     ->label('Images') // Etiqueta para la columna
                     ->disk('public') // Especifica el disco donde se almacenan las imágenes
-                    ->size(50), // Tamaño de las imágenes en la tabla
+                    ->size(80), // Tamaño de las imágenes en la tabla
 
                 Tables\Columns\TextColumn::make('categoria_id')
                     ->label('Category')
@@ -179,16 +194,41 @@ class ProductoResource extends Resource
                     ->boolean(),
 
                 Tables\Columns\IconColumn::make('es_destacado')
-                    ->label('Is Featured')
+                    ->label('Es Destacado')
                     ->boolean(),
 
                 Tables\Columns\IconColumn::make('en_stock')
-                    ->label('In Stock')
+                    ->label('En Stock')
                     ->boolean(),
 
                 Tables\Columns\IconColumn::make('en_oferta')
-                    ->label('On Sale')
+                    ->label('En oferta')
                     ->boolean(),
+                    
+                Tables\Columns\IconColumn::make('es_devolucible')
+                    ->label('Es Devolucible')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger'),
+
+                Tables\Columns\TextColumn::make('cantidad')
+                    ->label('Stock')
+                    ->numeric()
+                    ->sortable()
+                    ->color(fn ( $record): string => 
+                        $record->cantidad <= 5
+                            ? 'danger'
+                            : ($record->cantidad <= 10 
+                                ? 'warning' 
+                                : 'success'))
+                    ->description(fn ( $record): string => 
+                        $record->cantidad <= 5
+                            ? '¡Stock Bajo!'
+                            : ($record->cantidad <= 10 
+                                ? 'Stock Limitado' 
+                                : 'Stock Disponible')),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Created At')
