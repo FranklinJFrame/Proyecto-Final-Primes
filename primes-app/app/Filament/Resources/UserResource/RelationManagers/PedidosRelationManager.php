@@ -47,7 +47,7 @@ class PedidosRelationManager extends RelationManager
                 'cancelado' => 'danger',
                }) 
                ->icon(fn(string $state):string => match ($state) {
-                'nuevo' => 'heroicon-n-sparkles',
+                'nuevo' => 'heroicon-o-sparkles',
                 'procesando' => 'heroicon-m-arrow-path',
                 'enviado' => 'heroicon-m-truck',
                 'entregado' => 'heroicon-m-check-badge',
