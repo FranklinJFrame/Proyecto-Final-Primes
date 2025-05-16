@@ -6,8 +6,11 @@ use Livewire\Component;
 
 class LoginPage extends Component
 {
+    public $title = 'Iniciar Sesión - TECNOBOX';
+    
     public function render()
     {
-        return view('livewire.auth.login-page');
+        return view('livewire.auth.login-page')
+            ->title($this->title);
     }
 }
