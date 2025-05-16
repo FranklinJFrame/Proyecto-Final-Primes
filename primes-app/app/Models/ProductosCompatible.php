@@ -14,7 +14,7 @@ class ProductosCompatible extends Model
 
     protected $fillable = [
         'producto_id',
-        'compatible_product_id',
+        'compatible_with_id',
     ];
 
     public function producto()
@@ -23,7 +23,7 @@ class ProductosCompatible extends Model
     }
 
     public function productoCompatible()
-    {
-        return $this->belongsTo(Producto::class, 'compatible_product_id');
-    }
+{
+    return $this->belongsTo(\App\Models\Producto::class, 'compatible_with_id');
+}
 }

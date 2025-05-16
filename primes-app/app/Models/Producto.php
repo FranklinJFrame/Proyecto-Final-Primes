@@ -67,4 +67,9 @@ class Producto extends Model
     {
         return $this->hasMany(PedidoProducto::class);
     }
+
+    public function productosCompatibles()
+    {
+        return $this->hasMany(ProductosCompatible::class);
+    }
 }

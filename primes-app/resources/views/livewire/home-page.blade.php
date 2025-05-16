@@ -141,7 +141,7 @@
                 <!-- Almacenamiento -->
                 <div class="cyber-category-card group">
                     <div class="relative overflow-hidden rounded-xl">
-                        <img src="https://media.lifeinformatica.com/contents/Life/SAMSUNG-MZ-V9E2T0BW/imgs/MZ-V9E2T0BW-03.png" 
+                        <img src="https://dlcdnwebimgs.asus.com/files/media/F917652C-9ECA-44FB-8101-0C5CED34A314/V1/img/hero-product.png" 
                              alt="Almacenamiento" 
                              class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
                         <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
@@ -250,16 +250,13 @@
                     </div>
                     <div class="p-4">
                         <h3 class="text-lg font-bold text-white">Teclado Mecánico RGB</h3>
-                        <p class="text-gray-400 text-sm mb-4">Switch Red - Redragon</p>
-                        <div class="flex justify-between items-end mt-4">
+                        <p class="text-gray-400 text-sm mb-4">Switch Red - Layout ES</p>
+                        <div class="flex justify-between items-center">
                             <div>
-                                <span class="text-gray-400 line-through text-xs block">RD$ 4,999.99</span>
-                                <span class="text-xl font-bold text-white">RD$ 3,999.99</span>
+                                <span class="text-gray-400 line-through text-sm">RD$ 4,999.99</span>
+                                <span class="text-2xl font-bold text-white ml-2">RD$ 3,999.99</span>
                             </div>
-                            <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-1.5 rounded shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                                <svg class="inline w-4 h-4 mr-1 -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
+                            <button class="cyber-button-small px-4 py-2">
                                 Añadir
                             </button>
                         </div>
@@ -277,17 +274,14 @@
                              class="w-full h-48 object-contain">
                     </div>
                     <div class="p-4">
-                        <h3 class="text-lg font-bold text-white">Ratón Gaming Logitech G Pro 2</h3>
-                        <p class="text-gray-400 text-sm mb-4">30k DPI - Inalámbrico</p>
-                        <div class="flex justify-between items-end mt-4">
+                        <h3 class="text-lg font-bold text-white">Ratón Gaming RGB</h3>
+                        <p class="text-gray-400 text-sm mb-4">18000 DPI - Inalámbrico</p>
+                        <div class="flex justify-between items-center">
                             <div>
-                                <span class="text-gray-400 line-through text-xs block">RD$ 3,499.99</span>
-                                <span class="text-xl font-bold text-white">RD$ 2,974.99</span>
+                                <span class="text-gray-400 line-through text-sm">RD$ 3,499.99</span>
+                                <span class="text-2xl font-bold text-white ml-2">RD$ 2,974.99</span>
                             </div>
-                            <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-1.5 rounded shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                                <svg class="inline w-4 h-4 mr-1 -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
+                            <button class="cyber-button-small px-4 py-2">
                                 Añadir
                             </button>
                         </div>
@@ -305,17 +299,14 @@
                              class="w-full h-48 object-contain">
                     </div>
                     <div class="p-4">
-                        <h3 class="text-lg font-bold text-white">Auriculares Gaming Logitech</h3>
+                        <h3 class="text-lg font-bold text-white">Auriculares Gaming</h3>
                         <p class="text-gray-400 text-sm mb-4">7.1 Surround - RGB</p>
-                        <div class="flex justify-between items-end mt-4">
+                        <div class="flex justify-between items-center">
                             <div>
-                                <span class="text-gray-400 line-through text-xs block">RD$ 5,999.99</span>
-                                <span class="text-xl font-bold text-white">RD$ 4,499.99</span>
+                                <span class="text-gray-400 line-through text-sm">RD$ 5,999.99</span>
+                                <span class="text-2xl font-bold text-white ml-2">RD$ 4,499.99</span>
                             </div>
-                            <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-1.5 rounded shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                                <svg class="inline w-4 h-4 mr-1 -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
+                            <button class="cyber-button-small px-4 py-2">
                                 Añadir
                             </button>
                         </div>
@@ -328,22 +319,19 @@
                         <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
                             -30%
                         </div>
-                        <img src="https://m.media-amazon.com/images/I/61w0S+bF-oL._AC_SL1200_.jpg" 
+                        <img src="https://assets.corsair.com/image/upload/f_auto,q_auto/v1/akamai/pdp/vengeance-rgb-pro/Content/Vengeance_RGB_Pro_PDP_Black_04.png" 
                              alt="Memoria RAM" 
                              class="w-full h-48 object-contain">
                     </div>
                     <div class="p-4">
                         <h3 class="text-lg font-bold text-white">32GB RAM DDR4</h3>
                         <p class="text-gray-400 text-sm mb-4">3200MHz - RGB Pro</p>
-                        <div class="flex justify-between items-end mt-4">
+                        <div class="flex justify-between items-center">
                             <div>
-                                <span class="text-gray-400 line-through text-xs block">RD$ 11,699.42</span>
-                                <span class="text-xl font-bold text-white">RD$ 8,189.42</span>
+                                <span class="text-gray-400 line-through text-sm">RD$ 11,699.42</span>
+                                <span class="text-2xl font-bold text-white ml-2">RD$ 8,189.42</span>
                             </div>
-                            <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-1.5 rounded shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
-                                <svg class="inline w-4 h-4 mr-1 -mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
+                            <button class="cyber-button-small px-4 py-2">
                                 Añadir
                             </button>
                         </div>
