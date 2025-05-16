@@ -1,3 +1,6 @@
+@php
+use Illuminate\Support\Facades\Storage;
+@endphp
 <div class="min-h-screen bg-black">
   <section class="py-10 rounded-lg">
     <div class="px-4 py-4 mx-auto max-w-7xl lg:py-6 md:px-6">
@@ -95,7 +98,7 @@
           <div class="p-4 mb-5 bg-gray-900/80 backdrop-blur-md border border-blue-500/20 rounded-xl">
   <h2 class="text-2xl font-bold text-white cyber-glitch-text">Precio</h2>
   <div class="w-16 pb-2 mb-6 border-b border-blue-500"></div>
-  <div>
+            <div>
     <input 
       type="range" 
       id="priceRange" 
@@ -110,9 +113,9 @@
     <div class="flex justify-between">
       <span class="inline-block text-lg font-bold text-blue-400">RD$ 1000</span>
       <span class="inline-block text-lg font-bold text-blue-400">RD$ 500000</span>
-    </div>
-  </div>
-</div>
+              </div>
+            </div>
+          </div>
 
 
         </div>
@@ -137,32 +140,34 @@
               </div>
             @else
               @foreach ($productos as $producto)
-                <div class="w-full px-3 mb-6 sm:w-1/2 md:w-1/3">
+            <div class="w-full px-3 mb-6 sm:w-1/2 md:w-1/3">
                   <div class="cyber-product-card bg-gray-900/80 border border-blue-500/20 rounded-xl overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-blue-500/20">
                     <div class="relative bg-gray-800">
-                      <a href="/products/{{ $producto->slug }}" class="">
-                        <img src="{{ url('storage', $producto->imagenes) }}" alt="{{ $producto->nombre }}" class="object-cover w-full h-56 mx-auto transform hover:scale-105 transition-all duration-500">
+                      <a href="/products/{{ $producto->slug }}" class="" wire:key="{{producto->id}}">
+                        <img src="{{ asset('storage/products/' . (is_array($producto->imagenes) && !empty($producto->imagenes) ? $producto->imagenes[0] : 'default.jpg')) }}" 
+                             alt="{{ $producto->nombre }}" 
+                             class="object-cover w-full h-56 mx-auto transform hover:scale-105 transition-all duration-500">
                       </a>
                     </div>
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
                         <h3 class="text-xl font-medium text-white">
                           {{ $producto->nombre }}
-                        </h3>
-                      </div>
+                    </h3>
+                  </div>
                       <p class="text-gray-300 text-sm mb-2 line-clamp-2">{{ $producto->descripcion }}</p>
                       <p class="text-lg">
                         <span class="text-blue-400 font-bold">RD$ {{ number_format($producto->precio, 2) }}</span>
-                      </p>
-                    </div>
+                  </p>
+                </div>
                     <div class="flex justify-center p-4 border-t border-blue-500/20">
                       <a href="#" class="cyber-button-small inline-flex items-center px-4 py-2 text-white rounded-lg transition-all duration-300 transform hover:scale-105">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-4 h-4 mr-2" viewBox="0 0 16 16">
-                          <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
+                      <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .49.598l-1 5a.5.5 0 0 1-.465.401l-9.397.472L4.415 11H13a.5.5 0 0 1 0 1H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l.84 4.479 9.144-.459L13.89 4H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"></path>
                         </svg>
                         <span>Añadir al Carrito</span>
-                      </a>
-                    </div>
+                  </a>
+                </div>
                   </div>
                 </div>
               @endforeach
@@ -205,7 +210,7 @@
       </div>
     </div>
   </section>
-  
+
   <!-- CSS para efectos cyber -->
   <style>
     .cyber-button-small {
