@@ -45,8 +45,8 @@ class ProductoResource extends Resource
                                     ->required()
                                     ->maxLength(255)
                                     ->live(debounce: 500)
-                                    ->afterStateUpdated(function (string $state, Set $set) {
-                                        $set('slug', \Illuminate\Support\Str::slug($state));
+                                    ->afterStateUpdated(function ($state, Set $set) {
+                                        $set('slug', \Illuminate\Support\Str::slug($state ?? ''));
                                     })
                                     ->columnSpan(['md' => 2]),
 
