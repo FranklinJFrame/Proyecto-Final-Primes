@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\Producto;
 
 class ProductosPage extends Component
 {
@@ -10,7 +11,10 @@ class ProductosPage extends Component
     
     public function render()
     {
-        return view('livewire.productos-page')
-            ->title($this->title);
+        $productos = Producto::where('esta_activo', 1)->get();
+
+        return view('livewire.productos-page', [
+            'productos' => $productos,
+        ])->title($this->title);
     }
 }

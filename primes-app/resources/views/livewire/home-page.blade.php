@@ -154,7 +154,77 @@
             </div>
         </div>
     </div>
-  
+
+    
+            
+<!-- Accesorios Esenciales -->
+<div class="bg-black py-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <h2 class="text-3xl font-bold text-center text-white mb-12 cyber-glitch-text">
+                Marcas
+            </h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <!-- Soporte para Auriculares -->
+      <div class="cyber-category-card group">
+        <div class="relative overflow-hidden rounded-xl">
+          <img src="https://cdn.freebiesupply.com/logos/large/2x/apple1-logo-png-transparent.png" 
+               alt="Soporte para Auriculares" 
+               class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+          <div class="absolute bottom-4 left-4">
+            <h3 class="text-xl font-bold text-white">Apple</h3>
+            <p class="text-yellow-400">Innovación & diseño</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alfombrilla RGB -->
+      <div class="cyber-category-card group">
+        <div class="relative overflow-hidden rounded-xl">
+          <img src="https://asset.msi.com/global/picture/news/2018/nb/gf75-20181123-1.png" 
+               alt="Alfombrilla RGB" 
+               class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+          <div class="absolute bottom-4 left-4">
+            <h3 class="text-xl font-bold text-white">MSI</h3>
+            <p class="text-pink-400">Gaming & rendimiento</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Brazo para Micrófono -->
+      <div class="cyber-category-card group">
+        <div class="relative overflow-hidden rounded-xl">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/ASUS_ROG_2007_logo.svg/640px-ASUS_ROG_2007_logo.svg.png" 
+               alt="Brazo para Micrófono" 
+               class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+          <div class="absolute bottom-4 left-4">
+            <h3 class="text-xl font-bold text-white">Asus</h3>
+            <p class="text-orange-400">Tecnología avanzada</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ventilador USB RGB -->
+      <div class="cyber-category-card group">
+        <div class="relative overflow-hidden rounded-xl">
+          <img src="https://p1-ofp.static.pub/medias/bWFzdGVyfHJvb3R8MjkwNzQ5fGltYWdlL3BuZ3xoMDIvaDhkLzE0MzMyOTc5MzE0NzE4LnBuZ3xlM2VjMWI5ZjNlN2VjMDhkY2ZjNjdlMDJiZTE0MGZkZjRmNGRiZTEwMjJiY2MxZTY4NTM5YmNlMDEwNGE4NjJm/lenovo-laptop-thinkpad-x280-hero.png" 
+               alt="Ventilador RGB" 
+               class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+          <div class="absolute bottom-4 left-4">
+            <h3 class="text-xl font-bold text-white">Lenovo</h3>
+            <p class="text-cyan-400">Versatilidad & productividad</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+            
     <!-- Ofertas Destacadas -->
     <div class="bg-gradient-to-b from-black via-blue-900/20 to-black py-20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
