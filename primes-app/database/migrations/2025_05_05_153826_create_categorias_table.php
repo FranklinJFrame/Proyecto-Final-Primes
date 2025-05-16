@@ -14,6 +14,7 @@ return new class extends Migration {
             $tabla->string('nombre');
             $tabla->string('slug')->unique();
             $tabla->string('imagen')->nullable();
+            $table->boolean('is_compatible_device')->default(true);
             $tabla->boolean('esta_activa')->default(true);
             $tabla->timestamps();
         });

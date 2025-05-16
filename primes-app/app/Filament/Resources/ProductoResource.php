@@ -30,132 +30,174 @@ class ProductoResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Group::make()
+                Forms\Components\Grid::make()
                     ->schema([
-                        // Información del Producto
-                        Forms\Components\Section::make('Información del Producto')
+                        // Panel Principal - Información Básica
+                        Forms\Components\Section::make('Información Principal')
+                            ->description('Información básica del producto')
+                            ->icon('heroicon-o-information-circle')
+                            ->collapsible()
                             ->schema([
                                 Forms\Components\TextInput::make('nombre')
-                                    ->label('Name')
+                                    ->label('Nombre del Producto')
                                     ->required()
                                     ->maxLength(255)
-                                    ->reactive()
-                                    ->debounce(500)
-                                    ->afterStateUpdated(function ($state, $set) {
+                                    ->live(debounce: 500)
+                                    ->afterStateUpdated(function (string $state, Set $set) {
                                         $set('slug', \Illuminate\Support\Str::slug($state));
-                                    }),
+                                    })
+                                    ->columnSpan(['md' => 2]),
 
                                 Forms\Components\TextInput::make('slug')
                                     ->label('Slug')
                                     ->required()
                                     ->maxLength(255)
                                     ->disabled()
-                                    ->dehydrated(),
+                                    ->dehydrated()
+                                    ->columnSpan(['md' => 2]),
 
                                 Forms\Components\MarkdownEditor::make('descripcion')
-                                    ->label('Description')
-                                    ->columnSpanFull()
-                                    ->fileAttachmentsDirectory('products'),
+                                    ->label('Descripción')
+                                    ->toolbarButtons([
+                                        'bold',
+                                        'bulletList',
+                                        'orderedList',
+                                        'link',
+                                        'undo',
+                                        'redo',
+                                    ])
+                                    ->columnSpanFull(),
                             ])
-                            ->columns(2),
+                            ->columns(['md' => 4])
+                            ->columnSpan(['lg' => 2]),
 
-                        // Imágenes
-                        Forms\Components\Section::make('Imágenes')
+                        // Panel Lateral - Detalles y Estado
+                        Forms\Components\Grid::make()
+                            ->schema([
+                                // Sección de Precios
+                                Forms\Components\Section::make('Precios y Stock')
+                                    ->description('Gestión de precios y disponibilidad')
+                                    ->icon('heroicon-o-currency-dollar')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('precio')
+                                            ->label('Precio')
+                                            ->numeric()
+                                            ->required()
+                                            ->prefix('$')
+                                            ->suffixIcon('heroicon-m-currency-dollar'),
+
+                                        Forms\Components\Select::make('moneda')
+                                            ->label('Moneda')
+                                            ->options([
+                                                'DOP' => 'Peso Dominicano (DOP)',
+                                                'USD' => 'Dólar Americano (USD)',
+                                                'EUR' => 'Euro (EUR)',
+                                            ])
+                                            ->searchable()
+                                            ->required()
+                                            ->default('DOP'),
+
+                                        Forms\Components\TextInput::make('cantidad')
+                                            ->label('Cantidad en Stock')
+                                            ->numeric()
+                                            ->required()
+                                            ->default(0)
+                                            ->minValue(0)
+                                            ->step(1)
+                                            ->suffixIcon('heroicon-m-cube'),
+                                    ])
+                                    ->columns(1),
+
+                                // Sección de Categorización
+                                Forms\Components\Section::make('Categorización')
+                                    ->description('Asignar marca y categoría')
+                                    ->icon('heroicon-o-tag')
+                                    ->schema([
+                                        Forms\Components\Select::make('categoria_id')
+                                            ->label('Categoría')
+                                            ->relationship('categoria', 'nombre')
+                                            ->required()
+                                            ->searchable()
+                                            ->preload()
+                                            ->createOptionForm([
+                                                Forms\Components\TextInput::make('nombre')
+                                                    ->required()
+                                                    ->maxLength(255),
+                                                Forms\Components\Toggle::make('esta_activo')
+                                                    ->label('¿Activa?')
+                                                    ->default(true),
+                                            ]),
+
+                                        Forms\Components\Select::make('marca_id')
+                                            ->label('Marca')
+                                            ->relationship('marca', 'nombre')
+                                            ->required()
+                                            ->searchable()
+                                            ->preload()
+                                            ->createOptionForm([
+                                                Forms\Components\TextInput::make('nombre')
+                                                    ->required()
+                                                    ->maxLength(255),
+                                                Forms\Components\Toggle::make('esta_activo')
+                                                    ->label('¿Activa?')
+                                                    ->default(true),
+                                            ]),
+                                    ])
+                                    ->columns(1),
+
+                                // Sección de Estado
+                                Forms\Components\Section::make('Estado del Producto')
+                                    ->description('Configuración de visibilidad y características')
+                                    ->icon('heroicon-o-cog')
+                                    ->schema([
+                                        Forms\Components\Grid::make()
+                                            ->schema([
+                                                Forms\Components\Toggle::make('esta_activo')
+                                                    ->label('Producto Activo')
+                                                    ->helperText('Mostrar en la tienda')
+                                                    ->default(true),
+
+                                                Forms\Components\Toggle::make('en_stock')
+                                                    ->label('En Stock')
+                                                    ->helperText('Disponible para compra')
+                                                    ->default(true),
+
+                                                Forms\Components\Toggle::make('es_destacado')
+                                                    ->label('Destacado')
+                                                    ->helperText('Mostrar en sección destacada'),
+
+                                                Forms\Components\Toggle::make('en_oferta')
+                                                    ->label('En Oferta')
+                                                    ->helperText('Aplicar descuento'),
+                                                    
+                                                Forms\Components\Toggle::make('es_devolucible')
+                                                    ->label('Devoluciones Permitidas')
+                                                    ->helperText('Permite devolución')
+                                                    ->default(true),
+                                            ])
+                                            ->columns(2),
+                                    ]),
+                            ])
+                            ->columnSpan(['lg' => 1]),
+
+                        // Sección de Imágenes
+                        Forms\Components\Section::make('Galería de Imágenes')
+                            ->description('Gestiona las imágenes del producto')
+                            ->icon('heroicon-o-photo')
+                            ->collapsible()
                             ->schema([
                                 Forms\Components\FileUpload::make('imagenes')
-                                    ->label('Images')
+                                    ->label('Imágenes')
                                     ->multiple()
                                     ->directory('products')
                                     ->maxFiles(5)
-                                    ->reorderable(),
+                                    ->reorderable()
+                                    ->imageEditor()
+                                    ->columnSpanFull(),
                             ])
-                            ->columnSpan(2),
-
-                        // Precio
-                        Forms\Components\Section::make('Precio')
-                            ->schema([
-                                Forms\Components\TextInput::make('precio')
-                                    ->label('Price')
-                                    ->numeric()
-                                    ->required()
-                                    ->prefix('$'),
-
-                                Forms\Components\Select::make('moneda')
-                                    ->label('Tipo de Moneda')
-                                    ->options([
-                                        'USD' => 'US Dollar',
-                                        'EUR' => 'Euro',
-                                        'JPY' => 'Japanese Yen',
-                                        'GBP' => 'British Pound',
-                                        'AUD' => 'Australian Dollar',
-                                        'CAD' => 'Canadian Dollar',
-                                        'CHF' => 'Swiss Franc',
-                                        'CNY' => 'Chinese Yuan',
-                                        'SEK' => 'Swedish Krona',
-                                        'NZD' => 'New Zealand Dollar',
-                                        'DOP' => 'Dominican Peso',
-                                    ])
-                                    ->searchable()
-                                    ->required(),
-                            ])
-                            ->columnSpan(2),
-
-                        // Categorías y Marcas
-                        Forms\Components\Section::make('Marcas y Categorías')
-                            ->schema([
-                                Forms\Components\Select::make('categoria_id')
-                                    ->label('Categoria')
-                                    ->required()
-                                    ->searchable()
-                                    ->preload()
-                                    ->relationship('categoria', 'nombre'),
-
-                                Forms\Components\Select::make('marca_id')
-                                    ->label('Marca')
-                                    ->required()
-                                    ->searchable()
-                                    ->preload()
-                                    ->relationship('marca', 'nombre'),
-                            ])
-                            ->columnSpan(2),
-
-                        // Estado
-                        Forms\Components\Section::make('Status')
-                            ->schema([
-                                Forms\Components\TextInput::make('cantidad')
-                                    ->label('Cantidad en Stock')
-                                    ->numeric()
-                                    ->required()
-                                    ->default(0)
-                                    ->minValue(0)
-                                    ->step(1),
-
-                                Forms\Components\Toggle::make('en_stock')
-                                    ->label('en_stock')
-                                    ->required()
-                                    ->default(true),
-
-                                Forms\Components\Toggle::make('esta_activo')
-                                    ->label('esta_activo')
-                                    ->required()
-                                    ->default(true),
-
-                                Forms\Components\Toggle::make('es_destacado')
-                                    ->label('es_destacado')
-                                    ->default(false),
-
-                                Forms\Components\Toggle::make('en_oferta')
-                                    ->label('en_oferta')
-                                    ->default(false),
-                                    
-                                Forms\Components\Toggle::make('es_devolucible')
-                                    ->label('Es devolucible')
-                                    ->helperText('Indica si el producto puede ser devuelto después de la compra')
-                                    ->default(true),
-                            ])
-                            ->columnSpan(2),
+                            ->columnSpan('full'),
                     ])
-                    ->columns(3),
+                    ->columns(['lg' => 3]),
             ]);
     }
 
@@ -164,96 +206,123 @@ class ProductoResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('imagenes')
-                    ->label('Images') // Etiqueta para la columna
-                    ->disk('public') // Especifica el disco donde se almacenan las imágenes
-                    ->size(80), // Tamaño de las imágenes en la tabla
-
-                Tables\Columns\TextColumn::make('categoria_id')
-                    ->label('Category')
-                    ->sortable(),
-
-                Tables\Columns\TextColumn::make('marca_id')
-                    ->label('Brand')
-                    ->sortable(),
+                    ->label('Imagen')
+                    ->disk('public')
+                    ->size(80)
+                    ->circular(),
 
                 Tables\Columns\TextColumn::make('nombre')
-                    ->label('Name')
+                    ->label('Nombre')
+                    ->searchable()
+                    ->sortable()
+                    ->description(fn (Producto $record): string => \Illuminate\Support\Str::limit($record->descripcion, 50))
+                    ->wrap(),
+
+                Tables\Columns\TextColumn::make('categoria.nombre')
+                    ->label('Categoría')
+                    ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('slug')
-                    ->label('Slug')
+                Tables\Columns\TextColumn::make('marca.nombre')
+                    ->label('Marca')
+                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('precio')
-                    ->label('Price')
-                    ->numeric()
-                    ->sortable(),
-
-                Tables\Columns\IconColumn::make('esta_activo')
-                    ->label('Is Active')
-                    ->boolean(),
-
-                Tables\Columns\IconColumn::make('es_destacado')
-                    ->label('Es Destacado')
-                    ->boolean(),
-
-                Tables\Columns\IconColumn::make('en_stock')
-                    ->label('En Stock')
-                    ->boolean(),
-
-                Tables\Columns\IconColumn::make('en_oferta')
-                    ->label('En oferta')
-                    ->boolean(),
-                    
-                Tables\Columns\IconColumn::make('es_devolucible')
-                    ->label('Es Devolucible')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->trueColor('success')
-                    ->falseColor('danger'),
+                    ->label('Precio')
+                    ->money('DOP')
+                    ->sortable()
+                    ->alignment('right'),
 
                 Tables\Columns\TextColumn::make('cantidad')
                     ->label('Stock')
-                    ->numeric()
                     ->sortable()
-                    ->color(fn ( $record): string => 
+                    ->alignment('center')
+                    ->badge()
+                    ->color(fn (Producto $record): string => 
                         $record->cantidad <= 5
                             ? 'danger'
                             : ($record->cantidad <= 10 
                                 ? 'warning' 
                                 : 'success'))
-                    ->description(fn ( $record): string => 
+                    ->description(fn (Producto $record): string => 
                         $record->cantidad <= 5
                             ? '¡Stock Bajo!'
                             : ($record->cantidad <= 10 
                                 ? 'Stock Limitado' 
                                 : 'Stock Disponible')),
 
+                Tables\Columns\IconColumn::make('esta_activo')
+                    ->label('Activo')
+                    ->boolean()
+                    ->alignCenter(),
+
+                Tables\Columns\IconColumn::make('es_destacado')
+                    ->label('Destacado')
+                    ->boolean()
+                    ->alignCenter(),
+
+                Tables\Columns\IconColumn::make('en_oferta')
+                    ->label('Oferta')
+                    ->boolean()
+                    ->alignCenter(),
+
                 Tables\Columns\TextColumn::make('created_at')
-                    ->label('Created At')
-                    ->dateTime()
+                    ->label('Creado')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Updated At')
-                    ->dateTime()
+                    ->label('Actualizado')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('categoria')
+                    ->relationship('categoria', 'nombre')
+                    ->preload()
+                    ->multiple()
+                    ->label('Categoría'),
+
+                Tables\Filters\SelectFilter::make('marca')
+                    ->relationship('marca', 'nombre')
+                    ->preload()
+                    ->multiple()
+                    ->label('Marca'),
+
+                Tables\Filters\TernaryFilter::make('esta_activo')
+                    ->label('Activo')
+                    ->boolean()
+                    ->trueLabel('Productos Activos')
+                    ->falseLabel('Productos Inactivos')
+                    ->native(false),
+
+                Tables\Filters\TernaryFilter::make('en_stock')
+                    ->label('Stock')
+                    ->boolean()
+                    ->trueLabel('En Stock')
+                    ->falseLabel('Sin Stock')
+                    ->native(false),
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make(),
-                ]),
+                ])
+                ->link()
+                ->label('Acciones'),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ])
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make(),
             ]);
     }
 

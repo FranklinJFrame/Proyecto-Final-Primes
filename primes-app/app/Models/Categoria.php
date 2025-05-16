@@ -14,11 +14,16 @@ class Categoria extends Model
         'slug',
         'imagen',
         'esta_activa',
+        'is_compatible_device',
     ];
-
+    
 
     public function productos()
     {
         return $this->hasMany(Producto::class);
+    }
+
+    public function categoriasCompatibles() {
+        return $this->hasMany(CategoriasCompatible::class);
     }
 }
