@@ -15,7 +15,7 @@ class Marca extends Model
         'imagen',
         'esta_activa',
     ];
-    public function producto()
+    public function productos()
     {
         return $this->hasMany(Producto::class);
     }

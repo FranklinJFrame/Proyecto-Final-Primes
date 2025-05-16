@@ -28,31 +28,60 @@ class MarcaResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nombre')
-                    ->required()
-                    ->maxLength(255)
-                    ->reactive()
-                    ->debounce(500)
-                    ->afterStateUpdated(function ($state, $set) {
-                        $set('slug', \Illuminate\Support\Str::slug($state));
-                    }),
+                Forms\Components\Grid::make()
+                    ->schema([
+                        // Panel Principal
+                        Forms\Components\Section::make('Información de la Marca')
+                            ->description('Datos principales de la marca')
+                            ->icon('heroicon-o-building-storefront')
+                            ->collapsible()
+                            ->schema([
+                                Forms\Components\TextInput::make('nombre')
+                                    ->label('Nombre')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->live(debounce: 500)
+                                    ->afterStateUpdated(function (string $state, Forms\Set $set) {
+                                        $set('slug', \Illuminate\Support\Str::slug($state));
+                                    })
+                                    ->columnSpan(['md' => 2]),
 
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255)
-                    ->disabled()
-                    ->dehydrated()
-                    ->unique(Marca::class, 'slug', ignoreRecord: true),
+                                Forms\Components\TextInput::make('slug')
+                                    ->label('URL Amigable')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->disabled()
+                                    ->dehydrated()
+                                    ->unique(Marca::class, 'slug', ignoreRecord: true)
+                                    ->columnSpan(['md' => 2]),
 
-                Forms\Components\FileUpload::make('imagen')
-                    ->image()
-                    ->directory('marcas') // Directorio donde se guardarán las imágenes
-                    ->imagePreviewHeight('250') // Aumentar la altura de la vista previa de la imagen
-                    ->label('Imagen de la Marca'),
+                                Forms\Components\Toggle::make('esta_activa')
+                                    ->label('Marca Activa')
+                                    ->helperText('Mostrar en la tienda')
+                                    ->default(true)
+                                    ->columnSpan(['md' => 4]),
+                            ])
+                            ->columns(['md' => 4])
+                            ->columnSpan(['lg' => 2]),
 
-                Forms\Components\Toggle::make('esta_activa')
-                    ->required()
-                    ->default(true),
+                        // Panel Lateral - Imagen
+                        Forms\Components\Section::make('Imagen de la Marca')
+                            ->description('Sube el logotipo o imagen representativa')
+                            ->icon('heroicon-o-photo')
+                            ->schema([
+                                Forms\Components\FileUpload::make('imagen')
+                                    ->label('Logotipo')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->directory('marcas')
+                                    ->imagePreviewHeight('250')
+                                    ->maxSize(5120)
+                                    ->helperText('Formato: JPG, PNG. Máximo 5MB.')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columnSpan(['lg' => 1]),
+                    ])
+                    ->columns(['lg' => 3]),
             ]);
     }
 
@@ -60,47 +89,79 @@ class MarcaResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nombre')
-                    ->searchable()
-                    ->extraAttributes(['class' => 'text-lg']), // Aumentar el tamaño del texto
-
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable()
-                    ->extraAttributes(['class' => 'text-lg']), // Aumentar el tamaño del texto
-
                 Tables\Columns\ImageColumn::make('imagen')
-                    ->label('Imagen')
-                    ->disk('public') // Especifica el disco donde se almacenan las imágenes
-                    ->size(80), // Aumentar el tamaño de la imagen en la tabla
+                    ->label('Logo')
+                    ->disk('public')
+                    ->size(80)
+                    ->circular(),
+
+                Tables\Columns\TextColumn::make('nombre')
+                    ->label('Nombre')
+                    ->searchable()
+                    ->sortable()
+                    ->description(fn (Marca $record): string => $record->slug)
+                    ->weight('bold'),
 
                 Tables\Columns\IconColumn::make('esta_activa')
-                    ->boolean(),
+                    ->label('Activa')
+                    ->boolean()
+                    ->alignCenter()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger'),
+
+                Tables\Columns\TextColumn::make('productos_count')
+                    ->label('Productos')
+                    ->counts('productos')
+                    ->sortable()
+                    ->alignCenter()
+                    ->color('primary'),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Creada')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Actualizada')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
-                //
+                Tables\Filters\TernaryFilter::make('esta_activa')
+                    ->label('Estado')
+                    ->boolean()
+                    ->trueLabel('Marcas Activas')
+                    ->falseLabel('Marcas Inactivas')
+                    ->native(false),
             ])
             ->actions([
-                ActionGroup::make([
-                    ViewAction::make(),
-                    EditAction::make(),
-                    DeleteAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make()
+                        ->requiresConfirmation()
+                        ->modalDescription('¿Estás seguro de que deseas eliminar esta marca? Esta acción no se puede deshacer.'),
                 ])
+                ->link()
+                ->label('Acciones'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->modalDescription('¿Estás seguro de que deseas eliminar las marcas seleccionadas? Esta acción no se puede deshacer.'),
                 ]),
-            ]);
+            ])
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make()
+                    ->label('Crear Marca'),
+            ])
+            ->emptyStateDescription('No hay marcas creadas aún. ¡Comienza creando una!');
     }
 
     public static function getRelations(): array

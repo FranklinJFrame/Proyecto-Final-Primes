@@ -29,37 +29,69 @@ class CategoriaResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nombre')
-                    ->required()
-                    ->maxLength(255)
-                    ->reactive() 
-                    ->debounce(500)
-                    ->afterStateUpdated(function ($state, $set) {
-                        $set('slug', Str::slug($state)); 
-                    }),
+                Forms\Components\Grid::make()
+                    ->schema([
+                        // Panel Principal
+                        Forms\Components\Section::make('Información de la Categoría')
+                            ->description('Datos principales de la categoría')
+                            ->icon('heroicon-o-tag')
+                            ->collapsible()
+                            ->schema([
+                                Forms\Components\TextInput::make('nombre')
+                                    ->label('Nombre')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->live(debounce: 500)
+                                    ->afterStateUpdated(function (string $state, Forms\Set $set) {
+                                        $set('slug', Str::slug($state));
+                                    })
+                                    ->columnSpan(['md' => 2]),
 
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255)
-                    ->disabled() 
-                    ->dehydrated() 
-                    ->rule('unique:categorias,slug'),
+                                Forms\Components\TextInput::make('slug')
+                                    ->label('URL Amigable')
+                                    ->required()
+                                    ->maxLength(255)
+                                    ->disabled()
+                                    ->dehydrated()
+                                    ->unique('categorias', 'slug', ignoreRecord: true)
+                                    ->columnSpan(['md' => 2]),
 
-                Forms\Components\FileUpload::make('imagen')
-                    ->image()
-                    ->directory('categorias') // Directorio donde se guardarán las imágenes
-                    ->imagePreviewHeight('450') // Altura de la vista previa de la imagen
-                    ->label('Imagen de la Categoría'),
+                                Forms\Components\Grid::make()
+                                    ->schema([
+                                        Forms\Components\Toggle::make('esta_activa')
+                                            ->label('Categoría Activa')
+                                            ->helperText('Mostrar en la tienda')
+                                            ->default(true),
 
-                    Forms\Components\Toggle::make('is_compatible_device')
-    ->label('¿Es dispositivo compatible?')
-    ->default(true),
+                                        Forms\Components\Toggle::make('is_compatible_device')
+                                            ->label('Dispositivo Compatible')
+                                            ->helperText('¿Es un dispositivo que puede tener compatibilidades?')
+                                            ->default(true),
+                                    ])
+                                    ->columns(2)
+                                    ->columnSpan(['md' => 4]),
+                            ])
+                            ->columns(['md' => 4])
+                            ->columnSpan(['lg' => 2]),
 
-                Forms\Components\Toggle::make('esta_activa')
-                    ->required()
-                    ->default(true),
-
-                    
+                        // Panel Lateral - Imagen
+                        Forms\Components\Section::make('Imagen de la Categoría')
+                            ->description('Sube una imagen representativa')
+                            ->icon('heroicon-o-photo')
+                            ->schema([
+                                Forms\Components\FileUpload::make('imagen')
+                                    ->label('Imagen')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->directory('categorias')
+                                    ->imagePreviewHeight('250')
+                                    ->maxSize(5120)
+                                    ->helperText('Formato: JPG, PNG. Máximo 5MB.')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columnSpan(['lg' => 1]),
+                    ])
+                    ->columns(['lg' => 3]),
             ]);
     }
 
@@ -67,51 +99,93 @@ class CategoriaResource extends Resource
     {
         return $table
             ->columns([
-
-                Tables\Columns\IconColumn::make('is_compatible_device')
-    ->label('Compatible')
-    ->boolean(),
-
-
-                Tables\Columns\TextColumn::make('nombre')
-                    ->searchable(),
-
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-
                 Tables\Columns\ImageColumn::make('imagen')
                     ->label('Imagen')
-                    ->disk('public') // Especifica el disco donde se almacenan las imágenes
-                    ->size(80), // Tamaño de la imagen en la tabla
+                    ->disk('public')
+                    ->size(80)
+                    ->circular(),
+
+                Tables\Columns\TextColumn::make('nombre')
+                    ->label('Nombre')
+                    ->searchable()
+                    ->sortable()
+                    ->description(fn (Categoria $record): string => $record->slug),
 
                 Tables\Columns\IconColumn::make('esta_activa')
-                    ->boolean(),
+                    ->label('Activa')
+                    ->boolean()
+                    ->alignCenter()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('danger'),
+
+                Tables\Columns\IconColumn::make('is_compatible_device')
+                    ->label('Compatible')
+                    ->boolean()
+                    ->alignCenter()
+                    ->trueIcon('heroicon-o-puzzle-piece')
+                    ->falseIcon('heroicon-o-x-mark')
+                    ->trueColor('info')
+                    ->falseColor('warning'),
+
+                Tables\Columns\TextColumn::make('productos_count')
+                    ->label('Productos')
+                    ->counts('productos')
+                    ->sortable()
+                    ->alignCenter(),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Creada')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Actualizada')
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
-                //
+                Tables\Filters\TernaryFilter::make('esta_activa')
+                    ->label('Estado')
+                    ->boolean()
+                    ->trueLabel('Categorías Activas')
+                    ->falseLabel('Categorías Inactivas')
+                    ->native(false),
+
+                Tables\Filters\TernaryFilter::make('is_compatible_device')
+                    ->label('Compatibilidad')
+                    ->boolean()
+                    ->trueLabel('Dispositivos Compatibles')
+                    ->falseLabel('No Compatibles')
+                    ->native(false),
             ])
             ->actions([
-                ActionGroup::make([
-                    ViewAction::make(),
-                    EditAction::make(),
-                    DeleteAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make()
+                        ->requiresConfirmation()
+                        ->modalDescription('¿Estás seguro de que deseas eliminar esta categoría? Esta acción no se puede deshacer.'),
                 ])
+                ->link()
+                ->label('Acciones'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->requiresConfirmation()
+                        ->modalDescription('¿Estás seguro de que deseas eliminar las categorías seleccionadas? Esta acción no se puede deshacer.'),
                 ]),
-            ]);
+            ])
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make()
+                    ->label('Crear Categoría'),
+            ])
+            ->emptyStateDescription('No hay categorías creadas aún. ¡Comienza creando una!');
     }
 
     public static function getRelations(): array
