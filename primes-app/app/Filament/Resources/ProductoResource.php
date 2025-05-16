@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources;
 
+
+use App\Filament\Resources\ProductoResource\RelationManagers\ProductosCompatiblesRelationManager;
 use App\Filament\Resources\ProductoResource\Pages;
 use App\Models\Producto;
 use Filament\Forms;
@@ -329,7 +331,7 @@ class ProductoResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ProductosCompatiblesRelationManager::class
         ];
     }
 

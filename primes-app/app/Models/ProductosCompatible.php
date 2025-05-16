@@ -23,7 +23,7 @@ class ProductosCompatible extends Model
     }
 
     public function productoCompatible()
-    {
-        return $this->belongsTo(Producto::class, 'compatible_product_id');
-    }
+{
+    return $this->belongsTo(\App\Models\Producto::class, 'compatible_with_id');
+}
 }
