@@ -6,8 +6,11 @@ use Livewire\Component;
 
 class CheckoutPage extends Component
 {
+    public $title = 'Finalizar Compra - TECNOBOX';
+    
     public function render()
     {
-        return view('livewire.checkout-page');
+        return view('livewire.checkout-page')
+            ->title($this->title);
     }
 }
