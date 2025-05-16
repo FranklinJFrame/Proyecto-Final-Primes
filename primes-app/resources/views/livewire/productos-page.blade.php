@@ -143,11 +143,8 @@ use Illuminate\Support\Facades\Storage;
             <div class="w-full px-3 mb-6 sm:w-1/2 md:w-1/3">
                   <div class="cyber-product-card bg-gray-900/80 border border-blue-500/20 rounded-xl overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-blue-500/20">
                     <div class="relative bg-gray-800">
-                      <a href="/products/{{ $producto->slug }}" class="" wire:key="{{producto->id}}">
-                        <img src="{{ asset('storage/products/' . (is_array($producto->imagenes) && !empty($producto->imagenes) ? $producto->imagenes[0] : 'default.jpg')) }}" 
-                             alt="{{ $producto->nombre }}" 
-                             class="object-cover w-full h-56 mx-auto transform hover:scale-105 transition-all duration-500">
-                      </a>
+                    <a href="/products/{{ $producto->slug }}" class="">
+                    <img src="{{ url('storage', $producto->imagenes) }}" alt="{{ $producto->nombre }}" class="object-cover w-full h-56 mx-auto transform hover:scale-105 transition-all duration-500">
                     </div>
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
