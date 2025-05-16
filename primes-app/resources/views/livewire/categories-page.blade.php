@@ -9,14 +9,15 @@
       </div>
       
       <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-8">
-        <a class="cyber-category-card group flex flex-col bg-gray-900/80 border border-blue-500/20 rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 hover:-translate-y-1" href="#">
+        @forelse($categorias as $categoria)
+        <a class="cyber-category-card group flex flex-col bg-gray-900/80 border border-blue-500/20 rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 hover:-translate-y-1" href="/categories/{{ $categoria->slug }}">
           <div class="p-5 md:p-6">
             <div class="flex justify-between items-center">
               <div class="flex items-center">
-                <img class="h-[5rem] w-[5rem] rounded-lg" src="https://cdn.bajajelectronics.com/product/b002c02c-c379-49f8-b2a6-bd2e56d0e23a" alt="Image Description">
+                <img class="h-[5rem] w-[5rem] rounded-lg object-cover" src="{{ $categoria->imagen ? url('storage/'.$categoria->imagen) : 'https://via.placeholder.com/80x80?text=Sin+Imagen' }}" alt="{{ $categoria->nombre }}">
                 <div class="ms-4">
                   <h3 class="group-hover:text-blue-400 text-2xl font-semibold text-white transition-colors duration-300">
-                    Laptops
+                    {{ $categoria->nombre }}
                   </h3>
                 </div>
               </div>
@@ -28,66 +29,9 @@
             </div>
           </div>
         </a>
-
-        <a class="cyber-category-card group flex flex-col bg-gray-900/80 border border-blue-500/20 rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 hover:-translate-y-1" href="#">
-          <div class="p-5 md:p-6">
-            <div class="flex justify-between items-center">
-              <div class="flex items-center">
-                <img class="h-[5rem] w-[5rem] rounded-lg" src="https://static.toiimg.com/thumb/msid-86223197,width-400,resizemode-4/86223197.jpg" alt="Image Description">
-                <div class="ms-4">
-                  <h3 class="group-hover:text-blue-400 text-2xl font-semibold text-white transition-colors duration-300">
-                    Smartphones
-                  </h3>
-                </div>
-              </div>
-              <div class="ps-3">
-                <svg class="flex-shrink-0 w-5 h-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m9 18 6-6-6-6" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </a>
-
-        <a class="cyber-category-card group flex flex-col bg-gray-900/80 border border-blue-500/20 rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 hover:-translate-y-1" href="#">
-          <div class="p-5 md:p-6">
-            <div class="flex justify-between items-center">
-              <div class="flex items-center">
-                <img class="h-[5rem] w-[5rem] rounded-lg" src="https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/watch-card-40-ultra2-202309_GEO_IN_FMT_WHH?wid=508&hei=472&fmt=p-jpg&qlt=95&.v=1693611639854" alt="Image Description">
-                <div class="ms-4">
-                  <h3 class="group-hover:text-blue-400 text-2xl font-semibold text-white transition-colors duration-300">
-                    Smartwatches
-                  </h3>
-                </div>
-              </div>
-              <div class="ps-3">
-                <svg class="flex-shrink-0 w-5 h-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m9 18 6-6-6-6" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </a>
-
-        <a class="cyber-category-card group flex flex-col bg-gray-900/80 border border-blue-500/20 rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 hover:-translate-y-1" href="#">
-          <div class="p-5 md:p-6">
-            <div class="flex justify-between items-center">
-              <div class="flex items-center">
-                <img class="h-[5rem] w-[5rem] rounded-lg" src="https://i01.appmifile.com/v1/MI_18455B3E4DA706226CF7535A58E875F0267/pms_1632893007.55719480!400x400!85.png" alt="Image Description">
-                <div class="ms-4">
-                  <h3 class="group-hover:text-blue-400 text-2xl font-semibold text-white transition-colors duration-300">
-                    Television
-                  </h3>
-                </div>
-              </div>
-              <div class="ps-3">
-                <svg class="flex-shrink-0 w-5 h-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="m9 18 6-6-6-6" />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </a>
+        @empty
+        <div class="col-span-full text-center text-white text-xl py-12">No hay categorías disponibles en este momento.</div>
+        @endforelse
       </div>
     </div>
   </section>
