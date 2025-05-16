@@ -14,7 +14,7 @@ class ProductosCompatible extends Model
 
     protected $fillable = [
         'producto_id',
-        'compatible_product_id',
+        'compatible_with_id',
     ];
 
     public function producto()
