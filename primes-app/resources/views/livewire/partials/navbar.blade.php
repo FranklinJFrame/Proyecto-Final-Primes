@@ -2,7 +2,7 @@
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
           <div class="flex items-center">
-              <a href="/" class="text-2xl font-bold text-white cyber-glitch-text">
+              <a wire:navigate href="/" class="text-2xl font-bold text-white cyber-glitch-text">
                   TECNO<span class="text-blue-500">BOX</span>
               </a>
           </div>
