@@ -42,13 +42,13 @@ class CategoriaResource extends Resource
                                     ->required()
                                     ->maxLength(255)
                                     ->live(debounce: 500)
-                                    ->afterStateUpdated(function (string $state, Forms\Set $set) {
-                                        $set('slug', Str::slug($state));
+                                    ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                        $set('slug', \Illuminate\Support\Str::slug($state ?? ''));
                                     })
                                     ->columnSpan(['md' => 2]),
 
                                 Forms\Components\TextInput::make('slug')
-                                    ->label('URL Amigable')
+                                    ->label('Slug')
                                     ->required()
                                     ->maxLength(255)
                                     ->disabled()
