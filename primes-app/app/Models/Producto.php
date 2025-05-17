@@ -33,7 +33,7 @@ class Producto extends Model
         'esta_activo' => 'boolean',
         'es_destacado' => 'boolean',
         'en_oferta' => 'boolean',
-        'es_devolucible' => 'boolean', // Nuevo campo añadido con cast a boolean
+        'es_devolucible' => 'boolean', 
     ];
     
     protected static function boot()

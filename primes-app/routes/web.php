@@ -32,7 +32,7 @@ require __DIR__.'/auth.php';
 Route::get('/categories', CategoriesPage::class);
 Route::get('/products', ProductosPage::class);
 Route::get('/cart', CarritoPage::class);
-Route::get('/products/{product}', DetalleProductoPage::class);
+Route::get('/products/{slug}', DetalleProductoPage::class);
 Route::get('/checkout', CheckoutPage::class);
 Route::get('/my-orders', MisPedidosPage::class);
 Route::get('/my-orders/{order}', MiPedidosDetallePage::class);

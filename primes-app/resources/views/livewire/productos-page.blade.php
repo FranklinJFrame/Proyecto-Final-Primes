@@ -18,30 +18,14 @@ use Illuminate\Support\Facades\Storage;
             <h2 class="text-2xl font-bold text-white cyber-glitch-text"> Categorías</h2>
             <div class="w-16 pb-2 mb-6 border-b border-blue-500"></div>
             <ul>
-              <li class="mb-4">
-                <label for="" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" class="w-4 h-4 mr-2 accent-blue-500">
-                  <span class="text-lg">Smartphones</span>
+              @foreach ($categorias as $categoria)
+              <li class="mb-4" wire:key="{{ $categoria->id }}">
+                <label for="{{ $categoria->slug }}" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
+                  <input type="checkbox" id="{{ $categoria->slug }}" value="{{ $categoria->id }}" class="w-4 h-4 mr-2 accent-blue-500">
+                  <span class="text-lg">{{ $categoria->nombre }}</span>
                 </label>
               </li>
-              <li class="mb-4">
-                <label for="" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" class="w-4 h-4 mr-2 accent-blue-500">
-                  <span class="text-lg">Laptops</span>
-                </label>
-              </li>
-              <li class="mb-4">
-                <label for="" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" class="w-4 h-4 mr-2 accent-blue-500">
-                  <span class="text-lg">Smartwatches</span>
-                </label>
-              </li>
-              <li class="mb-4">
-                <label for="" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" class="w-4 h-4 mr-2 accent-blue-500">
-                  <span class="text-lg">Television</span>
-                </label>
-              </li>
+              @endforeach
             </ul>
           </div>
           
@@ -49,30 +33,14 @@ use Illuminate\Support\Facades\Storage;
             <h2 class="text-2xl font-bold text-white cyber-glitch-text">Marcas</h2>
             <div class="w-16 pb-2 mb-6 border-b border-blue-500"></div>
             <ul>
-              <li class="mb-4">
-                <label for="" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" class="w-4 h-4 mr-2 accent-blue-500">
-                  <span class="text-lg">Apple</span>
+              @foreach ($marcas as $marca)
+              <li class="mb-4" wire:key="{{ $marca->id }}">
+                <label for="{{ $marca->slug }}" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
+                  <input type="checkbox" id="{{ $marca->slug }}" value="{{ $marca->id }}" class="w-4 h-4 mr-2 accent-blue-500">
+                  <span class="text-lg">{{ $marca->nombre }}</span>
                 </label>
               </li>
-              <li class="mb-4">
-                <label for="" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" class="w-4 h-4 mr-2 accent-blue-500">
-                  <span class="text-lg">Samsung</span>
-                </label>
-              </li>
-              <li class="mb-4">
-                <label for="" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" class="w-4 h-4 mr-2 accent-blue-500">
-                  <span class="text-lg">Nothing</span>
-                </label>
-              </li>
-              <li class="mb-4">
-                <label for="" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" class="w-4 h-4 mr-2 accent-blue-500">
-                  <span class="text-lg">One Plus</span>
-                </label>
-              </li>
+              @endforeach
             </ul>
           </div>
           
@@ -143,8 +111,8 @@ use Illuminate\Support\Facades\Storage;
             <div class="w-full px-3 mb-6 sm:w-1/2 md:w-1/3">
                   <div class="cyber-product-card bg-gray-900/80 border border-blue-500/20 rounded-xl overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-blue-500/20">
                     <div class="relative bg-gray-800">
-                    <a href="/products/{{ $producto->slug }}" class="">
-                    <img src="{{ url('storage', $producto->imagenes) }}" alt="{{ $producto->nombre }}" class="object-cover w-full h-56 mx-auto transform hover:scale-105 transition-all duration-500">
+                    <a href="/products/{{ $producto->slug }}" class="" wire:key="{{ $producto->id }}";>
+                    <img src="{{ url('storage', $producto->imagenes[0]) }}" alt="{{ $producto->nombre }}" class="object-cover w-full h-56 mx-auto transform hover:scale-105 transition-all duration-500">
                     </div>
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
@@ -173,35 +141,7 @@ use Illuminate\Support\Facades\Storage;
           
           <!-- Paginación con estilo cyber -->
           <div class="flex justify-end mt-10">
-            <nav aria-label="page-navigation">
-              <ul class="flex list-style-none">
-                <li class="page-item disabled">
-                  <a href="#" class="relative block pointer-events-none px-3 py-1.5 mr-3 text-base text-gray-400 border border-blue-500/30 rounded-md bg-gray-900/70 backdrop-blur-sm hover:border-blue-500 transition-all duration-300">
-                    Anterior
-                  </a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="relative block px-3 py-1.5 mr-3 text-base text-white border border-blue-500 rounded-md bg-blue-600/50 backdrop-blur-sm glow-blue-sm transition-all duration-300">
-                    1
-                  </a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="relative block px-3 py-1.5 mr-3 text-base text-gray-300 border border-blue-500/30 rounded-md bg-gray-900/70 backdrop-blur-sm hover:border-blue-500 hover:text-white transition-all duration-300">
-                    2
-                  </a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="relative block px-3 py-1.5 mr-3 text-base text-gray-300 border border-blue-500/30 rounded-md bg-gray-900/70 backdrop-blur-sm hover:border-blue-500 hover:text-white transition-all duration-300">
-                    3
-                  </a>
-                </li>
-                <li class="page-item">
-                  <a href="#" class="relative block px-3 py-1.5 text-base text-gray-300 border border-blue-500/30 rounded-md bg-gray-900/70 backdrop-blur-sm hover:border-blue-500 hover:text-white transition-all duration-300">
-                    Siguiente
-                  </a>
-                </li>
-              </ul>
-            </nav>
+            {{ $productos->links() }}
           </div>
         </div>
       </div>

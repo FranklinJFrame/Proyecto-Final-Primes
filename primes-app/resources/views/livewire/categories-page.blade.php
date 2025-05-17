@@ -10,7 +10,7 @@
       
       <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-8">
         @forelse($categorias as $categoria)
-        <a class="cyber-category-card group flex flex-col bg-gray-900/80 border border-blue-500/20 rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 hover:-translate-y-1" href="/categories/{{ $categoria->slug }}">
+        <a class="cyber-category-card group flex flex-col bg-gray-900/80 border border-blue-500/20 rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all duration-300 hover:-translate-y-1" href="/categories/{{ $categoria->slug }}" wire:key="{{ $categoria->id }}";>
           <div class="p-5 md:p-6">
             <div class="flex justify-between items-center">
               <div class="flex items-center">
