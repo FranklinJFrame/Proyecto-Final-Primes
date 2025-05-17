@@ -11,11 +11,15 @@ class PedidosStats extends BaseWidget
 {
     protected function getStats(): array
     {
+        $avg = Pedidos::query()->avg('total_general');
         return [
             Stat::make('Nuevos Pedidos', Pedidos::where('estado', 'nuevo')->count()),
             Stat::make('Procesamiento de Pedidos', Pedidos::where('estado', 'procesando')->count()),
             Stat::make('Pedido Enviado', Pedidos::where('estado', 'enviado')->count()),
-            Stat::make('Precio Promedio', Number::currency(Pedidos::query()->avg('total_general')), 'INR')
+            Stat::make(
+                'Precio Promedio',
+                $avg !== null ? Number::currency($avg, 'DOP') : 'N/A'
+            ),
         ];
     }
 }

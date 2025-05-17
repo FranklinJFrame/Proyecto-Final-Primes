@@ -260,11 +260,3 @@
     }
   </style>
 </div>
-<script>
-  const range = document.getElementById('priceRange');
-  const rangeValue = document.getElementById('rangeValue');
-
-  range.addEventListener('input', () => {
-    rangeValue.textContent = parseInt(range.value).toLocaleString('es-DO');
-  });
-</script>
