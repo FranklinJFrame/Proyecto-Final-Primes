@@ -8,11 +8,16 @@ use App\Models\Categoria;
 use App\Models\Marca;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 
 class ProductosPage extends Component
 {
     use WithPagination;
     public $title = 'Productos - TECNOBOX';
+
+
+    #[Url]
+    public $selected_categorias = [];
     
     public function render()
     {

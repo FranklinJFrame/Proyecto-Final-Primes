@@ -13,12 +13,13 @@
         <div class="w-full pr-2 lg:w-1/4 lg:block">
           <div class="p-4 mb-5 bg-gray-900/80 backdrop-blur-md border border-blue-500/20 rounded-xl">
             <h2 class="text-2xl font-bold text-white cyber-glitch-text"> Categorías</h2>
+
             <div class="w-16 pb-2 mb-6 border-b border-blue-500"></div>
             <ul>
               @foreach ($categorias as $categoria)
               <li class="mb-4" wire:key="{{ $categoria->id }}">
                 <label for="{{ $categoria->slug }}" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" id="{{ $categoria->slug }}" value="{{ $categoria->id }}" class="w-4 h-4 mr-2 accent-blue-500">
+                  <input type="checkbox" wire:model.live="selected_categorias.{{ $categoria->id }}" id="{{ $categoria->slug }}" value="{{ $categoria->id }}" class="w-4 h-4 mr-2 accent-blue-500">
                   <span class="text-lg">{{ $categoria->nombre }}</span>
                 </label>
               </li>

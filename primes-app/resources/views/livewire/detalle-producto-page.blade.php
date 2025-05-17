@@ -1,4 +1,10 @@
 <div class="min-h-screen bg-black py-10">
+  <div class="max-w-6xl mx-auto">
+    <a href="/products" class="inline-flex items-center mb-8 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-blue-600 transition font-semibold">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+      Volver a productos
+    </a>
+  </div>
   <div class="max-w-6xl mx-auto bg-gray-900/90 rounded-2xl shadow-xl flex flex-col md:flex-row overflow-hidden border border-blue-500/20">
     <!-- Imagen principal y miniaturas -->
     <div class="md:w-1/2 flex flex-col items-center justify-center p-8 bg-gray-900"
