@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use App\Models\Categoria;
 
 class CategoriesPage extends Component
 {
@@ -10,7 +11,9 @@ class CategoriesPage extends Component
     
     public function render()
     {
-        return view('livewire.categories-page')
-            ->title($this->title);
+        $categorias = Categoria::where('esta_activa', 1)->get();
+        return view('livewire.categories-page', [
+            'categorias' => $categorias,
+        ])->title($this->title);
     }
 }
