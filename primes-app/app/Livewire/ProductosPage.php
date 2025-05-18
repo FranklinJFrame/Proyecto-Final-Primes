@@ -26,11 +26,19 @@ class ProductosPage extends Component
     public $precio_min = 1000;
     #[Url]
     public $precio_max = 500000;
+    #[Url]
+    public $search = '';
     
     public function render()
     {
         $productos = Producto::query()->where('esta_activo', 1);
 
+        if (!empty($this->search)) {
+            $productos->where(function($query) {
+                $query->where('nombre', 'like', '%'.$this->search.'%')
+                      ->orWhere('descripcion', 'like', '%'.$this->search.'%');
+            });
+        }
         if (!empty($this->selected_categorias)) {
             $productos->whereIn('categoria_id', $this->selected_categorias);
         }

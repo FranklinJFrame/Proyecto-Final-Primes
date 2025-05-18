@@ -11,6 +11,9 @@
       <div class="flex flex-wrap -mx-3">
         <!-- Sidebar con filtros -->
         <div class="w-full pr-2 lg:w-1/4 lg:block">
+          <div class="mb-5">
+            <input type="text" wire:model.live="search" placeholder="Buscar productos..." class="w-full px-4 py-2 rounded-lg bg-gray-900 text-blue-400 border border-blue-500/40 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-blue-300 shadow-md cyber-glitch-text" />
+          </div>
           <div class="p-4 mb-5 bg-gray-900/80 backdrop-blur-md border border-blue-500/20 rounded-xl">
             <h2 class="text-2xl font-bold text-white cyber-glitch-text"> Categorías</h2>
             <div class="w-16 pb-2 mb-6 border-b border-blue-500"></div>
