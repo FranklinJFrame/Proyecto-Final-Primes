@@ -16,10 +16,12 @@ class HomePage extends Component
         $ofertas = Producto::where('en_oferta', 1)->where('esta_activo', 1)->inRandomOrder()->limit(4)->get();
         $marcas = Marca::where('esta_activa', 1)->inRandomOrder()->limit(4)->get();
         $categorias = Categoria::where('esta_activa', 1)->inRandomOrder()->limit(4)->get();
+        $destacados = Producto::whereIn('id', [19, 20, 21])->where('esta_activo', 1)->get();
         return view('livewire.home-page', [
             'ofertas' => $ofertas,
             'marcas'=> $marcas,
-            'categorias' => $categorias
+            'categorias' => $categorias,
+            'destacados' => $destacados
         ])
             ->title($this->title);
     }

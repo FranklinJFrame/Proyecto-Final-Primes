@@ -41,7 +41,12 @@
                 </div>
   
                 <!-- 3D Card Display -->
+                @php
+                    // Buscar el producto con id 22 en los destacados o hacer una consulta directa si no está
+                    $productoPortada = $destacados->firstWhere('id', 22) ?? \App\Models\Producto::find(22);
+                @endphp
                 <div class="relative group perspective-1000 h-[800px] parallax-container">
+                    <a href="{{ $productoPortada ? url('/products/'.$productoPortada->slug) : '#' }}">
                     <div class="relative transform transition-all duration-700 ease-out hover:rotate-y-12 card-container h-full"
                          x-ref="parallaxImage"
                          @scroll.window="handleScroll()">
@@ -62,6 +67,7 @@
                             </div>
                         </div>
                     </div>
+                    </a>
                 </div>
             </div>
         </div>
@@ -196,67 +202,33 @@
                 Productos Destacados
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Product Cards con efectos cyber -->
+                @foreach($destacados as $producto)
                 <div class="cyber-card bg-gray-900 rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-blue-500/40 transition-all duration-500 transform hover:-translate-y-4 hover:scale-105">
-                    <div class="relative overflow-hidden">
-                        <img src="https://asset.msi.com/resize/image/global/product/product_1663742002e0bd21ebc380d0ea907a5374ca6919f8.png62405b38c58fe0f07fcef2367d8a9ba1/600.png" 
-                             alt="MSI RTX 4090" 
-                             class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
-                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
-                    </div>
-                    <div class="p-6 relative">
-                        <div class="cyber-line"></div>
-                        <h3 class="text-xl font-semibold text-white mb-2">MSI RTX 4090 GAMING X TRIO</h3>
-                        <p class="text-gray-400 mb-4">La tarjeta gráfica más potente para gaming</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-white cyber-price">RD$ 93,599.42</span>
-                            <button class="cyber-button-small px-4 py-2 text-white rounded-lg transition-all duration-300 transform hover:scale-105">
-                                Añadir al Carrito
-                            </button>
+                    <a href="/products/{{ $producto->slug }}" class="block">
+                        <div class="relative overflow-hidden">
+                            @if($producto->id == 19)
+                                <img src="https://asset.msi.com/resize/image/global/product/product_1663742002e0bd21ebc380d0ea907a5374ca6919f8.png62405b38c58fe0f07fcef2367d8a9ba1/600.png" alt="{{ $producto->nombre }}" class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
+                            @elseif($producto->id == 20)
+                                <img src="https://storage-asset.msi.com/global/picture/image/feature/vga/NVIDIA/VGA-2020/image/KV-3080X.png" alt="{{ $producto->nombre }}" class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
+                            @elseif($producto->id == 21)
+                                <img src="https://asset.msi.com/resize/image/global/product/product_16104439091f604cc0c971b267b62a1ce937d362d0.png62405b38c58fe0f07fcef2367d8a9ba1/600.png" alt="{{ $producto->nombre }}" class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
+                            @else
+                                <img src="{{ isset($producto->imagenes[0]) ? url('storage/'.$producto->imagenes[0]) : 'https://via.placeholder.com/300x200' }}" alt="{{ $producto->nombre }}" class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
+                            @endif
+                            <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
                         </div>
-                    </div>
-                </div>
-  
-                <!-- Repite el mismo patrón para las otras dos tarjetas -->
-                <div class="cyber-card bg-gray-900 rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-purple-500/40 transition-all duration-500 transform hover:-translate-y-4 hover:scale-105">
-                    <div class="relative overflow-hidden">
-                        <img src="https://storage-asset.msi.com/global/picture/image/feature/vga/NVIDIA/VGA-2020/image/KV-3080X.png" 
-                             alt="MSI RTX 3080" 
-                             class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
-                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
-                    </div>
-                    <div class="p-6 relative">
-                        <div class="cyber-line"></div>
-                        <h3 class="text-xl font-semibold text-white mb-2">MSI RTX 3080 GAMING Z TRIO</h3>
-                        <p class="text-gray-400 mb-4">Rendimiento excepcional a 4K</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-white cyber-price">RD$ 46,799.42</span>
-                            <button class="cyber-button-small px-4 py-2 text-white rounded-lg transition-all duration-300 transform hover:scale-105">
-                                Añadir al Carrito
-                            </button>
+                        <div class="p-6 relative">
+                            <div class="cyber-line"></div>
+                            <h3 class="text-xl font-semibold text-white mb-2">{{ $producto->nombre }}</h3>
+                            <p class="text-gray-400 mb-4 line-clamp-2">{{ $producto->descripcion }}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-2xl font-bold text-white cyber-price">RD$ {{ number_format($producto->precio, 2) }}</span>
+                                <span class="cyber-button-small px-4 py-2 text-white rounded-lg transition-all duration-300 transform hover:scale-105">Ver Detalles</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
-  
-                <div class="cyber-card bg-gray-900 rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-red-500/40 transition-all duration-500 transform hover:-translate-y-4 hover:scale-105">
-                    <div class="relative overflow-hidden">
-                        <img src="https://asset.msi.com/resize/image/global/product/product_16104439091f604cc0c971b267b62a1ce937d362d0.png62405b38c58fe0f07fcef2367d8a9ba1/600.png" 
-                             alt="MSI RTX 3060" 
-                             class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
-                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
-                    </div>
-                    <div class="p-6 relative">
-                        <div class="cyber-line"></div>
-                        <h3 class="text-xl font-semibold text-white mb-2">MSI RTX 3060 VENTUS 2X</h3>
-                        <p class="text-gray-400 mb-4">Gaming a 1080p con Ray Tracing</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-white cyber-price">RD$ 19,304.42</span>
-                            <button class="cyber-button-small px-4 py-2 text-white rounded-lg transition-all duration-300 transform hover:scale-105">
-                                Añadir al Carrito
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </div>
