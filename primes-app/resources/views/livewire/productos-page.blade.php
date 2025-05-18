@@ -91,9 +91,11 @@
           <div class="px-3 mb-6">
             <div class="flex items-center justify-between px-4 py-3 bg-gray-900/80 backdrop-blur-md border border-blue-500/20 rounded-xl">
               <div class="flex items-center">
-                <select name="" id="" class="block  w-44 text-base bg-gray-800 cursor-pointer text-white border border-blue-500/30 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500 transition-colors">
-                  <option class="flex" value="">Ordenar por más recientes</option>
-                  <option value="">Ordenar por precio</option>
+                <select wire:model.live="ordenarPor" class="block w-64 text-base bg-gray-800 cursor-pointer text-white border border-blue-500/30 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500 transition-colors">
+                  <option value="relevancia">Ordenar por más relevante</option>
+                  <option value="recientes">Ordenar por más recientes</option>
+                  <option value="precio_asc">Ordenar por precio: menor a mayor</option>
+                  <option value="precio_desc">Ordenar por precio: mayor a menor</option>
                 </select>
               </div>
             </div>

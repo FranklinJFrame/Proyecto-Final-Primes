@@ -217,7 +217,7 @@ class ProductoResource extends Resource
                     ->label('Nombre')
                     ->searchable()
                     ->sortable()
-                    ->description(fn (Producto $record): string => \Illuminate\Support\Str::limit($record->descripcion, 50))
+                    ->description(fn (Producto $record): string => $record->descripcion ? \Illuminate\Support\Str::limit($record->descripcion, 50) : '')
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make('categoria.nombre')

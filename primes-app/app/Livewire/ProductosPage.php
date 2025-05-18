@@ -28,6 +28,15 @@ class ProductosPage extends Component
     public $precio_max = 500000;
     #[Url]
     public $search = '';
+    #[Url]
+    public $ordenarPor = 'relevancia';
+    
+    public function updating($property)
+    {
+        if ($property !== 'page') {
+            $this->resetPage();
+        }
+    }
     
     public function render()
     {
@@ -55,10 +64,28 @@ class ProductosPage extends Component
         }
         $productos->whereBetween('precio', [$this->precio_min, $this->precio_max]);
 
+        // Lógica de ordenamiento
+        switch ($this->ordenarPor) {
+            case 'precio_asc':
+                $productos->orderBy('precio', 'asc');
+                break;
+            case 'precio_desc':
+                $productos->orderBy('precio', 'desc');
+                break;
+            case 'recientes':
+                $productos->orderBy('created_at', 'desc');
+                break;
+            case 'relevancia':
+            default:
+                $productos->orderByDesc('en_oferta')->orderByDesc('en_stock')->orderBy('created_at', 'desc');
+                break;
+        }
+
         return view('livewire.productos-page', [
             'productos' => $productos->paginate(6),
             'marcas' => Marca::where('esta_activa', 1)->get(['id', 'nombre', 'slug']),
             'categorias' => Categoria::where('esta_activa', 1)->get(['id', 'nombre', 'slug']),
+            'ordenarPor' => $this->ordenarPor,
         ])->title($this->title);
     }
 }
