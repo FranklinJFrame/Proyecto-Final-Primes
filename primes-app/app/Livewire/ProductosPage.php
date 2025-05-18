@@ -9,6 +9,7 @@ use App\Models\Marca;
 use Livewire\WithPagination;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
+use Illuminate\Http\Request;
 
 class ProductosPage extends Component
 {
@@ -35,6 +36,27 @@ class ProductosPage extends Component
     {
         if ($property !== 'page') {
             $this->resetPage();
+        }
+    }
+    
+    public function mount(Request $request)
+    {
+        if ($request->has('categoria')) {
+            $slug = $request->get('categoria');
+            $cat = \App\Models\Categoria::where('slug', $slug)->first();
+            if ($cat) {
+                $this->selected_categorias = [strval($cat->id)];
+            }
+        }
+        if ($request->has('marca')) {
+            $slug = $request->get('marca');
+            $marca = \App\Models\Marca::where('slug', $slug)->first();
+            if ($marca) {
+                $this->selected_marcas = [strval($marca->id)];
+            }
+        }
+        if ($request->has('oferta')) {
+            $this->selected_estado = ['en_oferta'];
         }
     }
     

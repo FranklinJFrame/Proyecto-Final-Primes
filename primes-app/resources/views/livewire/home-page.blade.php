@@ -96,61 +96,21 @@
                 Categorías Gaming
             </h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <!-- Procesadores -->
-                <div class="cyber-category-card group">
+                @foreach($categorias as $categoria)
+                <a href="/productos?categoria={{ $categoria->slug }}" class="cyber-category-card group block hover:shadow-blue-500/30 hover:scale-105 transition-all duration-300">
                     <div class="relative overflow-hidden rounded-xl">
-                        <img src="https://www.geekom.es/wp-content/uploads/2025/02/AMD-gpu-Vs-intel-gpu.webp" 
-                             alt="Procesadores" 
-                             class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+                        <div class="flex items-center justify-center w-full h-48 bg-white shadow-inner rounded-xl p-4">
+                            <img src="{{ $categoria->imagen ? url('storage/'.$categoria->imagen) : 'https://via.placeholder.com/300x200' }}" 
+                                 alt="{{ $categoria->nombre }}" 
+                                 class="max-h-32 max-w-full object-contain">
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent pointer-events-none"></div>
                         <div class="absolute bottom-4 left-4">
-                            <h3 class="text-xl font-bold text-white">Procesadores</h3>
-                            <p class="text-blue-400">Intel & AMD</p>
+                            <h3 class="text-xl font-bold text-white group-hover:text-blue-400 transition">{{ $categoria->nombre }}</h3>
                         </div>
                     </div>
-                </div>
-  
-                <!-- Placas Base -->
-                <div class="cyber-category-card group">
-                    <div class="relative overflow-hidden rounded-xl">
-                        <img src="https://www.intel.la/content/dam/www/central-libraries/us/en/images/rog-strix-z390-e-gaming-motherboard-rwd.png.rendition.intel.web.1280.720.png" 
-                             alt="Placas Base" 
-                             class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <h3 class="text-xl font-bold text-white">Placas Base</h3>
-                            <p class="text-purple-400">Gaming & Workstation</p>
-                        </div>
-                    </div>
-                </div>
-  
-                <!-- Memoria RAM -->
-                <div class="cyber-category-card group">
-                    <div class="relative overflow-hidden rounded-xl">
-                        <img src="https://www.xpc.com.do/images/ddr4.png" 
-                             alt="Memoria RAM" 
-                             class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <h3 class="text-xl font-bold text-white">Memoria RAM</h3>
-                            <p class="text-red-400">DDR4 & DDR5</p>
-                        </div>
-                    </div>
-                </div>
-  
-                <!-- Almacenamiento -->
-                <div class="cyber-category-card group">
-                    <div class="relative overflow-hidden rounded-xl">
-                        <img src="https://dlcdnwebimgs.asus.com/files/media/F917652C-9ECA-44FB-8101-0C5CED34A314/V1/img/hero-product.png" 
-                             alt="Almacenamiento" 
-                             class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-                        <div class="absolute bottom-4 left-4">
-                            <h3 class="text-xl font-bold text-white">Almacenamiento</h3>
-                            <p class="text-green-400">SSD & M.2 NVMe</p>
-                        </div>
-                    </div>
-                </div>
+                </a>
+                @endforeach
             </div>
         </div>
     </div>
@@ -164,61 +124,21 @@
                 Marcas
             </h2>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-      <!-- Soporte para Auriculares -->
-      <div class="cyber-category-card group">
+      @foreach($marcas as $marca)
+      <a href="/productos?marca={{ $marca->slug }}" class="cyber-category-card group block hover:shadow-blue-500/30 hover:scale-105 transition-all duration-300">
         <div class="relative overflow-hidden rounded-xl">
-          <img src="https://cdn.freebiesupply.com/logos/large/2x/apple1-logo-png-transparent.png" 
-               alt="Soporte para Auriculares" 
-               class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
+          <div class="flex items-center justify-center w-full h-48 bg-white shadow-inner rounded-xl p-4">
+              <img src="{{ $marca->imagen ? url('storage/'.$marca->imagen) : 'https://via.placeholder.com/300x200' }}" 
+                   alt="{{ $marca->nombre }}" 
+                   class="max-h-32 max-w-full object-contain">
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent pointer-events-none"></div>
           <div class="absolute bottom-4 left-4">
-            <h3 class="text-xl font-bold text-white">Apple</h3>
-            <p class="text-yellow-400">Innovación & diseño</p>
+            <h3 class="text-xl font-bold text-white group-hover:text-blue-400 transition">{{ $marca->nombre }}</h3>
           </div>
         </div>
-      </div>
-
-      <!-- Alfombrilla RGB -->
-      <div class="cyber-category-card group">
-        <div class="relative overflow-hidden rounded-xl">
-          <img src="https://asset.msi.com/global/picture/news/2018/nb/gf75-20181123-1.png" 
-               alt="Alfombrilla RGB" 
-               class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-          <div class="absolute bottom-4 left-4">
-            <h3 class="text-xl font-bold text-white">MSI</h3>
-            <p class="text-pink-400">Gaming & rendimiento</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Brazo para Micrófono -->
-      <div class="cyber-category-card group">
-        <div class="relative overflow-hidden rounded-xl">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/ASUS_ROG_2007_logo.svg/640px-ASUS_ROG_2007_logo.svg.png" 
-               alt="Brazo para Micrófono" 
-               class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-          <div class="absolute bottom-4 left-4">
-            <h3 class="text-xl font-bold text-white">Asus</h3>
-            <p class="text-orange-400">Tecnología avanzada</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Ventilador USB RGB -->
-      <div class="cyber-category-card group">
-        <div class="relative overflow-hidden rounded-xl">
-          <img src="https://p1-ofp.static.pub/medias/bWFzdGVyfHJvb3R8MjkwNzQ5fGltYWdlL3BuZ3xoMDIvaDhkLzE0MzMyOTc5MzE0NzE4LnBuZ3xlM2VjMWI5ZjNlN2VjMDhkY2ZjNjdlMDJiZTE0MGZkZjRmNGRiZTEwMjJiY2MxZTY4NTM5YmNlMDEwNGE4NjJm/lenovo-laptop-thinkpad-x280-hero.png" 
-               alt="Ventilador RGB" 
-               class="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-500">
-          <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent"></div>
-          <div class="absolute bottom-4 left-4">
-            <h3 class="text-xl font-bold text-white">Lenovo</h3>
-            <p class="text-cyan-400">Versatilidad & productividad</p>
-          </div>
-        </div>
-      </div>
+      </a>
+      @endforeach
     </div>
   </div>
 </div>
@@ -232,111 +152,39 @@
                 <h2 class="text-3xl font-bold text-white cyber-glitch-text">
                     Ofertas Gaming
                 </h2>
-                <a href="#" class="cyber-button-small px-6 py-2 text-white rounded-lg">
+                <a href="/productos?oferta=1" class="cyber-button-small px-6 py-2 text-white rounded-lg">
                     Ver todas
                 </a>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Oferta 1 -->
-                <div class="cyber-product-card">
+                @foreach($ofertas as $oferta)
+                <a href="/products/{{ $oferta->slug }}" class="block group">
+                <div class="cyber-product-card bg-gradient-to-br from-gray-900 via-gray-800 to-blue-900/60 border-2 border-blue-500/30 hover:border-blue-500 shadow-xl hover:shadow-blue-500/30 transition-all duration-300 rounded-2xl overflow-hidden">
                     <div class="relative">
-                        <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                            -20%
+                        @if($oferta->descuento ?? false)
+                        <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold z-10">
+                            -{{ $oferta->descuento }}%
                         </div>
-                        <img src="https://media.game.es/COVERV2/3D_L/230/230814.png" 
-                             alt="Teclado Mecánico" 
-                             class="w-full h-48 object-contain">
+                        @endif
+                        <img src="{{ (isset($oferta->imagenes[0]) && $oferta->imagenes[0]) ? url('storage/'.$oferta->imagenes[0]) : 'https://via.placeholder.com/300x200' }}" alt="{{ $oferta->nombre }}" class="w-full h-56 object-contain bg-gray-900 group-hover:scale-105 transition-transform duration-300 rounded-t-2xl">
                     </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold text-white">Teclado Mecánico RGB</h3>
-                        <p class="text-gray-400 text-sm mb-4">Switch Red - Layout ES</p>
-                        <div class="flex justify-between items-center">
+                    <div class="p-4 flex flex-col gap-2">
+                        <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition">{{ $oferta->nombre }}</h3>
+                        <p class="text-gray-400 text-xs mb-2 line-clamp-2">{{ $oferta->descripcion }}</p>
+                        <div class="flex justify-between items-center mt-auto">
                             <div>
-                                <span class="text-gray-400 line-through text-sm">RD$ 4,999.99</span>
-                                <span class="text-2xl font-bold text-white ml-2">RD$ 3,999.99</span>
+                                @if($oferta->precio_original ?? false)
+                                <span class="text-gray-400 line-through text-sm">RD$ {{ number_format($oferta->precio_original, 2) }}</span>
+                                @endif
+                                <span class="text-xl font-bold text-blue-400 ml-2">RD$ {{ number_format($oferta->precio, 2) }}</span>
                             </div>
-                            <button class="cyber-button-small px-4 py-2">
-                                Añadir
-                            </button>
+                            <span class="inline-block px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-xs font-bold">En oferta</span>
                         </div>
                     </div>
                 </div>
-  
-                <!-- Oferta 2 -->
-                <div class="cyber-product-card">
-                    <div class="relative">
-                        <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                            -15%
-                        </div>
-                        <img src="https://resource.logitech.com/content/dam/gaming/en/products/pro-2-lightspeed/gallery/pro2-lightspeed-white-gallery1.png" 
-                             alt="Ratón Gaming" 
-                             class="w-full h-48 object-contain">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold text-white">Ratón Gaming RGB</h3>
-                        <p class="text-gray-400 text-sm mb-4">18000 DPI - Inalámbrico</p>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-gray-400 line-through text-sm">RD$ 3,499.99</span>
-                                <span class="text-2xl font-bold text-white ml-2">RD$ 2,974.99</span>
-                            </div>
-                            <button class="cyber-button-small px-4 py-2">
-                                Añadir
-                            </button>
-                        </div>
-                    </div>
-                </div>
-  
-                <!-- Oferta 3 -->
-                <div class="cyber-product-card">
-                    <div class="relative">
-                        <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                            -25%
-                        </div>
-                        <img src="https://oneclickshop.com/wp-content/uploads/2022/07/g733-black-gallery-1.webp" 
-                             alt="Auriculares Gaming" 
-                             class="w-full h-48 object-contain">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold text-white">Auriculares Gaming</h3>
-                        <p class="text-gray-400 text-sm mb-4">7.1 Surround - RGB</p>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-gray-400 line-through text-sm">RD$ 5,999.99</span>
-                                <span class="text-2xl font-bold text-white ml-2">RD$ 4,499.99</span>
-                            </div>
-                            <button class="cyber-button-small px-4 py-2">
-                                Añadir
-                            </button>
-                        </div>
-                    </div>
-                </div>
-  
-                <!-- Oferta 4 -->
-                <div class="cyber-product-card">
-                    <div class="relative">
-                        <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
-                            -30%
-                        </div>
-                        <img src="https://assets.corsair.com/image/upload/f_auto,q_auto/v1/akamai/pdp/vengeance-rgb-pro/Content/Vengeance_RGB_Pro_PDP_Black_04.png" 
-                             alt="Memoria RAM" 
-                             class="w-full h-48 object-contain">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold text-white">32GB RAM DDR4</h3>
-                        <p class="text-gray-400 text-sm mb-4">3200MHz - RGB Pro</p>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <span class="text-gray-400 line-through text-sm">RD$ 11,699.42</span>
-                                <span class="text-2xl font-bold text-white ml-2">RD$ 8,189.42</span>
-                            </div>
-                            <button class="cyber-button-small px-4 py-2">
-                                Añadir
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                </a>
+                @endforeach
             </div>
         </div>
     </div>

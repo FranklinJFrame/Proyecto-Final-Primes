@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Marca;
+use App\Models\Producto;
 use App\Models\Categoria;
 
 class HomePage extends Component
@@ -12,10 +13,11 @@ class HomePage extends Component
 
     public function render()
     {
-        $marcas = Marca::where('esta_activa', 1)->get();
-        $categorias = Categoria::where('esta_activa', 1)->get();
-        
+        $ofertas = Producto::where('en_oferta', 1)->where('esta_activo', 1)->inRandomOrder()->limit(4)->get();
+        $marcas = Marca::where('esta_activa', 1)->inRandomOrder()->limit(4)->get();
+        $categorias = Categoria::where('esta_activa', 1)->inRandomOrder()->limit(4)->get();
         return view('livewire.home-page', [
+            'ofertas' => $ofertas,
             'marcas'=> $marcas,
             'categorias' => $categorias
         ])
