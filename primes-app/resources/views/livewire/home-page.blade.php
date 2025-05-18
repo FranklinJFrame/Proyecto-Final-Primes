@@ -52,6 +52,7 @@
                          @scroll.window="handleScroll()">
                         <img src="https://storage-asset.msi.com/global/picture/image/feature/vga/NVIDIA/GB203-400-Gaming-trio-white/images/kv_vga-2.png" 
                              alt="MSI Graphics Card" 
+                             loading="lazy"
                              class="w-full h-full object-contain transform transition-all duration-700 hover:scale-110 animate-float card-image parallax-image"
                              style="filter: drop-shadow(0 0 3rem rgba(59, 130, 246, 0.7));">
                         
@@ -103,11 +104,12 @@
             </h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                 @foreach($categorias as $categoria)
-                <a href="/productos?categoria={{ $categoria->slug }}" class="cyber-category-card group block hover:shadow-blue-500/30 hover:scale-105 transition-all duration-300">
+                <a href="/categoria/{{ $categoria->slug }}" class="cyber-category-card group block hover:shadow-blue-500/30 hover:scale-105 transition-all duration-300">
                     <div class="relative overflow-hidden rounded-xl">
                         <div class="flex items-center justify-center w-full h-48 bg-white shadow-inner rounded-xl p-4">
                             <img src="{{ $categoria->imagen ? url('storage/'.$categoria->imagen) : 'https://via.placeholder.com/300x200' }}" 
                                  alt="{{ $categoria->nombre }}" 
+                                 loading="lazy"
                                  class="max-h-32 max-w-full object-contain">
                         </div>
                         <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent pointer-events-none"></div>
@@ -131,11 +133,12 @@
             </h2>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
       @foreach($marcas as $marca)
-      <a href="/productos?marca={{ $marca->slug }}" class="cyber-category-card group block hover:shadow-blue-500/30 hover:scale-105 transition-all duration-300">
+      <a href="/marca/{{ $marca->slug }}" class="cyber-category-card group block hover:shadow-blue-500/30 hover:scale-105 transition-all duration-300">
         <div class="relative overflow-hidden rounded-xl">
           <div class="flex items-center justify-center w-full h-48 bg-white shadow-inner rounded-xl p-4">
               <img src="{{ $marca->imagen ? url('storage/'.$marca->imagen) : 'https://via.placeholder.com/300x200' }}" 
                    alt="{{ $marca->nombre }}" 
+                   loading="lazy"
                    class="max-h-32 max-w-full object-contain">
           </div>
           <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent pointer-events-none"></div>
@@ -173,7 +176,7 @@
                             -{{ $oferta->descuento }}%
                         </div>
                         @endif
-                        <img src="{{ (isset($oferta->imagenes[0]) && $oferta->imagenes[0]) ? url('storage/'.$oferta->imagenes[0]) : 'https://via.placeholder.com/300x200' }}" alt="{{ $oferta->nombre }}" class="w-full h-56 object-contain bg-gray-900 group-hover:scale-105 transition-transform duration-300 rounded-t-2xl">
+                        <img src="{{ (isset($oferta->imagenes[0]) && $oferta->imagenes[0]) ? url('storage/'.$oferta->imagenes[0]) : 'https://via.placeholder.com/300x200' }}" alt="{{ $oferta->nombre }}" loading="lazy" class="w-full h-56 object-contain bg-gray-900 group-hover:scale-105 transition-transform duration-300 rounded-t-2xl">
                     </div>
                     <div class="p-4 flex flex-col gap-2">
                         <h3 class="text-lg font-bold text-white group-hover:text-blue-400 transition">{{ $oferta->nombre }}</h3>
@@ -207,13 +210,13 @@
                     <a href="/products/{{ $producto->slug }}" class="block">
                         <div class="relative overflow-hidden">
                             @if($producto->id == 19)
-                                <img src="https://asset.msi.com/resize/image/global/product/product_1663742002e0bd21ebc380d0ea907a5374ca6919f8.png62405b38c58fe0f07fcef2367d8a9ba1/600.png" alt="{{ $producto->nombre }}" class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
+                                <img src="https://asset.msi.com/resize/image/global/product/product_1663742002e0bd21ebc380d0ea907a5374ca6919f8.png62405b38c58fe0f07fcef2367d8a9ba1/600.png" alt="{{ $producto->nombre }}" loading="lazy" class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
                             @elseif($producto->id == 20)
-                                <img src="https://storage-asset.msi.com/global/picture/image/feature/vga/NVIDIA/VGA-2020/image/KV-3080X.png" alt="{{ $producto->nombre }}" class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
+                                <img src="https://storage-asset.msi.com/global/picture/image/feature/vga/NVIDIA/VGA-2020/image/KV-3080X.png" alt="{{ $producto->nombre }}" loading="lazy" class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
                             @elseif($producto->id == 21)
-                                <img src="https://asset.msi.com/resize/image/global/product/product_16104439091f604cc0c971b267b62a1ce937d362d0.png62405b38c58fe0f07fcef2367d8a9ba1/600.png" alt="{{ $producto->nombre }}" class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
+                                <img src="https://asset.msi.com/resize/image/global/product/product_16104439091f604cc0c971b267b62a1ce937d362d0.png62405b38c58fe0f07fcef2367d8a9ba1/600.png" alt="{{ $producto->nombre }}" loading="lazy" class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
                             @else
-                                <img src="{{ isset($producto->imagenes[0]) ? url('storage/'.$producto->imagenes[0]) : 'https://via.placeholder.com/300x200' }}" alt="{{ $producto->nombre }}" class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
+                                <img src="{{ isset($producto->imagenes[0]) ? url('storage/'.$producto->imagenes[0]) : 'https://via.placeholder.com/300x200' }}" alt="{{ $producto->nombre }}" loading="lazy" class="w-full h-48 object-contain transform transition-transform duration-500 hover:scale-110">
                             @endif
                             <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
                         </div>

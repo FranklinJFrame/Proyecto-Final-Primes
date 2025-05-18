@@ -42,3 +42,19 @@ Route::get('/forgot', ForgotPasswordPage::class);
 Route::get('/reset', ResetPasswordPage::class);
 Route::get('/success', SuccessPage::class);
 Route::get('/cancel', CancelPage::class);
+
+Route::get('/categoria/{slug}', function ($slug) {
+    return redirect('/products?categoria=' . $slug);
+});
+
+Route::get('/categories/{slug}', function ($slug) {
+    return redirect('/products?categoria=' . $slug);
+});
+
+Route::get('/marca/{slug}', function ($slug) {
+    return redirect('/products?marca=' . $slug);
+});
+
+Route::get('/brands/{slug}', function ($slug) {
+    return redirect('/products?marca=' . $slug);
+});

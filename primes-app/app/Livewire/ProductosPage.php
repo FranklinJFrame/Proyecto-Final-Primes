@@ -62,7 +62,9 @@ class ProductosPage extends Component
     
     public function render()
     {
-        $productos = Producto::query()->where('esta_activo', 1);
+        $productos = Producto::query()
+            ->where('esta_activo', 1)
+            ->select(['id','nombre','slug','imagenes','descripcion','precio','moneda','cantidad','en_stock','en_oferta','categoria_id','marca_id']);
 
         if (!empty($this->search)) {
             $productos->where(function($query) {
@@ -104,9 +106,13 @@ class ProductosPage extends Component
         }
 
         return view('livewire.productos-page', [
-            'productos' => $productos->paginate(6),
-            'marcas' => Marca::where('esta_activa', 1)->get(['id', 'nombre', 'slug']),
-            'categorias' => Categoria::where('esta_activa', 1)->get(['id', 'nombre', 'slug']),
+            'productos' => $productos->with(['categoria:id,nombre,slug','marca:id,nombre,slug'])->paginate(12),
+            'marcas' => cache()->remember('marcas_productos', 3600, function() {
+                return Marca::where('esta_activa', 1)->get(['id', 'nombre', 'slug']);
+            }),
+            'categorias' => cache()->remember('categorias_productos', 3600, function() {
+                return Categoria::where('esta_activa', 1)->get(['id', 'nombre', 'slug']);
+            }),
             'ordenarPor' => $this->ordenarPor,
         ])->title($this->title);
     }

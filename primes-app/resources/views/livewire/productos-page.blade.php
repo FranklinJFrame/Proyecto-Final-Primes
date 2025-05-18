@@ -108,11 +108,12 @@
               </div>
             @else
               @foreach ($productos as $producto)
-                <div class="w-full px-3 mb-6 sm:w-1/2 md:w-1/3">
+                <div class="w-full px-3 mb-6 sm:w-1/2 md:w-1/3" wire:key="producto-{{ $producto->id }}">
                   <div class="cyber-product-card bg-gray-900/80 border border-blue-500/20 rounded-xl overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-blue-500/20">
                     <div class="relative bg-gray-800">
-                    <a href="/products/{{ $producto->slug }}" class="" wire:key="{{ $producto->id }}";>
-                    <img src="{{ url('storage', $producto->imagenes[0]) }}" alt="{{ $producto->nombre }}" class="object-cover w-full h-56 mx-auto transform hover:scale-105 transition-all duration-500">
+                      <a href="/products/{{ $producto->slug }}">
+                        <img src="{{ url('storage', $producto->imagenes[0]) }}" alt="{{ $producto->nombre }}" loading="lazy" class="object-cover w-full h-56 mx-auto transform hover:scale-105 transition-all duration-500">
+                      </a>
                     </div>
                     <div class="p-4">
                       <div class="flex items-center justify-between mb-2">
