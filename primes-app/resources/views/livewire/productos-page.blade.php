@@ -13,13 +13,12 @@
         <div class="w-full pr-2 lg:w-1/4 lg:block">
           <div class="p-4 mb-5 bg-gray-900/80 backdrop-blur-md border border-blue-500/20 rounded-xl">
             <h2 class="text-2xl font-bold text-white cyber-glitch-text"> Categorías</h2>
-
             <div class="w-16 pb-2 mb-6 border-b border-blue-500"></div>
             <ul>
               @foreach ($categorias as $categoria)
               <li class="mb-4" wire:key="{{ $categoria->id }}">
                 <label for="{{ $categoria->slug }}" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" wire:model.live="selected_categorias.{{ $categoria->id }}" id="{{ $categoria->slug }}" value="{{ $categoria->id }}" class="w-4 h-4 mr-2 accent-blue-500">
+                  <input type="checkbox" wire:model.live="selected_categorias" id="{{ $categoria->slug }}" value="{{ $categoria->id }}" class="w-4 h-4 mr-2 accent-blue-500">
                   <span class="text-lg">{{ $categoria->nombre }}</span>
                 </label>
               </li>
@@ -33,8 +32,8 @@
             <ul>
               @foreach ($marcas as $marca)
               <li class="mb-4" wire:key="{{ $marca->id }}">
-                <label for="{{ $marca->slug }}" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" id="{{ $marca->slug }}" value="{{ $marca->id }}" class="w-4 h-4 mr-2 accent-blue-500">
+                <label for="marca-{{ $marca->slug }}" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
+                  <input type="checkbox" wire:model.live="selected_marcas" id="marca-{{ $marca->slug }}" value="{{ $marca->id }}" class="w-4 h-4 mr-2 accent-blue-500">
                   <span class="text-lg">{{ $marca->nombre }}</span>
                 </label>
               </li>
@@ -47,14 +46,14 @@
             <div class="w-16 pb-2 mb-6 border-b border-blue-500"></div>
             <ul>
               <li class="mb-4">
-                <label for="" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" class="w-4 h-4 mr-2 accent-blue-500">
+                <label class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
+                  <input type="checkbox" wire:model.live="selected_estado" value="en_stock" class="w-4 h-4 mr-2 accent-blue-500">
                   <span class="text-lg">En Stock</span>
                 </label>
               </li>
               <li class="mb-4">
-                <label for="" class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
-                  <input type="checkbox" class="w-4 h-4 mr-2 accent-blue-500">
+                <label class="flex items-center text-gray-300 hover:text-blue-400 transition-colors">
+                  <input type="checkbox" wire:model.live="selected_estado" value="en_oferta" class="w-4 h-4 mr-2 accent-blue-500">
                   <span class="text-lg">En Oferta</span>
                 </label>
               </li>
@@ -62,28 +61,26 @@
           </div>
 
           <div class="p-4 mb-5 bg-gray-900/80 backdrop-blur-md border border-blue-500/20 rounded-xl">
-  <h2 class="text-2xl font-bold text-white cyber-glitch-text">Precio</h2>
-  <div class="w-16 pb-2 mb-6 border-b border-blue-500"></div>
-  <div>
-    <input 
-      type="range" 
-      id="priceRange" 
-      class="w-full h-1 mb-2 bg-blue-400/30 rounded-lg appearance-none cursor-pointer accent-blue-500" 
-      max="500000" 
-      value="100000" 
-      step="1000"
-    >
-    <div class="text-right text-blue-400 font-bold text-lg mb-4">
-      RD$ <span id="rangeValue">100000</span>
-    </div>
-    <div class="flex justify-between">
-      <span class="inline-block text-lg font-bold text-blue-400">RD$ 1000</span>
-      <span class="inline-block text-lg font-bold text-blue-400">RD$ 500000</span>
-    </div>
-  </div>
-</div>
-
-
+            <h2 class="text-2xl font-bold text-white cyber-glitch-text">Precio</h2>
+            <div class="w-16 pb-2 mb-6 border-b border-blue-500"></div>
+            <div class="flex flex-col gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-blue-400 font-bold">RD$</span>
+                <input type="number" wire:model.live="precio_min" min="1000" max="precio_max" class="w-20 px-2 py-1 rounded bg-gray-800 text-blue-400 border border-blue-500/30 focus:outline-none" placeholder="Mínimo">
+                <span class="text-blue-400">-</span>
+                <input type="number" wire:model.live="precio_max" min="precio_min" max="500000" class="w-20 px-2 py-1 rounded bg-gray-800 text-blue-400 border border-blue-500/30 focus:outline-none" placeholder="Máximo">
+              </div>
+              <input type="range" wire:model.live="precio_max" min="1000" max="500000" step="1000" class="w-full h-1 bg-blue-400/30 rounded-lg appearance-none cursor-pointer accent-blue-500">
+              <div class="text-right text-blue-400 font-bold text-lg mb-4">
+                RD$ <span>{{ number_format($precio_max, 0) }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="inline-block text-lg font-bold text-blue-400">RD$ 1000</span>
+                <span class="inline-block text-lg font-bold text-blue-400">RD$ 500000</span>
+              </div>
+            </div>
+          </div>
+          <button wire:click="$set('selected_categorias', []); $set('selected_marcas', []); $set('selected_estado', []); $set('precio_min', 1000); $set('precio_max', 500000);" class="w-full mt-2 py-2 bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-bold rounded-lg shadow hover:from-cyan-400 hover:to-blue-500 transition-all">Limpiar filtros</button>
         </div>
         
         <!-- Contenido principal -->
