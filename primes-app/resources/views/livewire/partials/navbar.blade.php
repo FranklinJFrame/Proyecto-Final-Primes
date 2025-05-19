@@ -24,12 +24,35 @@
                   </svg>
                   Carrito
               </a>
-              <a wire:navigate href="/login" class="flex items-center text-gray-300 hover:text-blue-500 transition-colors {{ request()->is('login*') ? 'text-blue-500' : '' }}">
-                  <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  Login
-              </a>
+              @php $user = auth()->user(); @endphp
+              @if($user)
+                  <div class="relative user-dropdown-group">
+                      <button class="flex items-center text-gray-300 hover:text-blue-500 transition-colors focus:outline-none">
+                          <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          <span class="font-semibold">{{ $user->name }}</span>
+                          <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                          </svg>
+                      </button>
+                      <div class="absolute right-0 mt-2 w-48 bg-black border border-blue-500/20 rounded-lg shadow-lg py-2 user-dropdown-menu z-50">
+                          <a href="/my-orders" class="block px-4 py-2 text-gray-300 hover:bg-blue-500/10 hover:text-blue-500 transition-colors">Mis pedidos</a>
+                          <a href="/settings/profile" class="block px-4 py-2 text-gray-300 hover:bg-blue-500/10 hover:text-blue-500 transition-colors">Cuenta</a>
+                          <form method="POST" action="/logout">
+                              @csrf
+                              <button type="submit" class="w-full text-left px-4 py-2 text-gray-300 hover:bg-blue-500/10 hover:text-blue-500 transition-colors">Logout</button>
+                          </form>
+                      </div>
+                  </div>
+              @else
+                  <a wire:navigate href="/login" class="flex items-center text-gray-300 hover:text-blue-500 transition-colors {{ request()->is('login*') ? 'text-blue-500' : '' }}">
+                      <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Login
+                  </a>
+              @endif
           </div>
 
           <!-- Botón menú móvil -->
@@ -60,15 +83,40 @@
                   </svg>
                   Carrito
               </a>
-              <a wire:navigate href="/login" class="flex items-center px-3 py-2 text-gray-300 hover:text-blue-500 transition-colors {{ request()->is('login*') ? 'text-blue-500' : '' }}">
-                  <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  Login
-              </a>
+              @if($user)
+                  <div class="border-t border-blue-500/10 my-2"></div>
+                  <div class="px-3 py-2 text-gray-300 font-semibold flex items-center">
+                      <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      {{ $user->name }}
+                  </div>
+                  <a href="/my-orders" class="block px-3 py-2 text-gray-300 hover:bg-blue-500/10 hover:text-blue-500 transition-colors">Mis pedidos</a>
+                  <a href="/settings/profile" class="block px-3 py-2 text-gray-300 hover:bg-blue-500/10 hover:text-blue-500 transition-colors">Cuenta</a>
+                  <form method="POST" action="/logout">
+                      @csrf
+                      <button type="submit" class="w-full text-left px-3 py-2 text-gray-300 hover:bg-blue-500/10 hover:text-blue-500 transition-colors">Logout</button>
+                  </form>
+              @else
+                  <a wire:navigate href="/login" class="flex items-center px-3 py-2 text-gray-300 hover:text-blue-500 transition-colors {{ request()->is('login*') ? 'text-blue-500' : '' }}">
+                      <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Login
+                  </a>
+              @endif
           </div>
       </div>
       <script src="https://unpkg.com/preline@latest/dist/preline.js"></script>
   </nav>
+  <style>
+      .user-dropdown-group:hover .user-dropdown-menu,
+      .user-dropdown-group:focus-within .user-dropdown-menu {
+          display: block !important;
+      }
+      .user-dropdown-menu {
+          display: none;
+      }
+  </style>
 </header>
 

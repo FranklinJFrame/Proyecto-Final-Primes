@@ -44,6 +44,8 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
+        $user->sendEmailVerificationNotification();
+
         Auth::login($user);
 
         return to_route('dashboard');

@@ -10,8 +10,8 @@
 
     <body class="">
         <main>
-            {{$slot}}
-</main>
+            @yield('content')
+        </main>
 
         @livewireStyles
     </body>

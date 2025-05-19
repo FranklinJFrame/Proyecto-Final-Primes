@@ -38,7 +38,7 @@ Route::get('/my-orders', MisPedidosPage::class);
 Route::get('/my-orders/{order}', MiPedidosDetallePage::class);
 Route::get('/login', LoginPage::class);
 Route::get('/register', RegisterPage::class);
-Route::get('/forgot', ForgotPasswordPage::class);
+Route::get('/forgot-password', ForgotPasswordPage::class);
 Route::get('/reset', ResetPasswordPage::class);
 Route::get('/success', SuccessPage::class);
 Route::get('/cancel', CancelPage::class);

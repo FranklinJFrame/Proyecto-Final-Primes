@@ -213,6 +213,25 @@
                       @enderror
                   </div>
 
+                  <!-- Confirmar contraseña -->
+                  <div class="space-y-2">
+                      <label class="block text-sm font-medium text-gray-300 mb-1 ml-1">
+                          Confirmar contraseña
+                      </label>
+                      <div class="relative group">
+                          <input wire:model="password_confirmation" type="password" 
+                                 class="tech-input w-full px-5 py-3 rounded-xl text-gray-200 placeholder-gray-500 focus:outline-none
+                                        transition-all duration-300 group-hover:border-blue-400"
+                                 placeholder="Repite tu contraseña">
+                          <div class="absolute inset-0 rounded-xl transition-opacity duration-300 opacity-0 group-hover:opacity-100"
+                               style="background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 100%);">
+                          </div>
+                      </div>
+                      @error('password_confirmation')
+                          <p class="text-red-400 text-xs mt-1">{{ $message }}</p>
+                      @enderror
+                  </div>
+
                   <!-- Botón de registro -->
                   <button type="submit" 
                           class="glow-effect w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600

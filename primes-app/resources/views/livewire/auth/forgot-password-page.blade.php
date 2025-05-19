@@ -118,6 +118,12 @@
                   <p class="text-gray-400 text-sm">Ingresa tu correo electrónico y te enviaremos las instrucciones para restablecerla.</p>
               </div>
 
+              @if($status)
+                  <div class="bg-blue-500/90 text-white text-center rounded-lg py-4 px-6 mb-6 text-lg font-semibold shadow animate-fade-in">
+                      {{ $status }}
+                  </div>
+              @endif
+
               <form wire:submit="forgotPassword" class="space-y-6">
                   <!-- Email -->
                   <div class="space-y-2">

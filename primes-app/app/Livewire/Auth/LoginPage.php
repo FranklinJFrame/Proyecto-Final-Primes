@@ -29,7 +29,7 @@ class LoginPage extends Component
             'password' => $this->password,
         ], $this->remember)) {
             session()->regenerate();
-            return redirect()->intended('/'); // Cambia '/' por la ruta deseada tras login
+            return redirect('/'); // Redirige a la homepage tras login
         }
 
         $this->addError('email', 'Las credenciales no son válidas.');
