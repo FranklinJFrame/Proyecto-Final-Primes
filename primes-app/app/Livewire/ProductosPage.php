@@ -106,7 +106,7 @@ class ProductosPage extends Component
         }
 
         return view('livewire.productos-page', [
-            'productos' => $productos->with(['categoria:id,nombre,slug','marca:id,nombre,slug'])->paginate(12),
+            'productos' => $productos->with(['categoria:id,nombre,slug','marca:id,nombre,slug'])->paginate(6),
             'marcas' => cache()->remember('marcas_productos', 3600, function() {
                 return Marca::where('esta_activa', 1)->get(['id', 'nombre', 'slug']);
             }),
