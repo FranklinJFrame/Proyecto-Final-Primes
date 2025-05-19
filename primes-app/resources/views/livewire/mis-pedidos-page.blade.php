@@ -17,66 +17,45 @@
           </tr>
         </thead>
         <tbody>
+          @forelse($pedidos as $pedido)
           <tr class="odd:bg-slate-900 even:bg-slate-800 hover:bg-blue-900/20 transition-colors">
-            <td class="px-6 py-4 whitespace-nowrap text-base font-semibold text-blue-200">20</td>
-            <td class="px-6 py-4 whitespace-nowrap text-base text-blue-100">18-02-2024</td>
+            <td class="px-6 py-4 whitespace-nowrap text-base font-semibold text-blue-200">{{ $pedido->id }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-base text-blue-100">{{ $pedido->created_at->format('d-m-Y') }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-base">
-              <span class="inline-flex items-center gap-1 bg-orange-500/90 py-1 px-3 rounded-full text-white shadow text-xs font-bold">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" /></svg>
-                Pendiente
+              <span class="inline-flex items-center gap-1 {{ $pedido->estado === 'entregado' ? 'bg-green-600' : ($pedido->estado === 'cancelado' ? 'bg-red-600' : 'bg-orange-500/90') }} py-1 px-3 rounded-full text-white shadow text-xs font-bold">
+                @if($pedido->estado === 'entregado')
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                  Entregado
+                @elseif($pedido->estado === 'cancelado')
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                  Cancelado
+                @else
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" /></svg>
+                  {{ ucfirst($pedido->estado) }}
+                @endif
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-base">
-              <span class="inline-flex items-center gap-1 bg-green-500/90 py-1 px-3 rounded-full text-white shadow text-xs font-bold">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                Pagado
+              <span class="inline-flex items-center gap-1 {{ $pedido->estado_pago === 'pagado' ? 'bg-green-500/90' : 'bg-orange-500/90' }} py-1 px-3 rounded-full text-white shadow text-xs font-bold">
+                @if($pedido->estado_pago === 'pagado')
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                  Pagado
+                @else
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" /></svg>
+                  Pendiente
+                @endif
               </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-base text-blue-100 font-bold">$12,000.00</td>
+            <td class="px-6 py-4 whitespace-nowrap text-base text-blue-100 font-bold">RD$ {{ number_format($pedido->total_general, 2) }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-right text-base font-medium">
-              <a href="/my-orders/{order}" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-5 rounded-xl shadow-lg hover:from-blue-500 hover:to-purple-500 transition-all font-bold">Ver Detalles</a>
+              <a href="/my-orders/{{ $pedido->id }}" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-5 rounded-xl shadow-lg hover:from-blue-500 hover:to-purple-500 transition-all font-bold">Ver Detalles</a>
             </td>
           </tr>
-          <tr class="odd:bg-slate-900 even:bg-slate-800 hover:bg-blue-900/20 transition-colors">
-            <td class="px-6 py-4 whitespace-nowrap text-base font-semibold text-blue-200">20</td>
-            <td class="px-6 py-4 whitespace-nowrap text-base text-blue-100">18-02-2024</td>
-            <td class="px-6 py-4 whitespace-nowrap text-base">
-              <span class="inline-flex items-center gap-1 bg-orange-500/90 py-1 px-3 rounded-full text-white shadow text-xs font-bold">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" /></svg>
-                Pendiente
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-base">
-              <span class="inline-flex items-center gap-1 bg-green-500/90 py-1 px-3 rounded-full text-white shadow text-xs font-bold">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                Pagado
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-base text-blue-100 font-bold">$12,000.00</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-base font-medium">
-              <a href="/my-orders/{order}" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-5 rounded-xl shadow-lg hover:from-blue-500 hover:to-purple-500 transition-all font-bold">Ver Detalles</a>
-            </td>
+          @empty
+          <tr>
+            <td colspan="6" class="text-center text-blue-400 py-8">No tienes pedidos aún.</td>
           </tr>
-          <tr class="odd:bg-slate-900 even:bg-slate-800 hover:bg-blue-900/20 transition-colors">
-            <td class="px-6 py-4 whitespace-nowrap text-base font-semibold text-blue-200">20</td>
-            <td class="px-6 py-4 whitespace-nowrap text-base text-blue-100">18-02-2024</td>
-            <td class="px-6 py-4 whitespace-nowrap text-base">
-              <span class="inline-flex items-center gap-1 bg-orange-500/90 py-1 px-3 rounded-full text-white shadow text-xs font-bold">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" /></svg>
-                Pendiente
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-base">
-              <span class="inline-flex items-center gap-1 bg-green-500/90 py-1 px-3 rounded-full text-white shadow text-xs font-bold">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                Pagado
-              </span>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-base text-blue-100 font-bold">$12,000.00</td>
-            <td class="px-6 py-4 whitespace-nowrap text-right text-base font-medium">
-              <a href="/my-orders/{order}" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-5 rounded-xl shadow-lg hover:from-blue-500 hover:to-purple-500 transition-all font-bold">Ver Detalles</a>
-            </td>
-          </tr>
+          @endforelse
         </tbody>
       </table>
     </div>

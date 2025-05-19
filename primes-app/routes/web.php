@@ -16,6 +16,8 @@ use App\Livewire\CancelPage;
 use App\Livewire\SuccessPage;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\Admin\PedidoAdminController;
+use App\Http\Controllers\FacturaController;
 //primes-app\app\Livewire\HomePage.php
 Route::get('/', HomePage::class);
 
@@ -57,4 +59,20 @@ Route::get('/marca/{slug}', function ($slug) {
 
 Route::get('/brands/{slug}', function ($slug) {
     return redirect('/products?marca=' . $slug);
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/carrito', [\App\Http\Controllers\CarritoController::class, 'index'])->name('carrito.index');
+    Route::post('/carrito/add', [\App\Http\Controllers\CarritoController::class, 'add'])->name('carrito.add');
+    Route::post('/carrito/remove', [\App\Http\Controllers\CarritoController::class, 'remove'])->name('carrito.remove');
+    Route::post('/carrito/increment', [\App\Http\Controllers\CarritoController::class, 'increment'])->name('carrito.increment');
+    Route::post('/carrito/decrement', [\App\Http\Controllers\CarritoController::class, 'decrement'])->name('carrito.decrement');
+    Route::post('/carrito/clear', [\App\Http\Controllers\CarritoController::class, 'clear'])->name('carrito.clear');
+});
+
+Route::get('/factura/pdf/{pedido}', [FacturaController::class, 'descargar'])->name('factura.pdf');
+
+// Admin pedidos detalle y factura
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/pedidos/{pedido}', [PedidoAdminController::class, 'show'])->name('admin.pedidos.show');
 });

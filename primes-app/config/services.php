@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'secret' => env('sk_test_51RQKY5RJeAKBJUGbTBo1uY33l84kHNeWITNYESj8x0bRlHHWhR9Gx2cHj1r8H0uGzjgVP0KTthpYgSoDTBjUCJjl00LrmBz85d'),
+    ],
+
 ];

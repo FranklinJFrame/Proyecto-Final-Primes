@@ -1,102 +1,107 @@
-<div class="w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 mx-auto">
-<section class="flex items-center font-poppins dark:bg-gray-800 ">
-  <div class="justify-center flex-1 max-w-6xl px-4 py-4 mx-auto bg-white border rounded-md dark:border-gray-900 dark:bg-gray-900 md:py-10 md:px-10">
-    <div>
-      <h1 class="px-4 mb-8 text-2xl font-semibold tracking-wide text-gray-700 dark:text-gray-300 ">
-        ¡Gracias! Su orden ha sido recibida</h1>
-      <div class="flex border-b border-gray-200 dark:border-gray-700  items-stretch justify-start w-full h-full px-4 mb-8 md:flex-row xl:flex-col md:space-x-6 lg:space-x-8 xl:space-x-0">
-        <div class="flex items-start justify-start flex-shrink-0">
-          <div class="flex items-center justify-center w-full pb-6 space-x-4 md:justify-start">
-            <div class="flex flex-col items-start justify-start space-y-2">
-              <p class="text-lg font-semibold leading-4 text-left text-gray-800 dark:text-gray-400">
-                Cielo Schimmel</p>
-              <p class="text-sm leading-4 text-gray-600 dark:text-gray-400">71582 Schmitt Springs</p>
-              <p class="text-sm leading-4 text-gray-600 dark:text-gray-400">Castro Valley, Delaware, 53476-0454</p>
-              <p class="text-sm leading-4 cursor-pointer dark:text-gray-400">Phone: 587-019-6103</p>
+<div class="w-full max-w-4xl py-10 px-4 sm:px-6 lg:px-8 mx-auto">
+    <section class="flex items-center font-poppins dark:bg-gray-800">
+        <div class="flex-1 max-w-4xl px-6 py-8 mx-auto bg-white border rounded-2xl shadow-lg dark:border-gray-900 dark:bg-gray-900">
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-3xl font-bold tracking-wide text-blue-700 dark:text-blue-300 flex items-center gap-2">
+                    <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" /></svg>
+                    ¡Gracias! Su orden ha sido recibida
+                </h1>
+                <img src="/logo-tecnobox.png" alt="TECNOBOX" class="h-10">
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="flex flex-wrap items-center pb-4 mb-10 border-b border-gray-200 dark:border-gray-700">
-        <div class="w-full px-4 mb-4 md:w-1/4">
-          <p class="mb-2 text-sm leading-5 text-gray-600 dark:text-gray-400 ">
-            Número de pedido: </p>
-          <p class="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">
-            29</p>
-        </div>
-        <div class="w-full px-4 mb-4 md:w-1/4">
-          <p class="mb-2 text-sm leading-5 text-gray-600 dark:text-gray-400 ">
-            Fecha: </p>
-          <p class="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">
-            17-02-2024</p>
-        </div>
-        <div class="w-full px-4 mb-4 md:w-1/4">
-          <p class="mb-2 text-sm font-medium leading-5 text-gray-800 dark:text-gray-400 ">
-            Total: </p>
-          <p class="text-base font-semibold leading-4 text-blue-600 dark:text-gray-400">
-            ₹157,495.00</p>
-        </div>
-        <div class="w-full px-4 mb-4 md:w-1/4">
-          <p class="mb-2 text-sm leading-5 text-gray-600 dark:text-gray-400 ">
-            Método de pago: </p>
-          <p class="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400 ">
-            Cash on Delivery </p>
-        </div>
-      </div>
-      <div class="px-4 mb-10">
-        <div class="flex flex-col items-stretch justify-center w-full space-y-4 md:flex-row md:space-y-0 md:space-x-8">
-          <div class="flex flex-col w-full space-y-6 ">
-            <h2 class="mb-2 text-xl font-semibold text-gray-700 dark:text-gray-400">Detalles del pedido</h2>
-            <div class="flex flex-col items-center justify-center w-full pb-4 space-y-4 border-b border-gray-200 dark:border-gray-700">
-              <div class="flex justify-between w-full">
-                <p class="text-base leading-4 text-gray-800 dark:text-gray-400">Subtotal</p>
-                <p class="text-base leading-4 text-gray-600 dark:text-gray-400">₹157,495.00</p>
-              </div>
-              <div class="flex items-center justify-between w-full">
-                <p class="text-base leading-4 text-gray-800 dark:text-gray-400">Descuento
-                </p>
-                <p class="text-base leading-4 text-gray-600 dark:text-gray-400">00</p>
-              </div>
-              <div class="flex items-center justify-between w-full">
-                <p class="text-base leading-4 text-gray-800 dark:text-gray-400">Envío</p>
-                <p class="text-base leading-4 text-gray-600 dark:text-gray-400">00</p>
-              </div>
-            </div>
-            <div class="flex items-center justify-between w-full">
-              <p class="text-base font-semibold leading-4 text-gray-800 dark:text-gray-400">Total</p>
-              <p class="text-base font-semibold leading-4 text-gray-600 dark:text-gray-400">₹157,495.00</p>
-            </div>
-          </div>
-          <div class="flex flex-col w-full px-2 space-y-4 md:px-8 ">
-            <h2 class="mb-2 text-xl font-semibold text-gray-700 dark:text-gray-400">Envío</h2>
-            <div class="flex items-start justify-between w-full">
-              <div class="flex items-center justify-center space-x-2">
-                <div class="w-8 h-8">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="w-6 h-6 text-blue-600 dark:text-blue-400 bi bi-truck" viewBox="0 0 16 16">
-                    <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z">
-                    </path>
-                  </svg>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Datos del Cliente</h2>
+                    <div class="text-gray-800 dark:text-gray-400">
+                        <div class="font-bold">{{ $pedido->nombre }} {{ $pedido->apellido }}</div>
+                        <div>{{ $pedido->direccion_calle }}</div>
+                        <div>{{ $pedido->ciudad }}, {{ $pedido->estado_direccion }}, {{ $pedido->codigo_postal }}</div>
+                        <div>Tel: {{ $pedido->telefono }}</div>
+                    </div>
                 </div>
-                <div class="flex flex-col items-center justify-start">
-                  <p class="text-lg font-semibold leading-6 text-gray-800 dark:text-gray-400">
-                    Delivery<br><span class="text-sm font-normal">Delivery en 24 Horas</span>
-                  </p>
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Datos de la Orden</h2>
+                    <div class="text-gray-800 dark:text-gray-400">
+                        <div><span class="font-semibold">N° Pedido:</span> #{{ $pedido->id }}</div>
+                        <div><span class="font-semibold">Fecha:</span> {{ $pedido->created_at->format('d/m/Y H:i') }}</div>
+                        <div><span class="font-semibold">Método de pago:</span> 
+                            {{ strtoupper($pedido->metodo_pago) }}
+                            @if($pedido->metodo_pago === 'stripe' || $pedido->metodo_pago === 'tarjeta')
+                                <span class="ml-2">(**** **** **** {{ $pedido->ultimos4 ?? '1234' }})</span>
+                            @endif
+                        </div>
+                        <div><span class="font-semibold">Estado:</span> {{ ucfirst($pedido->estado_pago) }}</div>
+                    </div>
                 </div>
-              </div>
-              <p class="text-lg font-semibold leading-6 text-gray-800 dark:text-gray-400">00</p>
             </div>
-          </div>
+            <div class="mb-8">
+                <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">Detalle de Productos</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white dark:bg-gray-900 rounded-xl shadow">
+                        <thead>
+                            <tr class="bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-300">
+                                <th class="p-3 text-left">Producto</th>
+                                <th class="p-3 text-left">Cantidad</th>
+                                <th class="p-3 text-left">Precio unitario</th>
+                                <th class="p-3 text-left">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($pedido->productos as $item)
+                                <tr class="border-b border-gray-100 dark:border-gray-800">
+                                    <td class="flex items-center gap-3 p-3">
+                                        <img src="{{
+                                            $item->producto && $item->producto->imagenes && is_array($item->producto->imagenes) && count($item->producto->imagenes) > 0
+                                                ? (filter_var($item->producto->imagenes[0], FILTER_VALIDATE_URL)
+                                                    ? $item->producto->imagenes[0]
+                                                    : asset('storage/products/' . $item->producto->imagenes[0]))
+                                                : 'https://placehold.co/60x60/png?text=Sin+Imagen'
+                                        }}" class="w-12 h-12 object-contain rounded bg-gray-100 border border-gray-200" alt="Imagen del producto">
+                                        <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $item->producto->nombre ?? 'Producto eliminado' }}</span>
+                                    </td>
+                                    <td class="p-3">{{ $item->cantidad }}</td>
+                                    <td class="p-3">RD$ {{ number_format($item->precio_unitario, 2) }}</td>
+                                    <td class="p-3">RD$ {{ number_format($item->precio_total, 2) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div></div>
+                <div class="bg-blue-50 dark:bg-gray-800 rounded-xl p-6 flex flex-col gap-2">
+                    <div class="flex justify-between text-base">
+                        <span class="text-gray-600">Subtotal</span>
+                        <span class="text-blue-800 font-semibold">RD$ {{ number_format($pedido->productos->sum('precio_total') - $pedido->costo_envio - round(($pedido->productos->sum('precio_total') - $pedido->costo_envio) * 0.18, 2), 2) }}</span>
+                    </div>
+                    <div class="flex justify-between text-base">
+                        <span class="text-gray-600">ITBIS (18%)</span>
+                        <span class="text-blue-800 font-semibold">RD$ {{ number_format(round(($pedido->productos->sum('precio_total') - $pedido->costo_envio) * 0.18, 2), 2) }}</span>
+                    </div>
+                    <div class="flex justify-between text-base">
+                        <span class="text-gray-600">Envío</span>
+                        <span class="text-blue-800 font-semibold">RD$ {{ number_format($pedido->costo_envio, 2) }}</span>
+                    </div>
+                    <div class="border-t border-blue-200 my-2"></div>
+                    <div class="flex justify-between text-lg font-bold">
+                        <span class="text-blue-800">Total</span>
+                        <span class="text-blue-600">RD$ {{ number_format($pedido->productos->sum('precio_total'), 2) }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-4 mt-8">
+                <div class="flex gap-2">
+                    <a href="/products" class="px-6 py-3 text-blue-600 border border-blue-600 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition">Volver a la tienda</a>
+                    <a href="/my-orders" class="px-6 py-3 bg-blue-600 rounded-lg text-white font-semibold hover:bg-blue-700 transition">Ver mis pedidos</a>
+                </div>
+                <form method="POST" action="{{ route('factura.pdf', $pedido->id) }}">
+                    @csrf
+                    <button type="submit" class="px-6 py-3 bg-green-600 rounded-lg text-white font-semibold hover:bg-green-700 transition flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                        Descargar PDF
+                    </button>
+                </form>
+            </div>
         </div>
-      </div>
-      <div class="flex items-center justify-start gap-4 px-4 mt-6 ">
-        <a href="/products" class="w-full text-center px-4 py-2 text-blue-500 border border-blue-500 rounded-md md:w-auto hover:text-white hover:bg-blue-600 dark:border-gray-700 dark:hover:bg-gray-700 dark:text-gray-300">
-          Volver a la tienda
-        </a>
-        <a href="/orders" class="w-full text-center px-4 py-2 bg-blue-500 rounded-md text-gray-50 md:w-auto dark:text-gray-300 hover:bg-blue-600 dark:hover:bg-gray-700 dark:bg-gray-800">
-            Ver mis pedidos
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 </div>

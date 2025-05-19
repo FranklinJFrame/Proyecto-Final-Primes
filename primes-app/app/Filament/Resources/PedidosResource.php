@@ -34,6 +34,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Actions\Action;
 
 class PedidosResource extends Resource
 {
@@ -376,6 +377,12 @@ class PedidosResource extends Resource
                     })
             ])
             ->actions([
+                Action::make('ver_factura')
+                    ->label('Descargar PDF')
+                    ->icon('heroicon-o-document-text')
+                    ->url(fn ($record) => route('factura.pdf', $record->id))
+                    ->openUrlInNewTab()
+                    ->color('primary'),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
