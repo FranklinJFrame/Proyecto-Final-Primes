@@ -1,0 +1,46 @@
+## Paso 1: Abrir PowerShell como Administrador
+1. Presiona `Windows + X`
+2. Selecciona "Windows PowerShell (Administrador)" o "Terminal (Administrador)"
+
+## Paso 2: Navegar al proyecto
+```powershell
+cd TU_RUTA_AL_PROYECTO\primes-app
+```
+(Reemplaza TU_RUTA_AL_PROYECTO con la ruta donde tienen clonado el repositorio)
+
+## Paso 3: Eliminar el enlace simbólico existente (si existe)
+```powershell
+# Si el archivo storage existe en public, eliminarlo
+if (Test-Path public\storage) {
+    Remove-Item public\storage -Force
+}
+```
+
+## Paso 4: Crear el enlace simbólico nuevo
+```powershell
+php artisan storage:link
+```
+
+## Paso 5: Verificar permisos
+1. Asegurarse que la carpeta `storage` tenga los permisos correctos:
+   - Click derecho en la carpeta `storage`
+   - Propiedades
+   - Seguridad
+   - Editar
+   - Asegurarse que el usuario actual tenga permisos de lectura y escritura
+
+## Paso 6: Verificar estructura de carpetas
+Asegurarse que existan estas carpetas:
+```
+storage/app/public/
+├── products/
+├── marcas/
+├── categorias/
+```
+
+## Paso 7: Limpiar caché
+```powershell
+php artisan cache:clear
+php artisan config:clear
+php artisan view:clear
+```
