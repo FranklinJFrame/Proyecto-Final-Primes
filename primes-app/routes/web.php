@@ -69,10 +69,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/carrito/decrement', [\App\Http\Controllers\CarritoController::class, 'decrement'])->name('carrito.decrement');
     Route::post('/carrito/clear', [\App\Http\Controllers\CarritoController::class, 'clear'])->name('carrito.clear');
     
-    // Cuenta del usuario - Versión Cyber
-    Route::get('/mi-cuenta', App\Livewire\MiCuentaPage::class)->name('cuenta');
+    // Rutas de cuenta de usuario
+    Route::get('/mi-cuenta', \App\Livewire\MiCuentaPage::class)->name('cuenta');
+    Route::get('/mis-pedidos', \App\Livewire\MisPedidosPage::class)->name('pedidos');
+    Route::get('/mis-pedidos/{order}', \App\Livewire\MiPedidosDetallePage::class)->name('pedidos.detalle');
     
-    // Redireccionar /settings/profile a la versión cyber
+    // Redirecciones de rutas en inglés a español
+    Route::get('/my-orders', function() {
+        return redirect('/mis-pedidos');
+    });
+    Route::get('/my-orders/{order}', function($order) {
+        return redirect("/mis-pedidos/$order");
+    });
     Route::get('/settings/profile', function() {
         return redirect('/mi-cuenta');
     });
@@ -83,4 +91,8 @@ Route::get('/factura/pdf/{pedido}', [FacturaController::class, 'descargar'])->na
 // Admin pedidos detalle y factura
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/pedidos/{pedido}', [PedidoAdminController::class, 'show'])->name('admin.pedidos.show');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/factura/{id}', [App\Http\Controllers\FacturaController::class, 'generarPDF'])->name('factura.pdf');
 });

@@ -113,7 +113,9 @@
             <tr>
               <td class="py-4">
                 <div class="flex items-center">
-                  <img class="h-16 w-16 mr-4" src="{{ $item->producto->imagenes ? asset('storage/products/' . $item->producto->imagenes[0]) : 'https://via.placeholder.com/80' }}" alt="Product image">
+                  <img class="h-16 w-16 mr-4 object-cover rounded-lg bg-gray-100" 
+                    src="{{ url('storage/products/' . ($item->producto->imagenes[0] ?? '')) }}" 
+                    alt="{{ $item->producto->nombre }}">
                   <span class="font-semibold">{{ $item->producto->nombre }}</span>
                 </div>
               </td>
@@ -149,22 +151,48 @@
         <h2 class="text-lg font-semibold mb-4">Resumen</h2>
         <div class="flex justify-between mb-2">
           <span>Subtotal</span>
-          <span>RD$ {{ number_format($pedido->total_general, 2) }}</span>
+          <span>RD$ {{ number_format($pedido->productos->sum('precio_total'), 2) }}</span>
         </div>
         <div class="flex justify-between mb-2">
-          <span>Impuestos</span>
-          <span>RD$ 0.00</span>
+          <span>ITBIS (18%)</span>
+          <span>RD$ {{ number_format($pedido->productos->sum('precio_total') * 0.18, 2) }}</span>
         </div>
         <div class="flex justify-between mb-2">
           <span>Envío</span>
-          <span>RD$ 0.00</span>
+          <span>RD$ {{ number_format($pedido->costo_envio ?? 0, 2) }}</span>
         </div>
         <hr class="my-2">
         <div class="flex justify-between mb-2">
           <span class="font-semibold">Total</span>
-          <span class="font-semibold">RD$ {{ number_format($pedido->total_general, 2) }}</span>
+          <span class="font-semibold">RD$ {{ number_format(
+            $pedido->productos->sum('precio_total') + 
+            ($pedido->productos->sum('precio_total') * 0.18) + 
+            ($pedido->costo_envio ?? 0), 
+            2) 
+          }}</span>
         </div>
+        <hr class="my-4">
+        <form method="POST" action="{{ route('factura.pdf', $pedido->id) }}" class="w-full">
+          @csrf
+          <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Descargar Factura
+          </button>
+        </form>
       </div>
+
+      <!-- Dirección de envío -->
+      <div class="bg-white rounded-lg shadow-md p-6 mt-4">
+        <h2 class="text-lg font-semibold mb-4">Dirección de Envío</h2>
+        @if($pedido->direccion)
+          <div class="space-y-2 text-gray-600">
+            <p class="font-medium text-gray-800">{{ $pedido->user->name }}</p>
+            <p>{{ $pedido->direccion->direccion_calle }}</p>
+            <p>{{ $pedido->direccion->ciudad }}, {{ $pedido->direccion->estado }}</p>
+            <p>{{ $pedido->direccion->codigo_postal }}</p>
+            <div class="pt-2 border-t border-gray-200 mt-2">
     </div>
   </div>
 </div>

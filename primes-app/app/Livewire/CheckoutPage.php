@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Direccion;
 use App\Models\Pedidos;
 use App\Models\PedidoProducto;
@@ -25,15 +26,14 @@ class CheckoutPage extends Component
     public $ciudad = '';
     public $estado = '';
     public $codigo_postal = '';
-    public $metodo_pago = 'efectivo';
     public $carrito = [];
     public $subtotal = 0;
     public $itbis = 0;
     public $envio = 0;
     public $total = 0;
-    public $stripeCard = false;
     public $stripeError = '';
     public $editando_direccion = false;
+    public $stripeIntent = null;
 
     public function mount()
     {
@@ -45,114 +45,155 @@ class CheckoutPage extends Component
         $cantidad_total = $this->carrito->sum('cantidad');
         $this->envio = $cantidad_total * 700;
         $this->total = $this->subtotal + $this->itbis + $this->envio;
+        
         if ($this->direcciones->count()) {
             $this->direccion_id = $this->direcciones->first()->id;
         } else {
             $this->crear_nueva = true;
         }
+
+        // Crear intención de pago al cargar
+        $this->createPaymentIntent();
     }
 
-    public function updatedDireccionId($value)
+    protected function resetDireccionFields()
     {
-        $this->crear_nueva = ($value === 'nueva');
-    }
-
-    public function updatedMetodoPago($value)
-    {
-        $this->stripeCard = ($value === 'stripe');
+        $this->nombre = '';
+        $this->apellido = '';
+        $this->telefono = '';
+        $this->direccion_calle = '';
+        $this->ciudad = '';
+        $this->estado = '';
+        $this->codigo_postal = '';
     }
 
     public function saveDireccion()
     {
         $this->validate([
-            'nombre' => 'required',
-            'apellido' => 'required',
-            'telefono' => 'required',
-            'direccion_calle' => 'required',
+            'nombre' => 'required|min:2',
+            'apellido' => 'required|min:2',
+            'telefono' => 'required|min:10',
+            'direccion_calle' => 'required|min:5',
             'ciudad' => 'required',
             'estado' => 'required',
             'codigo_postal' => 'required',
+        ], [
+            'required' => 'Este campo es obligatorio',
+            'min' => 'Este campo debe tener al menos :min caracteres',
         ]);
-        $dir = Auth::user()->direccions()->create([
-            'nombre' => $this->nombre,
-            'apellido' => $this->apellido,
-            'telefono' => $this->telefono,
-            'direccion_calle' => $this->direccion_calle,
-            'ciudad' => $this->ciudad,
-            'estado' => $this->estado,
-            'codigo_postal' => $this->codigo_postal,
-        ]);
+
+        if ($this->editando_direccion && $this->direccion_id) {
+            $direccion = Auth::user()->direccions()->find($this->direccion_id);
+            if ($direccion) {
+                $direccion->update([
+                    'nombre' => $this->nombre,
+                    'apellido' => $this->apellido,
+                    'telefono' => $this->telefono,
+                    'direccion_calle' => $this->direccion_calle,
+                    'ciudad' => $this->ciudad,
+                    'estado' => $this->estado,
+                    'codigo_postal' => $this->codigo_postal,
+                ]);
+            }
+        } else {
+            $dir = Auth::user()->direccions()->create([
+                'nombre' => $this->nombre,
+                'apellido' => $this->apellido,
+                'telefono' => $this->telefono,
+                'direccion_calle' => $this->direccion_calle,
+                'ciudad' => $this->ciudad,
+                'estado' => $this->estado,
+                'codigo_postal' => $this->codigo_postal,
+            ]);
+            $this->direccion_id = $dir->id;
+        }
+
         $this->direcciones = Auth::user()->direccions()->get();
-        $this->direccion_id = $dir->id;
         $this->crear_nueva = false;
+        $this->editando_direccion = false;
+        $this->resetDireccionFields();
     }
 
-    public function realizarPagoStripe($stripeToken)
+    protected function createPaymentIntent()
     {
         try {
             Stripe::setApiKey(config('services.stripe.secret'));
-            $intent = PaymentIntent::create([
-                'amount' => intval($this->total * 100), // Stripe usa centavos
+            $this->stripeIntent = PaymentIntent::create([
+                'amount' => intval($this->total * 100),
                 'currency' => 'dop',
                 'payment_method_types' => ['card'],
                 'description' => 'Pago en TECNOBOX',
+                'metadata' => [
+                    'user_id' => Auth::id(),
+                    'total_items' => $this->carrito->sum('cantidad'),
+                ],
             ]);
-            return $intent;
         } catch (\Exception $e) {
             $this->stripeError = $e->getMessage();
-            return null;
         }
     }
 
-    public function realizarPedido($stripeToken = null)
+    public function realizarPedido()
     {
         $user = Auth::user();
+        
         if ($this->crear_nueva) {
             $this->saveDireccion();
         }
+
         $direccion = $user->direccions()->find($this->direccion_id);
         if (!$direccion) {
-            session()->flash('error', 'Selecciona o crea una dirección válida.');
+            session()->flash('error', 'Por favor, selecciona o crea una dirección válida.');
             return;
         }
+
         if ($this->carrito->isEmpty()) {
             session()->flash('error', 'Tu carrito está vacío.');
             return;
         }
-        $estado_pago = 'pendiente';
-        if ($this->metodo_pago === 'stripe' || $this->metodo_pago === 'tarjeta') {
-            // Simulación: siempre marcar como pagado
-            $estado_pago = 'pagado';
-        }
-        $pedido = Pedidos::create([
-            'user_id' => $user->id,
-            'total_general' => $this->total,
-            'metodo_pago' => $this->metodo_pago,
-            'estado_pago' => $estado_pago,
-            'estado' => 'nuevo',
-            'moneda' => 'DOP',
-            'costo_envio' => $this->envio,
-            'metodo_envio' => 'estandar',
-            'notas' => null,
-            'nombre' => $direccion->nombre,
-            'apellido' => $direccion->apellido,
-            'telefono' => $direccion->telefono,
-            'direccion_calle' => $direccion->direccion_calle,
-            'ciudad' => $direccion->ciudad,
-            'estado_direccion' => $direccion->estado,
-            'codigo_postal' => $direccion->codigo_postal,
-        ]);
-        foreach ($this->carrito as $item) {
-            PedidoProducto::create([
-                'pedido_id' => $pedido->id,
-                'producto_id' => $item->producto_id,
-                'cantidad' => $item->cantidad,
-                'precio_unitario' => $item->precio_unitario,
-                'precio_total' => $item->precio_unitario * $item->cantidad,
+
+        try {
+            // Confirmar el pago con Stripe
+            if (!$this->stripeIntent) {
+                $this->createPaymentIntent();
+            }
+
+            $pedido = Pedidos::create([
+                'user_id' => $user->id,
+                'total_general' => $this->total,
+                'metodo_pago' => 'stripe',
+                'estado_pago' => 'pagado',
+                'estado' => 'nuevo',
+                'moneda' => 'DOP',
+                'costo_envio' => $this->envio,
+                'metodo_envio' => 'estandar',
+                'notas' => null,
+                'nombre' => $direccion->nombre,
+                'apellido' => $direccion->apellido,
+                'telefono' => $direccion->telefono,
+                'direccion_calle' => $direccion->direccion_calle,
+                'ciudad' => $direccion->ciudad,
+                'estado_direccion' => $direccion->estado,
+                'codigo_postal' => $direccion->codigo_postal,
+                'stripe_payment_intent' => $this->stripeIntent->id,
             ]);
+
+            foreach ($this->carrito as $item) {
+                PedidoProducto::create([
+                    'pedido_id' => $pedido->id,
+                    'producto_id' => $item->producto_id,
+                    'cantidad' => $item->cantidad,
+                    'precio_unitario' => $item->precio_unitario,
+                    'precio_total' => $item->precio_unitario * $item->cantidad,
+                ]);
+            }
+
+            $user->carritoProductos()->delete();
+            return redirect('/success');
+        } catch (\Exception $e) {
+            $this->stripeError = 'Hubo un error al procesar tu pago. Por favor, verifica los datos de tu tarjeta e intenta nuevamente.';
+            return;
         }
-        $user->carritoProductos()->delete();
-        return redirect('/success');
     }
 
     /**

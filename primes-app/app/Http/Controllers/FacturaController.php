@@ -8,10 +8,24 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class FacturaController extends Controller
 {
-    public function descargar($pedido)
+    public function generarPDF($id)
     {
-        $pedido = Pedidos::with(['productos.producto'])->findOrFail($pedido);
-        $pdf = Pdf::loadView('pdf.factura-pdf', compact('pedido'));
-        return $pdf->download('Factura_TECNOBOX_Pedido_' . $pedido->id . '.pdf');
+        $pedido = Pedidos::with(['productos.producto', 'user', 'direccion'])->findOrFail($id);
+        
+        // Calcular totales
+        $subtotal = $pedido->productos->sum('precio_total');
+        $impuestos = $subtotal * 0.18;
+        $envio = $pedido->costo_envio ?? 0;
+        $total = $subtotal + $impuestos + $envio;
+
+        $pdf = PDF::loadView('pdf.factura', [
+            'pedido' => $pedido,
+            'subtotal' => $subtotal,
+            'impuestos' => $impuestos,
+            'envio' => $envio,
+            'total' => $total
+        ]);
+
+        return $pdf->download('factura-' . str_pad($pedido->id, 8, '0', STR_PAD_LEFT) . '.pdf');
     }
 } 
