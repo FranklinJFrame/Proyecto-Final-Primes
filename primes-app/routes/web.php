@@ -86,13 +86,13 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::get('/factura/pdf/{pedido}', [FacturaController::class, 'descargar'])->name('factura.pdf');
+// Ruta de factura accesible tanto por GET como por POST
+Route::middleware(['auth'])->group(function () {
+    Route::get('/factura/pdf/{pedido}', [App\Http\Controllers\FacturaController::class, 'descargar'])->name('factura.pdf.get');
+    Route::post('/factura/{id}', [App\Http\Controllers\FacturaController::class, 'generarPDF'])->name('factura.pdf');
+});
 
 // Admin pedidos detalle y factura
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/pedidos/{pedido}', [PedidoAdminController::class, 'show'])->name('admin.pedidos.show');
-});
-
-Route::middleware(['auth'])->group(function () {
-    Route::post('/factura/{id}', [App\Http\Controllers\FacturaController::class, 'generarPDF'])->name('factura.pdf');
 });

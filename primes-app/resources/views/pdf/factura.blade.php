@@ -108,10 +108,24 @@
             <h3>Información del cliente</h3>
             <p>
                 <strong>{{ $pedido->user->name }}</strong><br>
-                {{ $pedido->direccion->direccion_calle }}<br>
-                {{ $pedido->direccion->ciudad }}, {{ $pedido->direccion->estado }}<br>
-                {{ $pedido->direccion->codigo_postal }}<br>
-                Tel: {{ $pedido->direccion->telefono }}
+                @if($direccionUsuario)
+                    {{ $direccionUsuario->direccion_calle }}<br>
+                    {{ $direccionUsuario->ciudad }}, {{ $direccionUsuario->estado }}<br>
+                    {{ $direccionUsuario->codigo_postal }}<br>
+                    Tel: {{ $direccionUsuario->telefono }}
+                @elseif($pedido->direccion_calle)
+                    {{ $pedido->direccion_calle }}<br>
+                    {{ $pedido->ciudad }}, {{ $pedido->estado_direccion ?? $pedido->estado }}<br>
+                    {{ $pedido->codigo_postal }}<br>
+                    Tel: {{ $pedido->telefono }}
+                @elseif($pedido->direccion)
+                    {{ $pedido->direccion->direccion_calle }}<br>
+                    {{ $pedido->direccion->ciudad }}, {{ $pedido->direccion->estado }}<br>
+                    {{ $pedido->direccion->codigo_postal }}<br>
+                    Tel: {{ $pedido->direccion->telefono }}
+                @else
+                    <span>Dirección no disponible</span>
+                @endif
             </p>
         </div>
 

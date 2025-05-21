@@ -14,7 +14,7 @@ class MiPedidosDetallePage extends Component
 
     public function mount($order)
     {
-        $this->pedido = Auth::user()->pedidos()->with(['productos.producto', 'direccion'])->findOrFail($order);
+        $this->pedido = Auth::user()->pedidos()->with(['productos.producto', 'direccion', 'user.direccions'])->findOrFail($order);
     }
 
     public function render()

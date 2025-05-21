@@ -14,7 +14,7 @@ class Pedidos extends Model
     use  HasFactory;
     protected $fillable = [
         'user_id',
-         'total_general',
+        'total_general',
         'metodo_pago',
         'estado_pago',
         'estado',
@@ -22,6 +22,14 @@ class Pedidos extends Model
         'costo_envio',
         'metodo_envio', 
         'notas',
+        'nombre',
+        'apellido',
+        'telefono',
+        'direccion_calle',
+        'ciudad',
+        'estado_direccion',
+        'codigo_postal',
+        'stripe_payment_intent',
     ];
 
     public function user()

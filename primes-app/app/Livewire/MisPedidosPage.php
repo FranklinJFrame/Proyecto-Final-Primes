@@ -6,7 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Pedidos;
-use App\Models\Carrito;
+use App\Models\CarritoProducto;
 
 class MisPedidosPage extends Component
 {
@@ -31,7 +31,7 @@ class MisPedidosPage extends Component
         foreach ($pedido->productos as $item) {
             if ($item->producto) {
                 // Check if product already exists in cart
-                $existingCartItem = Carrito::where('user_id', Auth::id())
+                $existingCartItem = CarritoProducto::where('user_id', Auth::id())
                     ->where('producto_id', $item->producto->id)
                     ->first();
 
@@ -41,10 +41,11 @@ class MisPedidosPage extends Component
                     $existingCartItem->save();
                 } else {
                     // Create new cart item if doesn't exist
-                    Carrito::create([
+                    CarritoProducto::create([
                         'user_id' => Auth::id(),
                         'producto_id' => $item->producto->id,
-                        'cantidad' => $item->cantidad
+                        'cantidad' => $item->cantidad,
+                        'precio_unitario' => $item->precio_unitario
                     ]);
                 }
             }

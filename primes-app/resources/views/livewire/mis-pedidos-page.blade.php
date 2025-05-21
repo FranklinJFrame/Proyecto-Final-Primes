@@ -74,7 +74,31 @@
                                 </div>
                                 <div class="flex flex-col">
                                     <div class="text-sm text-gray-400 mb-1">Total</div>
-                                    <div class="font-medium text-lg text-blue-400">RD$ {{ number_format($pedido->total, 2) }}</div>
+                                    <div class="font-medium text-lg text-blue-400">RD$ {{ number_format($pedido->total_general, 2) }}</div>
+                                    <button type="button" class="text-xs text-gray-400 hover:text-blue-400 mt-1" onclick="toggleDesglose{{ $pedido->id }}()">
+                                        Ver desglose
+                                    </button>
+                                    <div id="desglose{{ $pedido->id }}" class="hidden mt-2 text-xs space-y-1 bg-gray-800/80 p-2 rounded">
+                                        @php
+                                            $subtotal = $pedido->productos->sum(function($item) {
+                                                return $item->precio_unitario * $item->cantidad;
+                                            });
+                                            $itbis = round($subtotal * 0.18, 2);
+                                            $envio = $pedido->costo_envio;
+                                        @endphp
+                                        <div class="flex justify-between">
+                                            <span>Subtotal:</span>
+                                            <span>RD$ {{ number_format($subtotal, 2) }}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>ITBIS (18%):</span>
+                                            <span>RD$ {{ number_format($itbis, 2) }}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span>Envío:</span>
+                                            <span>RD$ {{ number_format($envio, 2) }}</span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="flex flex-col">
                                     <div class="text-sm text-gray-400 mb-1">Pedido #</div>
@@ -126,7 +150,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             @foreach($pedido->productos()->with('producto')->get() as $item)
                                 <div class="flex items-start gap-4 bg-gray-900/50 rounded-xl p-4 hover:bg-gray-700/30 transition-colors group-hover:border-gray-600">
-                                    <img src="{{ url('storage/products/' . ($item->producto->imagenes[0] ?? '')) }}" 
+                                    <img src="{{$item->producto->imagenes[0]}}" 
                                     class="w-24 h-24 object-cover rounded-lg bg-gray-800 border border-gray-700" 
                                     alt="{{ $item->producto->nombre }}">
                                     <div class="flex-1 min-w-0">
@@ -151,15 +175,12 @@
                                         <span class="text-sm font-medium">Escribir reseña</span>
                                     </button>
                                 @endif
-                                <form method="POST" action="{{ route('factura.pdf', $pedido->id) }}" class="inline">
-                                    @csrf
-                                    <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-700/30 hover:bg-gray-700/50 transition-colors">
-                                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                        </svg>
-                                        <span class="text-sm font-medium">Descargar factura</span>
-                                    </button>
-                                </form>
+                                <a href="{{ route('factura.pdf.get', $pedido->id) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-700/30 hover:bg-gray-700/50 transition-colors">
+                                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium">Descargar factura</span>
+                                </a>
                                 <button wire:click="comprarDeNuevo({{ $pedido->id }})" 
                                     class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-700/30 hover:bg-gray-700/50 transition-colors">
                                     <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -238,4 +259,20 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+@push('scripts')
+<script>
+    // Funciones para mostrar/ocultar el desglose del total
+    @foreach($pedidos as $pedido)
+    function toggleDesglose{{ $pedido->id }}() {
+        const desglose = document.getElementById('desglose{{ $pedido->id }}');
+        if (desglose.classList.contains('hidden')) {
+            desglose.classList.remove('hidden');
+        } else {
+            desglose.classList.add('hidden');
+        }
+    }
+    @endforeach
+</script>
+@endpush 
