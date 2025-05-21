@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-
 use App\Filament\Resources\ProductoResource\RelationManagers\ProductosCompatiblesRelationManager;
 use App\Filament\Resources\ProductoResource\Pages;
 use App\Models\Producto;
@@ -69,6 +68,51 @@ class ProductoResource extends Resource
                                         'redo',
                                     ])
                                     ->columnSpanFull(),
+
+                                // --- Productos Compatibles: Vertical y con botón ---
+                                Forms\Components\Fieldset::make('Productos Compatibles')
+                                    ->schema([
+                                        Forms\Components\Select::make('productos_compatibles_temp')
+                                            ->label('Selecciona productos compatibles')
+                                            ->options(function ($get) {
+                                                $categoriaId = $get('categoria_id');
+                                                if (!$categoriaId) {
+                                                    return [];
+                                                }
+                                                $compatibleCategoryIds = \App\Models\CategoriasCompatible::where('categoria_id', $categoriaId)
+                                                    ->pluck('compatible_category_id')
+                                                    ->toArray();
+                                                return \App\Models\Producto::whereIn('categoria_id', $compatibleCategoryIds)
+                                                    ->pluck('nombre', 'id')
+                                                    ->toArray();
+                                            })
+                                            ->multiple()
+                                            ->searchable()
+                                            ->columnSpanFull()
+                                            ->helperText('Selecciona uno o varios productos compatibles.'),
+
+                                        Forms\Components\Actions::make([
+                                            Forms\Components\Actions\Action::make('agregar_a_descripcion')
+                                                ->label('Agregar a descripción')
+                                                ->color('primary')
+                                                ->action(function ($get, $set) {
+                                                    $productosIds = $get('productos_compatibles_temp') ?? [];
+                                                    $nombres = \App\Models\Producto::whereIn('id', $productosIds)->pluck('nombre')->toArray();
+                                                    if (count($nombres)) {
+                                                        $descripcion = $get('descripcion') ?? '';
+                                                        // Elimina sección anterior de productos compatibles si existe
+                                                        $descripcion = preg_replace('/productos compatibles:(\n.+)*/i', '', $descripcion);
+                                                        // Agrega la nueva sección en el formato solicitado
+                                                        $linea = "productos compatibles:\n" . implode("\n", $nombres);
+                                                        $descripcion = trim($descripcion . "\n" . $linea);
+                                                        $set('descripcion', $descripcion);
+                                                    }
+                                                }),
+                                        ])->columnSpanFull(),
+                                    ])
+                                    ->columns(1)
+                                    ->columnSpanFull(),
+                                // --- Fin productos compatibles ---
                             ])
                             ->columns(['md' => 4])
                             ->columnSpan(['lg' => 2]),
