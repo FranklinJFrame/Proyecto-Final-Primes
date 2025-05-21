@@ -71,7 +71,7 @@
 				<div class="space-y-4">
 					@foreach($carrito as $item)
 						<div class="flex gap-4 py-4 border-b border-gray-700 last:border-0">
-							<img src="{{ Storage::url('products/' . ($item->producto->imagenes[0] ?? 'default.jpg')) }}"
+							<img src="{{ url('storage', $item->producto->imagenes[0]) }}"
 								alt="{{ $item->producto->nombre }}"
 								class="w-20 h-20 object-cover rounded-lg bg-gray-700"
 								onerror="this.src='/img/default-product.jpg'">
