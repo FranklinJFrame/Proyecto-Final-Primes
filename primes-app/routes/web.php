@@ -68,6 +68,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/carrito/increment', [\App\Http\Controllers\CarritoController::class, 'increment'])->name('carrito.increment');
     Route::post('/carrito/decrement', [\App\Http\Controllers\CarritoController::class, 'decrement'])->name('carrito.decrement');
     Route::post('/carrito/clear', [\App\Http\Controllers\CarritoController::class, 'clear'])->name('carrito.clear');
+    
+    // Cuenta del usuario - Versión Cyber
+    Route::get('/mi-cuenta', App\Livewire\MiCuentaPage::class)->name('cuenta');
+    
+    // Redireccionar /settings/profile a la versión cyber
+    Route::get('/settings/profile', function() {
+        return redirect('/mi-cuenta');
+    });
 });
 
 Route::get('/factura/pdf/{pedido}', [FacturaController::class, 'descargar'])->name('factura.pdf');

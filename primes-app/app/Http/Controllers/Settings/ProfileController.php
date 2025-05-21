@@ -18,9 +18,15 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $user = $request->user();
+        $ultimosPedidos = $user->pedidos()->latest()->take(3)->get(['id', 'created_at', 'total_general']);
+        $direccion = $user->direccions()->first();
+
         return Inertia::render('settings/profile', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => $request->session()->get('status'),
+            'ultimosPedidos' => $ultimosPedidos,
+            'direccion' => $direccion,
         ]);
     }
 
