@@ -36,7 +36,11 @@ return [
     ],
 
     'stripe' => [
+<<<<<<< HEAD
+        'key' => env('STRIPE_KEY', 'pk_test_51RQKY5RJeAKBJUGbFIXcSWhrM8v8rveOOE3tvUHIbcS66jkpqVzqH3HzQRtJMBZA7GBJKBsNHcIYEjC7OBcK6Byq005jdPQgkc'),
+=======
         'key' => env('STRIPE_KEY'),
+>>>>>>> b7e6f5b1eec792651d39af92f94888a752987a64
         'secret' => env('STRIPE_SECRET'),
     ],
 

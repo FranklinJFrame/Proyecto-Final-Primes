@@ -37,6 +37,12 @@ class CheckoutPage extends Component
     public $stripeError = '';
     public $editando_direccion = false;
     public $stripeIntent = null;
+<<<<<<< HEAD
+    public $paymentMethodId = null;
+    public $card_number = '';
+    public $card_expiry = '';
+    public $card_cvc = '';
+=======
     public $metodo_pago = 'paypal';
     public $datos_transferencia = '';
     public $datos_debito = '';
@@ -53,6 +59,7 @@ class CheckoutPage extends Component
     public $direccion_seleccionada = null;
 
     protected $listeners = ['paypalPagoExitoso' => 'pagoPaypalExitoso'];
+>>>>>>> b7e6f5b1eec792651d39af92f94888a752987a64
 
     public function mount()
     {
@@ -140,8 +147,10 @@ class CheckoutPage extends Component
     {
         try {
             Stripe::setApiKey(config('services.stripe.secret'));
+            
+            $amount = intval($this->total * 100);
             $this->stripeIntent = PaymentIntent::create([
-                'amount' => intval($this->total * 100),
+                'amount' => $amount,
                 'currency' => 'dop',
                 'payment_method_types' => ['card'],
                 'description' => 'Pago en TECNOBOX',
@@ -152,6 +161,7 @@ class CheckoutPage extends Component
             ]);
         } catch (\Exception $e) {
             $this->stripeError = $e->getMessage();
+            return null;
         }
     }
 
@@ -215,7 +225,10 @@ class CheckoutPage extends Component
                 'ciudad' => $direccion->ciudad,
                 'estado_direccion' => $direccion->estado,
                 'codigo_postal' => $direccion->codigo_postal,
+<<<<<<< HEAD
+=======
                 'stripe_payment_intent' => null,
+>>>>>>> b7e6f5b1eec792651d39af92f94888a752987a64
             ]);
 
             // Crear los productos del pedido
