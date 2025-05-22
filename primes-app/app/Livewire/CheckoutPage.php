@@ -34,6 +34,10 @@ class CheckoutPage extends Component
     public $stripeError = '';
     public $editando_direccion = false;
     public $stripeIntent = null;
+    public $paymentMethodId = null;
+    public $card_number = '';
+    public $card_expiry = '';
+    public $card_cvc = '';
 
     public function mount()
     {
@@ -118,8 +122,10 @@ class CheckoutPage extends Component
     {
         try {
             Stripe::setApiKey(config('services.stripe.secret'));
+            
+            $amount = intval($this->total * 100);
             $this->stripeIntent = PaymentIntent::create([
-                'amount' => intval($this->total * 100),
+                'amount' => $amount,
                 'currency' => 'dop',
                 'payment_method_types' => ['card'],
                 'description' => 'Pago en TECNOBOX',
@@ -130,6 +136,7 @@ class CheckoutPage extends Component
             ]);
         } catch (\Exception $e) {
             $this->stripeError = $e->getMessage();
+            return null;
         }
     }
 
@@ -152,16 +159,27 @@ class CheckoutPage extends Component
             return;
         }
 
-        try {
-            // Confirmar el pago con Stripe
-            if (!$this->stripeIntent) {
-                $this->createPaymentIntent();
-            }
+        // Validar campos de tarjeta
+        $this->validate([
+            'card_number' => 'required|size:16',
+            'card_expiry' => 'required|size:5',
+            'card_cvc' => 'required|min:3|max:4',
+        ], [
+            'card_number.required' => 'El número de tarjeta es obligatorio',
+            'card_number.size' => 'El número de tarjeta debe tener 16 dígitos',
+            'card_expiry.required' => 'La fecha de vencimiento es obligatoria',
+            'card_expiry.size' => 'La fecha debe tener el formato MM/YY',
+            'card_cvc.required' => 'El código CVC es obligatorio',
+            'card_cvc.min' => 'El CVC debe tener al menos 3 dígitos',
+            'card_cvc.max' => 'El CVC no puede tener más de 4 dígitos',
+        ]);
 
+        try {
+            // Crear el pedido
             $pedido = Pedidos::create([
                 'user_id' => $user->id,
                 'total_general' => $this->total,
-                'metodo_pago' => 'stripe',
+                'metodo_pago' => 'tarjeta',
                 'estado_pago' => 'pagado',
                 'estado' => 'nuevo',
                 'moneda' => 'DOP',
@@ -175,7 +193,6 @@ class CheckoutPage extends Component
                 'ciudad' => $direccion->ciudad,
                 'estado_direccion' => $direccion->estado,
                 'codigo_postal' => $direccion->codigo_postal,
-                'stripe_payment_intent' => $this->stripeIntent->id,
             ]);
 
             foreach ($this->carrito as $item) {
@@ -188,10 +205,14 @@ class CheckoutPage extends Component
                 ]);
             }
 
+            // Limpiar el carrito
             $user->carritoProductos()->delete();
-            return redirect('/success');
+            
+            // Emitir evento con el ID del pedido
+            $this->dispatch('pedidoCreado', $pedido->id);
+            
         } catch (\Exception $e) {
-            $this->stripeError = 'Hubo un error al procesar tu pago. Por favor, verifica los datos de tu tarjeta e intenta nuevamente.';
+            session()->flash('error', 'Hubo un error al procesar tu pedido. Por favor, intenta nuevamente.');
             return;
         }
     }

@@ -56,9 +56,23 @@
 					<h2 class="text-xl font-bold mb-6 text-blue-400">Método de Pago</h2>
 					
 					<div class="space-y-4">
-						<div class="bg-gray-700/50 rounded-lg p-4">
-							<div id="card-element" class="bg-gray-600 rounded-md p-4 border border-gray-500"></div>
-							<div id="card-errors" class="text-red-400 text-sm mt-2"></div>
+						<div class="bg-gray-700/50 rounded-lg p-6">
+							<div class="space-y-6">
+								<div>
+									<label class="block text-sm font-medium text-gray-300 mb-2">Número de Tarjeta</label>
+									<input type="text" wire:model="card_number" maxlength="16" class="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="1234 5678 9012 3456">
+								</div>
+								<div class="grid grid-cols-2 gap-6">
+									<div>
+										<label class="block text-sm font-medium text-gray-300 mb-2">Fecha de Vencimiento</label>
+										<input type="text" wire:model="card_expiry" maxlength="5" class="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="MM/YY">
+									</div>
+									<div>
+										<label class="block text-sm font-medium text-gray-300 mb-2">CVC</label>
+										<input type="text" wire:model="card_cvc" maxlength="4" class="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="123">
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -71,10 +85,10 @@
 				<div class="space-y-4">
 					@foreach($carrito as $item)
 						<div class="flex gap-4 py-4 border-b border-gray-700 last:border-0">
-							<img src="{{ Storage::url('products/' . ($item->producto->imagenes[0] ?? 'default.jpg')) }}"
+							<img src="{{ $item->producto->imagenes[0] ?? '/img/default-product.jpg' }}"
 								alt="{{ $item->producto->nombre }}"
 								class="w-20 h-20 object-cover rounded-lg bg-gray-700"
-								onerror="this.src='/img/default-product.jpg'">
+								loading="lazy">
 							
 							<div class="flex-1">
 								<h3 class="font-medium text-white">{{ $item->producto->nombre }}</h3>
@@ -103,16 +117,29 @@
 					</div>
 
 					<!-- Botón de pago -->
-					<button wire:click="procesarPago" 
-						class="w-full mt-6 px-6 py-3 border border-transparent rounded-xl text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center gap-2">
-						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+					<button type="button" wire:click="realizarPedido" wire:loading.attr="disabled"
+						class="w-full mt-6 px-6 py-4 border border-transparent rounded-xl text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+						<span wire:loading.remove>
+							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+							</svg>
+						</span>
+						<svg wire:loading class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 						</svg>
-						Pagar Ahora
+						<span wire:loading.remove>Pagar Ahora</span>
+						<span wire:loading>Procesando...</span>
 					</button>
 
+					@if (session()->has('error'))
+						<div class="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+							<p class="text-red-500 text-sm">{{ session('error') }}</p>
+						</div>
+					@endif
+
 					<p class="text-sm text-gray-400 text-center mt-4">
-						Pago seguro procesado por Stripe
+						Pago seguro
 					</p>
 				</div>
 			</div>
@@ -121,38 +148,11 @@
 </div>
 
 @push('scripts')
-<script src="https://js.stripe.com/v3/"></script>
 <script>
-	const stripe = Stripe('{{ config('services.stripe.key') }}');
-	const elements = stripe.elements();
-	const card = elements.create('card', {
-		style: {
-			base: {
-				color: '#fff',
-				fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-				fontSmoothing: 'antialiased',
-				fontSize: '16px',
-				'::placeholder': {
-					color: '#aab7c4'
-				},
-				backgroundColor: '#374151',
-			},
-			invalid: {
-				color: '#fa755a',
-				iconColor: '#fa755a'
-			}
-		}
-	});
-
-	card.mount('#card-element');
-
-	card.addEventListener('change', function(event) {
-		const displayError = document.getElementById('card-errors');
-		if (event.error) {
-			displayError.textContent = event.error.message;
-		} else {
-			displayError.textContent = '';
-		}
+	document.addEventListener('DOMContentLoaded', function() {
+		Livewire.on('pedidoCreado', (pedidoId) => {
+			window.location.href = '/success?pedido=' + pedidoId;
+		});
 	});
 </script>
 @endpush
