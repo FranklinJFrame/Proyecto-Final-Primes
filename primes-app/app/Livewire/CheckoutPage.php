@@ -248,8 +248,7 @@ class CheckoutPage extends Component
 
     public function nuevaDireccion()
     {
-        $this->crear_nueva = true;
-        $this->resetDireccionFields();
+        return redirect('/mi-cuenta');
     }
 
     public function render()

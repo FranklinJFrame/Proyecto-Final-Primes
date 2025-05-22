@@ -5,186 +5,187 @@
     <title>Factura #{{ str_pad($pedido->id, 8, '0', STR_PAD_LEFT) }}</title>
     <style>
         body {
-            font-family: 'Helvetica', sans-serif;
-            color: #333;
-            line-height: 1.6;
+            font-family: 'Helvetica', Arial, sans-serif;
+            color: #222;
+            background: #f6f8fa;
+            margin: 0;
+            padding: 0;
         }
         .container {
-            padding: 20px;
+            max-width: 900px;
+            margin: 32px auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px #e0e7ef;
+            padding: 40px 48px 32px 48px;
         }
         .header {
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #3b82f6;
-            padding-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 18px;
+            margin-bottom: 32px;
         }
-        .header img {
-            max-width: 200px;
-            margin-bottom: 10px;
+        .empresa {
+            font-size: 2.1rem;
+            color: #2563eb;
+            font-weight: bold;
+            margin-bottom: 6px;
         }
-        .invoice-details {
-            margin-bottom: 30px;
+        .empresa-info {
+            color: #222;
+            font-size: 1.1rem;
+            margin-bottom: 2px;
         }
-        .invoice-details table {
+        .factura-title {
+            font-size: 1.3rem;
+            color: #2563eb;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-align: right;
+        }
+        .factura-num {
+            color: #444;
+            font-size: 1rem;
+            text-align: right;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            color: #2563eb;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .info-table {
             width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 18px;
         }
-        .invoice-details td {
-            padding: 5px;
-            vertical-align: top;
-        }
-        .customer-details {
-            margin-bottom: 30px;
-            padding: 15px;
-            background-color: #f8fafc;
-            border-radius: 5px;
+        .info-table td {
+            padding: 4px 0;
         }
         .products-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
         }
         .products-table th {
-            background-color: #3b82f6;
-            color: white;
-            padding: 10px;
-            text-align: left;
+            background: #e8f0fe;
+            color: #2563eb;
+            font-weight: bold;
+            padding: 10px 8px;
+            border-bottom: 2px solid #2563eb;
+            font-size: 1rem;
         }
         .products-table td {
-            padding: 10px;
+            padding: 10px 8px;
             border-bottom: 1px solid #e5e7eb;
+            font-size: 0.98rem;
         }
-        .products-table img {
-            max-width: 50px;
-            height: auto;
+        .products-table td img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            border-radius: 6px;
+            border: 1px solid #e0e7ef;
+            background: #f9fafb;
         }
         .totals {
+            width: 320px;
             float: right;
-            width: 300px;
-        }
-        .totals table {
-            width: 100%;
+            margin-top: 12px;
         }
         .totals td {
-            padding: 5px;
+            padding: 7px 0;
+            font-size: 1rem;
         }
-        .totals .total {
+        .totals .label {
+            color: #555;
+        }
+        .totals .value {
             font-weight: bold;
-            font-size: 1.2em;
-            border-top: 2px solid #3b82f6;
+            color: #2563eb;
+        }
+        .totals .total-row {
+            font-size: 1.15rem;
+            border-top: 2px solid #2563eb;
         }
         .footer {
             text-align: center;
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            color: #6b7280;
-            font-size: 0.9em;
+            color: #888;
+            font-size: 0.98rem;
+            margin-top: 48px;
+            border-top: 1px solid #e0e7ef;
+            padding-top: 18px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>TECNOBOX</h1>
-            <p>Factura #{{ str_pad($pedido->id, 8, '0', STR_PAD_LEFT) }}</p>
+            <div>
+                <div class="empresa">TECNOBOX</div>
+                <div class="empresa-info">Gurabo, Tigaiga, Plaza Alfa</div>
+                <div class="empresa-info">Santiago, Rep. Dominicana</div>
+                <div class="empresa-info">RNC: 123456789</div>
+            </div>
+            <div style="text-align:right;">
+                <div class="factura-title">Factura Electrónica</div>
+                <div class="factura-num">N° {{ str_pad($pedido->id, 8, '0', STR_PAD_LEFT) }}</div>
+                <div class="empresa-info">Fecha: {{ $pedido->created_at->format('d/m/Y') }}</div>
+            </div>
         </div>
-
-        <div class="invoice-details">
-            <table>
-                <tr>
-                    <td width="50%">
-                        <strong>Fecha de emisión:</strong><br>
-                        {{ $pedido->created_at->format('d/m/Y') }}
-                    </td>
-                    <td width="50%">
-                        <strong>Estado del pedido:</strong><br>
-                        {{ ucfirst($pedido->estado) }}
-                    </td>
-                </tr>
+        <div style="margin-bottom: 24px;">
+            <div class="section-title">Datos del Cliente</div>
+            <table class="info-table">
+                <tr><td><b>Nombre:</b></td><td>{{ $pedido->nombre }} {{ $pedido->apellido }}</td></tr>
+                <tr><td><b>Dirección:</b></td><td>{{ $pedido->direccion_calle }}, {{ $pedido->ciudad }}, {{ $pedido->estado_direccion }}, {{ $pedido->codigo_postal }}</td></tr>
+                <tr><td><b>Teléfono:</b></td><td>{{ $pedido->telefono }}</td></tr>
             </table>
         </div>
-
-        <div class="customer-details">
-            <h3>Información del cliente</h3>
-            <p>
-                <strong>{{ $pedido->user->name }}</strong><br>
-                @if($direccionUsuario)
-                    {{ $direccionUsuario->direccion_calle }}<br>
-                    {{ $direccionUsuario->ciudad }}, {{ $direccionUsuario->estado }}<br>
-                    {{ $direccionUsuario->codigo_postal }}<br>
-                    Tel: {{ $direccionUsuario->telefono }}
-                @elseif($pedido->direccion_calle)
-                    {{ $pedido->direccion_calle }}<br>
-                    {{ $pedido->ciudad }}, {{ $pedido->estado_direccion ?? $pedido->estado }}<br>
-                    {{ $pedido->codigo_postal }}<br>
-                    Tel: {{ $pedido->telefono }}
-                @elseif($pedido->direccion)
-                    {{ $pedido->direccion->direccion_calle }}<br>
-                    {{ $pedido->direccion->ciudad }}, {{ $pedido->direccion->estado }}<br>
-                    {{ $pedido->direccion->codigo_postal }}<br>
-                    Tel: {{ $pedido->direccion->telefono }}
-                @else
-                    <span>Dirección no disponible</span>
-                @endif
-            </p>
-        </div>
-
-        <table class="products-table">
-            <thead>
-                <tr>
-                    <th>Imagen</th>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio unitario</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($pedido->productos as $item)
+        <div style="margin-bottom: 24px;">
+            <div class="section-title">Detalle de Productos</div>
+            <table class="products-table">
+                <thead>
                     <tr>
-                        <td>
-                            <img src="{{
-                                $item->producto && $item->producto->imagenes && is_array($item->producto->imagenes) && count($item->producto->imagenes) > 0
-                                    ? (filter_var($item->producto->imagenes[0], FILTER_VALIDATE_URL)
-                                        ? $item->producto->imagenes[0]
-                                        : public_path('storage/products/' . $item->producto->imagenes[0]))
-                                    : public_path('logo-tecnobox.png')
-                            }}" alt="Imagen del producto" style="width:48px;height:48px;object-fit:contain;border-radius:6px;border:1px solid #e0e7ef;background:#f9fafb;">
-                        </td>
-                        <td>{{ $item->producto->nombre ?? 'Producto eliminado' }}</td>
-                        <td>{{ $item->cantidad }}</td>
-                        <td>RD$ {{ number_format($item->precio_unitario, 2) }}</td>
-                        <td>RD$ {{ number_format($item->precio_total, 2) }}</td>
+                        <th>Imagen</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio unitario</th>
+                        <th>Subtotal</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-
-        <div class="totals">
-            <table>
-                <tr>
-                    <td>Subtotal:</td>
-                    <td align="right">RD$ {{ number_format($subtotal, 2) }}</td>
-                </tr>
-                <tr>
-                    <td>ITBIS (18%):</td>
-                    <td align="right">RD$ {{ number_format($impuestos, 2) }}</td>
-                </tr>
-                <tr>
-                    <td>Envío:</td>
-                    <td align="right">RD$ {{ number_format($envio, 2) }}</td>
-                </tr>
-                <tr class="total">
-                    <td>Total:</td>
-                    <td align="right">RD$ {{ number_format($total, 2) }}</td>
-                </tr>
+                </thead>
+                <tbody>
+                    @foreach($pedido->productos as $item)
+                        <tr>
+                            <td>
+                                <img src="{{
+                                    $item->producto && $item->producto->imagenes && is_array($item->producto->imagenes) && count($item->producto->imagenes) > 0
+                                        ? (filter_var($item->producto->imagenes[0], FILTER_VALIDATE_URL)
+                                            ? $item->producto->imagenes[0]
+                                            : public_path('storage/products/' . $item->producto->imagenes[0]))
+                                        : public_path('logo-tecnobox.png')
+                                }}" alt="Imagen del producto">
+                            </td>
+                            <td>{{ $item->producto->nombre ?? 'Producto eliminado' }}</td>
+                            <td>{{ $item->cantidad }}</td>
+                            <td>RD$ {{ number_format($item->precio_unitario, 2) }}</td>
+                            <td>RD$ {{ number_format($item->precio_total, 2) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
             </table>
         </div>
-
+        <table class="totals">
+            <tr><td class="label">Subtotal</td><td class="value">RD$ {{ number_format($pedido->productos->sum('precio_total') - $pedido->costo_envio - round(($pedido->productos->sum('precio_total') - $pedido->costo_envio) * 0.18, 2), 2) }}</td></tr>
+            <tr><td class="label">ITBIS (18%)</td><td class="value">RD$ {{ number_format(round(($pedido->productos->sum('precio_total') - $pedido->costo_envio) * 0.18, 2), 2) }}</td></tr>
+            <tr><td class="label">Envío</td><td class="value">RD$ {{ number_format($pedido->costo_envio, 2) }}</td></tr>
+            <tr class="total-row"><td class="label">Total</td><td class="value">RD$ {{ number_format($pedido->productos->sum('precio_total'), 2) }}</td></tr>
+        </table>
         <div class="footer">
-            <p>Gracias por tu compra en TECNOBOX</p>
-            <p>Para cualquier consulta, contáctanos en support@tecnobox.com</p>
+            Gracias por su compra en TECNOBOX. Si tiene alguna pregunta, contáctenos.<br>
+            <b>www.tecnobox.com.do</b>
         </div>
     </div>
 </body>
-</html> 
+</html>
