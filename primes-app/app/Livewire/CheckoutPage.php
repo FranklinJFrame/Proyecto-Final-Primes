@@ -11,6 +11,9 @@ use App\Models\PedidoProducto;
 use App\Models\CarritoProducto;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
+use App\Models\DatosTarj;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\FacturaMail;
 
 class CheckoutPage extends Component
 {
@@ -45,6 +48,9 @@ class CheckoutPage extends Component
     public $cvc_tarjeta = '';
     public $vencimiento_tarjeta = '';
     public $errores_pago = [];
+    public $tarjetas = [];
+    public $tarjeta_id = null;
+    public $direccion_seleccionada = null;
 
     protected $listeners = ['paypalPagoExitoso' => 'pagoPaypalExitoso'];
 
@@ -53,19 +59,22 @@ class CheckoutPage extends Component
         $user = Auth::user();
         $this->direcciones = $user->direccions()->get();
         $this->carrito = $user->carritoProductos()->with('producto')->get();
+        $this->tarjetas = $user->tarjetas()->get();
         $this->subtotal = $this->carrito->sum(fn($item) => $item->precio_unitario * $item->cantidad);
         $this->itbis = round($this->subtotal * 0.18, 2);
         $cantidad_total = $this->carrito->sum('cantidad');
         $this->envio = $cantidad_total * 700;
         $this->total = $this->subtotal + $this->itbis + $this->envio;
-        
+        $this->nombre_tarjeta = '';
+        $this->numero_tarjeta = '';
+        $this->cvc_tarjeta = '';
+        $this->vencimiento_tarjeta = '';
+        $this->tarjeta_id = null;
         if ($this->direcciones->count()) {
             $this->direccion_id = $this->direcciones->first()->id;
         } else {
             $this->crear_nueva = true;
         }
-
-        // Crear intención de pago al cargar
         $this->createPaymentIntent();
     }
 
@@ -154,52 +163,51 @@ class CheckoutPage extends Component
     public function realizarPedido()
     {
         $this->errores_pago = [];
-        if ($this->metodo_pago === 'tarjeta') {
-            if (empty($this->nombre_tarjeta)) $this->errores_pago['nombre_tarjeta'] = 'El nombre es obligatorio';
-            if (empty($this->numero_tarjeta)) $this->errores_pago['numero_tarjeta'] = 'El número de tarjeta es obligatorio';
-            if (empty($this->cvc_tarjeta)) $this->errores_pago['cvc_tarjeta'] = 'El CVC es obligatorio';
-            if (empty($this->vencimiento_tarjeta)) $this->errores_pago['vencimiento_tarjeta'] = 'La fecha de vencimiento es obligatoria';
-        }
-        if ($this->metodo_pago === 'transferencia') {
-            if (empty($this->banco_transferencia)) $this->errores_pago['banco_transferencia'] = 'El banco es obligatorio';
-            if (empty($this->cuenta_transferencia)) $this->errores_pago['cuenta_transferencia'] = 'El número de cuenta es obligatorio';
-            if (empty($this->referencia_transferencia)) $this->errores_pago['referencia_transferencia'] = 'La referencia es obligatoria';
-        }
-        if (count($this->errores_pago) > 0) return;
         $user = Auth::user();
-        if ($this->crear_nueva) {
-            $this->saveDireccion();
-        }
-        $direccion = $user->direccions()->find($this->direccion_id);
-        if (!$direccion) {
-            session()->flash('error', 'Por favor, selecciona o crea una dirección válida.');
-            return;
-        }
-        if ($this->carrito->isEmpty()) {
-            session()->flash('error', 'Tu carrito está vacío.');
-            return;
-        }
+        
         try {
-            $estado_pago = 'pendiente';
-            if ($this->metodo_pago === 'paypal') {
-                $estado_pago = 'pagado';
+            // Validar dirección seleccionada
+            if (!$this->direccion_seleccionada) {
+                session()->flash('error', 'Por favor, selecciona una dirección de envío.');
+                return;
             }
-            $notas = null;
-            if ($this->metodo_pago === 'transferencia') {
-                $notas = 'Banco: ' . $this->banco_transferencia . ' | Cuenta: ' . $this->cuenta_transferencia . ' | Referencia: ' . $this->referencia_transferencia;
-            } elseif ($this->metodo_pago === 'debito') {
-                $notas = 'Nombre: ' . $this->nombre_tarjeta . ' | Tarjeta: ' . $this->numero_tarjeta . ' | CVC: ' . $this->cvc_tarjeta . ' | Vencimiento: ' . $this->vencimiento_tarjeta;
+
+            $direccion = $user->direccions()->find($this->direccion_seleccionada);
+            if (!$direccion) {
+                session()->flash('error', 'Por favor, selecciona una dirección válida.');
+                return;
             }
+
+            // Validar que hay productos en el carrito
+            if ($this->carrito->isEmpty()) {
+                session()->flash('error', 'Tu carrito está vacío.');
+                return;
+            }
+
+            // Validar método de pago y datos relacionados
+            if (!in_array($this->metodo_pago, ['paypal', 'tarjeta', 'pce'])) {
+                session()->flash('error', 'Por favor, selecciona un método de pago válido.');
+                return;
+            }
+
+            if ($this->metodo_pago === 'tarjeta') {
+                if (!$this->tarjeta_id && (!$this->nombre_tarjeta || !$this->numero_tarjeta || !$this->cvc_tarjeta || !$this->vencimiento_tarjeta)) {
+                    session()->flash('error', 'Por favor, selecciona o ingresa los datos de una tarjeta válida.');
+                    return;
+                }
+            }
+
+            // Crear el pedido
             $pedido = Pedidos::create([
                 'user_id' => $user->id,
                 'total_general' => $this->total,
                 'metodo_pago' => $this->metodo_pago,
-                'estado_pago' => $estado_pago,
+                'estado_pago' => 'pagado', // Siempre marcamos como pagado ya que no hay integración real con pasarelas de pago
                 'estado' => 'nuevo',
                 'moneda' => 'DOP',
                 'costo_envio' => $this->envio,
-                'metodo_envio' => 'estandar',
-                'notas' => $notas,
+                'metodo_envio' => 'tecnobox_transport',
+                'notas' => null,
                 'nombre' => $direccion->nombre,
                 'apellido' => $direccion->apellido,
                 'telefono' => $direccion->telefono,
@@ -209,6 +217,8 @@ class CheckoutPage extends Component
                 'codigo_postal' => $direccion->codigo_postal,
                 'stripe_payment_intent' => null,
             ]);
+
+            // Crear los productos del pedido
             foreach ($this->carrito as $item) {
                 PedidoProducto::create([
                     'pedido_id' => $pedido->id,
@@ -218,10 +228,36 @@ class CheckoutPage extends Component
                     'precio_total' => $item->precio_unitario * $item->cantidad,
                 ]);
             }
+
+            // Limpiar el carrito
             $user->carritoProductos()->delete();
-            return redirect('/success');
+
+            // Guardar el ID del pedido en la sesión
+            session(['pedido_success_id' => $pedido->id]);
+
+            // Enviar factura por correo automáticamente
+            $direccionUsuario = $pedido->user && $pedido->user->direccions->count() > 0 ? $pedido->user->direccions->first() : null;
+            $subtotal = $pedido->productos->sum(function($item) { return $item->precio_unitario * $item->cantidad; });
+            $impuestos = round($subtotal * 0.18, 2);
+            $envio = $pedido->costo_envio ?? 0;
+            $total = $subtotal + $impuestos + $envio;
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.factura', [
+                'pedido' => $pedido,
+                'subtotal' => $subtotal,
+                'impuestos' => $impuestos,
+                'envio' => $envio,
+                'total' => $total,
+                'direccionUsuario' => $direccionUsuario
+            ]);
+            Mail::to($pedido->user->email)->send(new FacturaMail($pedido, $pdf->output()));
+
+            // Redirigir usando la URL completa
+            return redirect('http://127.0.0.1:8000/success');
+
         } catch (\Exception $e) {
-            $this->stripeError = 'Hubo un error al procesar tu pago. Por favor, verifica los datos e intenta nuevamente.';
+            \Log::error('Error al crear pedido: ' . $e->getMessage());
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            session()->flash('error', 'Hubo un error al procesar tu pedido: ' . $e->getMessage());
             return;
         }
     }
@@ -249,6 +285,48 @@ class CheckoutPage extends Component
     public function nuevaDireccion()
     {
         return redirect('/mi-cuenta');
+    }
+
+    public function updatedTarjetaId($value)
+    {
+        $this->rellenarDatosTarjeta($value);
+    }
+
+    public function rellenarDatosTarjeta($id)
+    {
+        $tarjeta = $this->tarjetas->where('id', $id)->first();
+        if ($tarjeta) {
+            $this->nombre_tarjeta = $tarjeta->nombre_tarjeta;
+            $this->numero_tarjeta = $tarjeta->numero_tarjeta;
+            $this->cvc_tarjeta = $tarjeta->cvc;
+            $this->vencimiento_tarjeta = $tarjeta->vencimiento;
+        }
+    }
+
+    public function addNuevaTarjeta()
+    {
+        // Validar que los campos no estén vacíos
+        if (empty($this->nombre_tarjeta) || empty($this->numero_tarjeta) || empty($this->cvc_tarjeta) || empty($this->vencimiento_tarjeta)) {
+            session()->flash('error', 'Completa todos los datos de la tarjeta antes de añadir.');
+            return;
+        }
+        $user = Auth::user();
+        // Verificar si ya existe una tarjeta con ese número para este usuario
+        if ($user->tarjetas()->where('numero_tarjeta', $this->numero_tarjeta)->exists()) {
+            session()->flash('error', 'Esta tarjeta ya está registrada.');
+            return;
+        }
+        $tarjeta = $user->tarjetas()->create([
+            'metodo_pago_id' => 2, // Asume que 2 es el id de 'Tarjeta (débito/crédito)' en metodos_pago
+            'nombre_tarjeta' => $this->nombre_tarjeta,
+            'numero_tarjeta' => $this->numero_tarjeta,
+            'cvc' => $this->cvc_tarjeta,
+            'vencimiento' => $this->vencimiento_tarjeta,
+            'alias' => 'Tarjeta (***' . substr($this->numero_tarjeta, -3) . ')',
+        ]);
+        $this->tarjetas = $user->tarjetas()->get();
+        $this->tarjeta_id = $tarjeta->id;
+        $this->rellenarDatosTarjeta($tarjeta->id);
     }
 
     public function render()

@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\Admin\PedidoAdminController;
 use App\Http\Controllers\FacturaController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PedidoController;
 //primes-app\app\Livewire\HomePage.php
 Route::get('/', HomePage::class);
 
@@ -30,6 +32,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+
+// routes/web.php
+Route::post('/checkout', function () {
+    return redirect()->route('success');
+});
+
+Route::get('/success', SuccessPage::class)->name('success');
+
 
 Route::get('/categories', CategoriesPage::class);
 Route::get('/products', ProductosPage::class);
@@ -73,6 +83,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/mi-cuenta', \App\Livewire\MiCuentaPage::class)->name('cuenta');
     Route::get('/mis-pedidos', \App\Livewire\MisPedidosPage::class)->name('pedidos');
     Route::get('/mis-pedidos/{order}', \App\Livewire\MiPedidosDetallePage::class)->name('pedidos.detalle');
+    Route::get('/mis-tarjetas', \App\Livewire\MisTarjetasPage::class)->name('tarjetas');
     
     // Redirecciones de rutas en inglés a español
     Route::get('/my-orders', function() {
@@ -96,3 +107,13 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/pedidos/{pedido}', [PedidoAdminController::class, 'show'])->name('admin.pedidos.show');
 });
+
+// Rutas de pago
+Route::middleware(['auth'])->group(function () {
+    Route::get('/pedido/realizar', \App\Livewire\RealizarPedido::class)->name('pedido.realizar');
+    Route::get('/pedidos/{pedido}', [App\Http\Controllers\PedidoController::class, 'show'])->name('pedidos.show');
+});
+
+// Webhooks de pago (no requieren autenticación)
+Route::post('/webhooks/stripe', [App\Http\Controllers\PaymentController::class, 'stripeWebhook'])->name('webhooks.stripe');
+Route::post('/webhooks/paypal', [App\Http\Controllers\PaymentController::class, 'paypalWebhook'])->name('webhooks.paypal');

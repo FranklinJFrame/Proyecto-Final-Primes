@@ -64,13 +64,7 @@
                     @foreach($pedido->productos as $item)
                         <tr>
                             <td>
-                                <img src="{{
-                                    $item->producto && $item->producto->imagenes && is_array($item->producto->imagenes) && count($item->producto->imagenes) > 0
-                                        ? (filter_var($item->producto->imagenes[0], FILTER_VALIDATE_URL)
-                                            ? $item->producto->imagenes[0]
-                                            : public_path('storage/products/' . $item->producto->imagenes[0]))
-                                        : public_path('logo-tecnobox.png')
-                                }}" alt="Imagen del producto">
+                                <img src="{{ url('storage', $item->producto->imagenes[0]) }}" >
                             </td>
                             <td>{{ $item->producto->nombre ?? 'Producto eliminado' }}</td>
                             <td>{{ $item->cantidad }}</td>

@@ -141,6 +141,17 @@
                 <tr><td><b>Nombre:</b></td><td>{{ $pedido->nombre }} {{ $pedido->apellido }}</td></tr>
                 <tr><td><b>Dirección:</b></td><td>{{ $pedido->direccion_calle }}, {{ $pedido->ciudad }}, {{ $pedido->estado_direccion }}, {{ $pedido->codigo_postal }}</td></tr>
                 <tr><td><b>Teléfono:</b></td><td>{{ $pedido->telefono }}</td></tr>
+                <tr><td><b>Método de pago:</b></td><td>
+                    @php
+                        $metodo = [
+                            'stripe' => 'Tarjeta de crédito',
+                            'tarjeta' => 'Tarjeta de crédito',
+                            'paypal' => 'PayPal',
+                            'pce' => 'Pago contra entrega',
+                        ][$pedido->metodo_pago] ?? ucfirst($pedido->metodo_pago);
+                    @endphp
+                    {{ $metodo }}
+                </td></tr>
             </table>
         </div>
         <div style="margin-bottom: 24px;">
@@ -148,7 +159,6 @@
             <table class="products-table">
                 <thead>
                     <tr>
-                        <th>Imagen</th>
                         <th>Producto</th>
                         <th>Cantidad</th>
                         <th>Precio unitario</th>
@@ -158,15 +168,6 @@
                 <tbody>
                     @foreach($pedido->productos as $item)
                         <tr>
-                            <td>
-                                <img src="{{
-                                    $item->producto && $item->producto->imagenes && is_array($item->producto->imagenes) && count($item->producto->imagenes) > 0
-                                        ? (filter_var($item->producto->imagenes[0], FILTER_VALIDATE_URL)
-                                            ? $item->producto->imagenes[0]
-                                            : public_path('storage/products/' . $item->producto->imagenes[0]))
-                                        : public_path('logo-tecnobox.png')
-                                }}" alt="Imagen del producto">
-                            </td>
                             <td>{{ $item->producto->nombre ?? 'Producto eliminado' }}</td>
                             <td>{{ $item->cantidad }}</td>
                             <td>RD$ {{ number_format($item->precio_unitario, 2) }}</td>

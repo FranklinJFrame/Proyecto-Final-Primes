@@ -8,6 +8,7 @@ use App\Filament\Resources\OrderResource\RelationManagers\DireccionRelationManag
 use App\Models\Pedidos;
 use App\Models\PedidoProductos;
 use App\Models\Producto;
+use App\Models\MetodosPago;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Group;
@@ -36,6 +37,10 @@ use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\TextInputFilter;
+use App\Models\Pagos;
+use Filament\Resources\Pagos as FilamentPagosResource;
+use App\Models\DatosTarj;
+
 
 class PedidosResource extends Resource
 {
@@ -67,12 +72,11 @@ class PedidosResource extends Resource
 
                                 Forms\Components\Select::make('metodo_pago')
                                     ->label('Método de Pago')
-                                    ->options([
-                                        'stripe' => 'Stripe',
-                                        'transferencia' => 'Transferencia bancaria',
-                                        'debito' => 'Tarjeta de débito',
-                                        'pce' => 'Pago contra entrega',
-                                    ])
+                                    ->options(function() {
+                                        return MetodosPago::where('esta_activo', true)
+                                            ->pluck('nombre', 'id')
+                                            ->toArray();
+                                    })
                                     ->required()
                                     ->prefixIcon('heroicon-o-credit-card')
                                     ->columnSpan(['md' => 2]),
@@ -87,7 +91,12 @@ class PedidosResource extends Resource
                                     ->default('pendiente')
                                     ->required()
                                     ->prefixIcon('heroicon-o-banknotes')
-                                    ->columnSpan(['md' => 2]),
+                                    ->columnSpan(['md' => 2])
+                                    ->afterStateUpdated(function ($state, $record) {
+                                        if ($record && $record->pago) {
+                                            $record->pago->update(['estado' => $state]);
+                                        }
+                                    }),
 
                                 Forms\Components\Select::make('moneda')
                                     ->label('Moneda')
@@ -320,10 +329,14 @@ class PedidosResource extends Resource
                 Tables\Columns\TextColumn::make('metodo_pago')
                     ->label('Método de Pago')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'stripe' => 'Stripe',
-                        'pce' => 'Contra Entrega',
-                        default => $state,
+                    ->formatStateUsing(function ($state, $record) {
+                        // Si el método de pago es un id, busca el nombre
+                        if (is_numeric($state)) {
+                            $metodo = \App\Models\MetodosPago::find($state);
+                            return $metodo ? ucfirst($metodo->nombre) : $state;
+                        }
+                        // Si es string, muestra el string
+                        return ucfirst($state);
                     }),
 
                 Tables\Columns\TextColumn::make('metodo_envio')

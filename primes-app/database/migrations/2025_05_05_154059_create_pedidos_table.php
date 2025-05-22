@@ -22,6 +22,15 @@ return new class extends Migration
             $tabla->decimal('costo_envio', 10, 2)->nullable();
             $tabla->string('metodo_envio')->nullable();
             $tabla->text('notas')->nullable();
+            // Campos de dirección
+            $tabla->string('nombre')->nullable();
+            $tabla->string('apellido')->nullable();
+            $tabla->string('telefono')->nullable();
+            $tabla->string('direccion_calle')->nullable();
+            $tabla->string('ciudad')->nullable();
+            $tabla->string('estado_direccion')->nullable();
+            $tabla->string('codigo_postal')->nullable();
+            $tabla->string('stripe_payment_intent')->nullable();
             $tabla->timestamps();
         });
     }

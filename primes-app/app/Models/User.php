@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Notifications\CustomResetPassword;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -45,8 +46,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
-    public function pedidos() {
+    public function pedidos(): HasMany
+    {
         return $this->hasMany(Pedidos::class);
+    }
+
+    public function pagos(): HasMany
+    {
+        return $this->hasMany(Pagos::class);
     }
 
     public function sendPasswordResetNotification($token)
@@ -59,15 +66,23 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->notify(new \App\Notifications\CustomVerifyEmail);
     }
 
-    public function cartItems() {
+    public function cartItems(): HasMany
+    {
         return $this->hasMany(\App\Models\CartItem::class);
     }
 
-    public function carritoProductos() {
+    public function carritoProductos(): HasMany
+    {
         return $this->hasMany(\App\Models\CarritoProducto::class);
     }
 
-    public function direccions() {
+    public function direccions(): HasMany
+    {
         return $this->hasMany(\App\Models\Direccion::class);
+    }
+
+    public function tarjetas(): HasMany
+    {
+        return $this->hasMany(\App\Models\DatosTarj::class, 'user_id');
     }
 }

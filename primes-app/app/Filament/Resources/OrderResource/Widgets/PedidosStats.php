@@ -18,7 +18,7 @@ class PedidosStats extends BaseWidget
             Stat::make('Pedido Enviado', Pedidos::where('estado', 'enviado')->count()),
             Stat::make(
                 'Precio Promedio',
-                $avg !== null ? Number::currency($avg, 'DOP') : 'N/A'
+                $avg !== null ? 'RD$ ' . number_format($avg, 2) : 'N/A'
             ),
         ];
     }

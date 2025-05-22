@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pedidos;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\FacturaMail;
 
 class FacturaController extends Controller
 {
     /**
      * Genera y descarga la factura en PDF para un pedido específico
      */
-    public function generarPDF($id)
+    public function generarPDF($id, Request $request)
     {
         $pedido = Pedidos::with(['productos.producto', 'user.direccions', 'direccion'])->findOrFail($id);
         
@@ -37,6 +39,14 @@ class FacturaController extends Controller
             'total' => $total,
             'direccionUsuario' => $direccionUsuario
         ]);
+
+        // Si la request tiene 'enviar', mandamos el correo
+        if ($request->has('enviar')) {
+            $pdfContent = $pdf->output();
+            $email = $pedido->user->email;
+            Mail::to($email)->send(new FacturaMail($pedido, $pdfContent));
+            return response()->json(['message' => 'Factura enviada al correo: ' . $email]);
+        }
 
         return $pdf->download('factura-' . str_pad($pedido->id, 8, '0', STR_PAD_LEFT) . '.pdf');
     }

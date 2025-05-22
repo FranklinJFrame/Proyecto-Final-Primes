@@ -5,10 +5,12 @@ namespace App\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Direccion;
+use App\Models\DatosTarj;
 
 class MiCuentaPage extends Component
 {
     public $direcciones = [];
+    public $tarjetas = [];
     public $editId = null;
     public $nombre = '';
     public $apellido = '';
@@ -33,11 +35,17 @@ class MiCuentaPage extends Component
     public function mount()
     {
         $this->loadDirecciones();
+        $this->loadTarjetas();
     }
 
     public function loadDirecciones()
     {
         $this->direcciones = Auth::user()->direccions()->get();
+    }
+
+    public function loadTarjetas()
+    {
+        $this->tarjetas = Auth::user()->tarjetas()->get();
     }
 
     public function resetForm()
@@ -136,6 +144,9 @@ class MiCuentaPage extends Component
 
     public function render()
     {
-        return view('livewire.mi-cuenta-page');
+        return view('livewire.mi-cuenta-page', [
+            'direcciones' => $this->direcciones,
+            'tarjetas' => $this->tarjetas,
+        ]);
     }
 }

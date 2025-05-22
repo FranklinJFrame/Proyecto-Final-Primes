@@ -26,7 +26,15 @@
                     <div><span class="font-semibold">N° Pedido:</span> #{{ $pedido->id }}</div>
                     <div><span class="font-semibold">Fecha:</span> {{ $pedido->created_at->format('d/m/Y H:i') }}</div>
                     <div><span class="font-semibold">Método de pago:</span> 
-                        {{ strtoupper($pedido->metodo_pago) }}
+                        @php
+                            $metodo = [
+                                'stripe' => 'Tarjeta de crédito',
+                                'tarjeta' => 'Tarjeta de crédito',
+                                'paypal' => 'PayPal',
+                                'pce' => 'Pago contra entrega',
+                            ][$pedido->metodo_pago] ?? ucfirst($pedido->metodo_pago);
+                        @endphp
+                        {{ $metodo }}
                         @if($pedido->metodo_pago === 'stripe' || $pedido->metodo_pago === 'tarjeta')
                             <span class="ml-2">(**** **** **** {{ $pedido->ultimos4 ?? '1234' }})</span>
                         @endif
@@ -103,4 +111,4 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection

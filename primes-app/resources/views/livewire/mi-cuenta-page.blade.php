@@ -134,7 +134,7 @@
                 @endif
             </div>
 
-            <!-- Panel derecho: Dirección y acciones -->
+            <!-- Panel derecho: Dirección y Tarjetas -->
             <div class="space-y-6">
                 <!-- Dirección principal -->
                 <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
@@ -251,12 +251,76 @@
                                 </div>
                             @endforeach
                         </div>
-                    @else
+                    @elsenuevaDireccion
                         <div class="bg-gray-700/50 rounded-lg p-6 text-center">
                             <p class="text-gray-300 mb-4">No tienes direcciones registradas.</p>
                             <button wire:click="nuevaDireccion" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                 Añadir dirección
                             </button>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Tarjetas de crédito -->
+                <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-bold text-blue-400">Mis Tarjetas</h2>
+                        <div>
+                            @php
+                                $tarjetas = auth()->user()->tarjetas()->get();
+                            @endphp
+                            @if($tarjetas->count() < 3)
+                                <a href="{{ route('tarjetas') }}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    Nueva
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+
+                    @if($tarjetas->count() > 0)
+                        <div class="space-y-4">
+                            @foreach($tarjetas->take(2) as $tarjeta)
+                                <div class="bg-gray-700/50 rounded-lg p-4 hover:bg-gray-700 transition-all duration-300">
+                                    <div class="flex justify-between">
+                                        <div class="font-bold text-white">{{ $tarjeta->nombre_tarjeta }}</div>
+                                        @if($tarjeta->es_predeterminada)
+                                            <div class="text-xs text-blue-400">Predeterminada</div>
+                                        @endif
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="mb-1">
+                                            <span class="text-gray-300 text-sm">Número:</span>
+                                            <span class="text-white">**** **** **** {{ substr($tarjeta->numero_tarjeta, -4) }}</span>
+                                        </div>
+                                        <div class="mb-1">
+                                            <span class="text-gray-300 text-sm">Vence:</span>
+                                            <span class="text-white">{{ $tarjeta->vencimiento }}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-300 text-sm">Tipo:</span>
+                                            <span class="text-white">{{ ucfirst($tarjeta->tipo_tarjeta) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+
+                            @if($tarjetas->count() > 2)
+                                <div class="text-center mt-2">
+                                    <a href="{{ route('tarjetas') }}" class="text-blue-400 hover:text-blue-300 text-sm">
+                                        Ver todas las tarjetas
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    @else
+                        <div class="bg-gray-700/50 rounded-lg p-6 text-center">
+                            <p class="text-gray-300 mb-4">No tienes tarjetas registradas.</p>
+                            <a href="{{ route('tarjetas') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Añadir tarjeta
+                            </a>
                         </div>
                     @endif
                 </div>
