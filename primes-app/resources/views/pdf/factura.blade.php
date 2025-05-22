@@ -132,6 +132,7 @@
         <table class="products-table">
             <thead>
                 <tr>
+                    <th>Imagen</th>
                     <th>Producto</th>
                     <th>Cantidad</th>
                     <th>Precio unitario</th>
@@ -142,8 +143,15 @@
                 @foreach($pedido->productos as $item)
                     <tr>
                         <td>
-                            {{ $item->producto->nombre }}
+                            <img src="{{
+                                $item->producto && $item->producto->imagenes && is_array($item->producto->imagenes) && count($item->producto->imagenes) > 0
+                                    ? (filter_var($item->producto->imagenes[0], FILTER_VALIDATE_URL)
+                                        ? $item->producto->imagenes[0]
+                                        : public_path('storage/products/' . $item->producto->imagenes[0]))
+                                    : public_path('logo-tecnobox.png')
+                            }}" alt="Imagen del producto" style="width:48px;height:48px;object-fit:contain;border-radius:6px;border:1px solid #e0e7ef;background:#f9fafb;">
                         </td>
+                        <td>{{ $item->producto->nombre ?? 'Producto eliminado' }}</td>
                         <td>{{ $item->cantidad }}</td>
                         <td>RD$ {{ number_format($item->precio_unitario, 2) }}</td>
                         <td>RD$ {{ number_format($item->precio_total, 2) }}</td>

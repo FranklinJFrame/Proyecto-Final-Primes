@@ -31,7 +31,7 @@
                            @keydown.arrow-up="$event.target.previousElementSibling?.focus()"
                            class="flex items-center gap-3 p-3 hover:bg-blue-500/10 focus:bg-blue-500/10 focus:outline-none transition-colors">
                             @if(isset($suggestion->imagenes[0]))
-                            <img src="{{ url('storage/'.$suggestion->imagenes[0]) }}" 
+                            <img src="{{ url('storage', $suggestion->imagenes[0]) }}" 
                                  alt="{{ $suggestion->nombre }}" 
                                  class="w-12 h-12 object-contain rounded bg-gray-800/50">
                             @endif

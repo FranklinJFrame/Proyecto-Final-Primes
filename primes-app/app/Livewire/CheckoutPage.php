@@ -34,6 +34,19 @@ class CheckoutPage extends Component
     public $stripeError = '';
     public $editando_direccion = false;
     public $stripeIntent = null;
+    public $metodo_pago = 'paypal';
+    public $datos_transferencia = '';
+    public $datos_debito = '';
+    public $banco_transferencia = '';
+    public $cuenta_transferencia = '';
+    public $referencia_transferencia = '';
+    public $nombre_tarjeta = '';
+    public $numero_tarjeta = '';
+    public $cvc_tarjeta = '';
+    public $vencimiento_tarjeta = '';
+    public $errores_pago = [];
+
+    protected $listeners = ['paypalPagoExitoso' => 'pagoPaypalExitoso'];
 
     public function mount()
     {
@@ -133,41 +146,60 @@ class CheckoutPage extends Component
         }
     }
 
+    public function pagoPaypalExitoso($details)
+    {
+        $this->realizarPedido();
+    }
+
     public function realizarPedido()
     {
+        $this->errores_pago = [];
+        if ($this->metodo_pago === 'tarjeta') {
+            if (empty($this->nombre_tarjeta)) $this->errores_pago['nombre_tarjeta'] = 'El nombre es obligatorio';
+            if (empty($this->numero_tarjeta)) $this->errores_pago['numero_tarjeta'] = 'El número de tarjeta es obligatorio';
+            if (empty($this->cvc_tarjeta)) $this->errores_pago['cvc_tarjeta'] = 'El CVC es obligatorio';
+            if (empty($this->vencimiento_tarjeta)) $this->errores_pago['vencimiento_tarjeta'] = 'La fecha de vencimiento es obligatoria';
+        }
+        if ($this->metodo_pago === 'transferencia') {
+            if (empty($this->banco_transferencia)) $this->errores_pago['banco_transferencia'] = 'El banco es obligatorio';
+            if (empty($this->cuenta_transferencia)) $this->errores_pago['cuenta_transferencia'] = 'El número de cuenta es obligatorio';
+            if (empty($this->referencia_transferencia)) $this->errores_pago['referencia_transferencia'] = 'La referencia es obligatoria';
+        }
+        if (count($this->errores_pago) > 0) return;
         $user = Auth::user();
-        
         if ($this->crear_nueva) {
             $this->saveDireccion();
         }
-
         $direccion = $user->direccions()->find($this->direccion_id);
         if (!$direccion) {
             session()->flash('error', 'Por favor, selecciona o crea una dirección válida.');
             return;
         }
-
         if ($this->carrito->isEmpty()) {
             session()->flash('error', 'Tu carrito está vacío.');
             return;
         }
-
         try {
-            // Confirmar el pago con Stripe
-            if (!$this->stripeIntent) {
-                $this->createPaymentIntent();
+            $estado_pago = 'pendiente';
+            if ($this->metodo_pago === 'paypal') {
+                $estado_pago = 'pagado';
             }
-
+            $notas = null;
+            if ($this->metodo_pago === 'transferencia') {
+                $notas = 'Banco: ' . $this->banco_transferencia . ' | Cuenta: ' . $this->cuenta_transferencia . ' | Referencia: ' . $this->referencia_transferencia;
+            } elseif ($this->metodo_pago === 'debito') {
+                $notas = 'Nombre: ' . $this->nombre_tarjeta . ' | Tarjeta: ' . $this->numero_tarjeta . ' | CVC: ' . $this->cvc_tarjeta . ' | Vencimiento: ' . $this->vencimiento_tarjeta;
+            }
             $pedido = Pedidos::create([
                 'user_id' => $user->id,
                 'total_general' => $this->total,
-                'metodo_pago' => 'stripe',
-                'estado_pago' => 'pagado',
+                'metodo_pago' => $this->metodo_pago,
+                'estado_pago' => $estado_pago,
                 'estado' => 'nuevo',
                 'moneda' => 'DOP',
                 'costo_envio' => $this->envio,
                 'metodo_envio' => 'estandar',
-                'notas' => null,
+                'notas' => $notas,
                 'nombre' => $direccion->nombre,
                 'apellido' => $direccion->apellido,
                 'telefono' => $direccion->telefono,
@@ -175,9 +207,8 @@ class CheckoutPage extends Component
                 'ciudad' => $direccion->ciudad,
                 'estado_direccion' => $direccion->estado,
                 'codigo_postal' => $direccion->codigo_postal,
-                'stripe_payment_intent' => $this->stripeIntent->id,
+                'stripe_payment_intent' => null,
             ]);
-
             foreach ($this->carrito as $item) {
                 PedidoProducto::create([
                     'pedido_id' => $pedido->id,
@@ -187,11 +218,10 @@ class CheckoutPage extends Component
                     'precio_total' => $item->precio_unitario * $item->cantidad,
                 ]);
             }
-
             $user->carritoProductos()->delete();
             return redirect('/success');
         } catch (\Exception $e) {
-            $this->stripeError = 'Hubo un error al procesar tu pago. Por favor, verifica los datos de tu tarjeta e intenta nuevamente.';
+            $this->stripeError = 'Hubo un error al procesar tu pago. Por favor, verifica los datos e intenta nuevamente.';
             return;
         }
     }
@@ -214,6 +244,12 @@ class CheckoutPage extends Component
             $this->editando_direccion = true;
             $this->crear_nueva = false;
         }
+    }
+
+    public function nuevaDireccion()
+    {
+        $this->crear_nueva = true;
+        $this->resetDireccionFields();
     }
 
     public function render()

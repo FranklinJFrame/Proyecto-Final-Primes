@@ -58,10 +58,13 @@
                 <div class="space-y-4">
                     @foreach($pedido->productos as $item)
                         <div class="flex items-center gap-4 bg-white/5 rounded-xl p-4 hover:bg-white/10 transition-colors">
-                            <img src="{{ url('storage/products/' . ($item->producto->imagenes[0] ?? '')) }}" 
-                            class="w-16 h-16 object-cover rounded-lg bg-gray-800 border border-gray-700" 
-                            alt="{{ $item->producto->nombre }}">
-                            
+                            <img src="{{ $item->producto && $item->producto->imagenes && is_array($item->producto->imagenes) && count($item->producto->imagenes) > 0
+                                ? (filter_var($item->producto->imagenes[0], FILTER_VALIDATE_URL)
+                                    ? $item->producto->imagenes[0]
+                                    : asset('storage/products/' . $item->producto->imagenes[0]))
+                                : asset('logo-tecnobox.png') }}"
+                                class="w-16 h-16 object-cover rounded-lg bg-gray-800 border border-gray-700"
+                                alt="{{ $item->producto->nombre }}">
                             <div class="flex-1">
                                 <h3 class="font-medium text-white">{{ $item->producto->nombre }}</h3>
                                 <p class="text-sm text-gray-400">Cantidad: {{ $item->cantidad }}</p>
@@ -76,17 +79,21 @@
             </div>
 
             <!-- Resumen de costos -->
+            @php
+                $subtotal = $pedido->productos->sum('precio_total') - $pedido->costo_envio - round(($pedido->productos->sum('precio_total') - $pedido->costo_envio) * 0.18, 2);
+                $itbis = round(($pedido->productos->sum('precio_total') - $pedido->costo_envio) * 0.18, 2);
+            @endphp
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="md:col-start-2">
                     <div class="bg-white/5 rounded-xl p-6">
                         <div class="space-y-3">
                             <div class="flex justify-between text-gray-300">
                                 <span>Subtotal</span>
-                                <span class="font-medium">RD$ {{ number_format($pedido->productos->sum('precio_total') - $pedido->costo_envio - round(($pedido->productos->sum('precio_total') - $pedido->costo_envio) * 0.18, 2), 2) }}</span>
+                                <span class="font-medium">RD$ {{ number_format($subtotal, 2) }}</span>
                             </div>
                             <div class="flex justify-between text-gray-300">
                                 <span>ITBIS (18%)</span>
-                                <span class="font-medium">RD$ {{ number_format(round(($pedido->productos->sum('precio_total') - $pedido->costo_envio) * 0.18, 2), 2) }}</span>
+                                <span class="font-medium">RD$ {{ number_format($itbis, 2) }}</span>
                             </div>
                             <div class="flex justify-between text-gray-300">
                                 <span>Envío</span>

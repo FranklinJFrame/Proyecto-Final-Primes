@@ -8,6 +8,29 @@
       </div>
     </div>
     
+    @php
+        use Carbon\Carbon;
+        $fechaMin = Carbon::parse($pedido->created_at)->addWeekdays(2)->format('d/m/Y');
+        $fechaMax = Carbon::parse($pedido->created_at)->addWeekdays(5)->format('d/m/Y');
+    @endphp
+    <!-- Banner de tiempo estimado de entrega tipo Amazon -->
+    <div class="w-full mb-8">
+      <div class="rounded-lg bg-yellow-100 border border-yellow-300 px-6 py-4 flex items-center justify-center shadow text-yellow-900 text-center">
+        <svg class="w-7 h-7 mr-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" />
+        </svg>
+        <span class="text-lg md:text-xl font-semibold">
+          Tu pedido llegará entre el <span class="font-bold">{{ $fechaMin }}</span> y el <span class="font-bold">{{ $fechaMax }}</span>
+        </span>
+      </div>
+    </div>
+    
+    @if(now()->gt(Carbon::parse($pedido->created_at)->addWeekdays(5)) && $pedido->estado != 'entregado' && $pedido->notas)
+    <div class="bg-red-100 border border-red-300 px-6 py-4 rounded-lg text-red-900 mt-4">
+      <strong>Motivo del retraso:</strong> {{ $pedido->notas }}
+    </div>
+    @endif
+    
     <!-- Tarjetas de información -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
       <!-- Tarjeta Cliente -->
@@ -90,7 +113,7 @@
                     <div class="flex items-center">
                       @if($item->producto && isset($item->producto->imagenes) && count($item->producto->imagenes) > 0)
                       <div class="flex-shrink-0 h-10 w-10">
-                        <img class="h-10 w-10 rounded-md object-cover border border-gray-700" src="{{ $item->producto->imagenes[0] }}" alt="{{ $item->producto->nombre }}">
+                        <img class="h-10 w-10 rounded-md object-cover border border-gray-700" src="{{ url('storage', $item->producto->imagenes[0]) }}" alt="{{ $item->producto->nombre }}">
                       </div>
                       @else
                       <div class="flex-shrink-0 h-10 w-10 bg-gray-800 rounded-md flex items-center justify-center">
@@ -161,6 +184,30 @@
             </div>
           @endif
         </div>
+
+        <!-- Información de envío extra -->
+        <div class="bg-gray-800 border border-gray-700 rounded-xl shadow-lg p-6 mt-6">
+          <div class="flex items-center mb-4">
+            <svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2a4 4 0 014-4h4" />
+            </svg>
+            <h2 class="text-lg font-semibold text-white">Envío</h2>
+          </div>
+          <div class="text-gray-300 mb-2"><span class="font-semibold text-white">Transportista:</span> {{ $pedido->metodo_envio == 'tecnobox_transport' ? 'Tecnobox Transport' : ($pedido->metodo_envio == 'caribes_tour' ? 'Caribes Tour' : $pedido->metodo_envio) }}</div>
+        </div>
+
+        <!-- Notas adicionales del pedido -->
+        @if($pedido->notas)
+        <div class="bg-gray-800 border border-gray-700 rounded-xl shadow-lg p-6 mt-6">
+          <div class="flex items-center mb-4">
+            <svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4-4 4 4" />
+            </svg>
+            <h2 class="text-lg font-semibold text-white">Notas adicionales del pedido</h2>
+          </div>
+          <div class="text-gray-300">{{ $pedido->notas }}</div>
+        </div>
+        @endif
       </div>
 
       <div class="md:w-1/4">
