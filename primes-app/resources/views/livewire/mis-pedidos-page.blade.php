@@ -104,6 +104,14 @@
                                     <div class="text-sm text-gray-400 mb-1">Pedido #</div>
                                     <div class="font-medium text-lg">{{ str_pad($pedido->id, 8, '0', STR_PAD_LEFT) }}</div>
                                 </div>
+                                <div class="flex flex-col">
+                                    <div class="text-sm text-gray-400 mb-1">Transportista</div>
+                                    <div class="font-medium text-lg">{{ $pedido->metodo_envio == 'caribes_tour' ? 'Caribes Tour' : $pedido->metodo_envio }}</div>
+                                </div>
+                                <div class="flex flex-col">
+                                    <div class="text-sm text-gray-400 mb-1">Entrega estimada</div>
+                                    <div class="font-medium text-lg">2 a 5 días laborables</div>
+                                </div>
                             </div>
                             <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
                                 @switch($pedido->estado)
@@ -150,7 +158,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             @foreach($pedido->productos()->with('producto')->get() as $item)
                                 <div class="flex items-start gap-4 bg-gray-900/50 rounded-xl p-4 hover:bg-gray-700/30 transition-colors group-hover:border-gray-600">
-                                    <img src="{{$item->producto->imagenes[0]}}" 
+                                    <img src="{{ url('storage', $item->producto->imagenes[0]) }}" 
                                     class="w-24 h-24 object-cover rounded-lg bg-gray-800 border border-gray-700" 
                                     alt="{{ $item->producto->nombre }}">
                                     <div class="flex-1 min-w-0">

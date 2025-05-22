@@ -35,6 +35,7 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\TextInputFilter;
 
 class PedidosResource extends Resource
 {
@@ -68,7 +69,9 @@ class PedidosResource extends Resource
                                     ->label('Método de Pago')
                                     ->options([
                                         'stripe' => 'Stripe',
-                                        'pce' => 'Pago contra entrega',  
+                                        'transferencia' => 'Transferencia bancaria',
+                                        'debito' => 'Tarjeta de débito',
+                                        'pce' => 'Pago contra entrega',
                                     ])
                                     ->required()
                                     ->prefixIcon('heroicon-o-credit-card')
@@ -101,10 +104,8 @@ class PedidosResource extends Resource
                                 Forms\Components\Select::make('metodo_envio')
                                     ->label('Método de Envío')
                                     ->options([
-                                        'fedex' => 'FedEx',
-                                        'ups' => 'UPS',
-                                        'dhl' => 'DHL',
-                                        'usps' => 'USPS',
+                                        'tecnobox_transport' => 'Tecnobox Transport',
+                                        'caribes_tour' => 'Caribes Tour',
                                     ])
                                     ->required()
                                     ->prefixIcon('heroicon-o-truck')
@@ -261,6 +262,11 @@ class PedidosResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label('ID Pedido')
+                    ->sortable()
+                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Cliente')
                     ->sortable()
@@ -374,7 +380,18 @@ class PedidosResource extends Resource
                                 $data['hasta'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
-                    })
+                    }),
+
+                Tables\Filters\Filter::make('id')
+                    ->form([
+                        Forms\Components\TextInput::make('id')->label('ID Pedido'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (!empty($data['id'])) {
+                            $query->where('id', $data['id']);
+                        }
+                        return $query;
+                    }),
             ])
             ->actions([
                 Action::make('ver_factura')
