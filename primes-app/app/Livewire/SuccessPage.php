@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\Pedidos;
 use App\Models\DatosTarj;
 use App\Models\Pagos;
+use Illuminate\Support\Facades\Auth;
 
 class SuccessPage extends Component
 {

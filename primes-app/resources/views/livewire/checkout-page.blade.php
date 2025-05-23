@@ -74,7 +74,7 @@
 						@endif
 					</div>
 					<div class="space-y-4">
-<<<<<<< HEAD
+
 						<div class="bg-gray-700/50 rounded-lg p-6">
 							<div class="space-y-6">
 								<div>
@@ -93,7 +93,7 @@
 								</div>
 							</div>
 						</div>
-=======
+
 						@if($metodo_pago === 'paypal')
 							<div class="bg-gray-700/50 rounded-lg p-4 flex flex-col items-center">
 								<div id="paypal-button-container"></div>
@@ -158,7 +158,6 @@
 						@elseif($metodo_pago === 'pce')
 							<div class="bg-gray-700/50 rounded-lg p-4 text-green-400 font-semibold">Pago contra entrega (pagarás al recibir el pedido)</div>
 						@endif
->>>>>>> b7e6f5b1eec792651d39af92f94888a752987a64
 					</div>
 				</div>
 			</div>
@@ -170,11 +169,7 @@
 				<div class="space-y-4">
 					@foreach($carrito as $item)
 						<div class="flex gap-4 py-4 border-b border-gray-700 last:border-0">
-<<<<<<< HEAD
-							<img src="{{ $item->producto->imagenes[0] ?? '/img/default-product.jpg' }}"
-=======
 							<img src="{{ url('storage', $item->producto->imagenes[0]) }}"
->>>>>>> b7e6f5b1eec792651d39af92f94888a752987a64
 								alt="{{ $item->producto->nombre }}"
 								class="w-20 h-20 object-cover rounded-lg bg-gray-700"
 								loading="lazy">
@@ -210,23 +205,10 @@
 					</div>
 
 					<!-- Botón de pago -->
-<<<<<<< HEAD
-					<button type="button" wire:click="realizarPedido" wire:loading.attr="disabled"
-						class="w-full mt-6 px-6 py-4 border border-transparent rounded-xl text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-						<span wire:loading.remove>
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-							</svg>
-						</span>
-						<svg wire:loading class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-=======
 					<button wire:click="realizarPedido" 
 						class="w-full mt-6 px-6 py-3 border border-transparent rounded-xl text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center gap-2">
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
->>>>>>> b7e6f5b1eec792651d39af92f94888a752987a64
 						</svg>
 						<span wire:loading.remove>Pagar Ahora</span>
 						<span wire:loading>Procesando...</span>
@@ -248,11 +230,8 @@
 </div>
 
 @push('scripts')
-<<<<<<< HEAD
-=======
 <script src="https://js.stripe.com/v3/"></script>
 <script src="https://www.paypal.com/sdk/js?client-id=ATB8WxGXsSNf6VEv8kzk5E4zt9hYRmsxvPa9XsLkj4MWS5cyIHeNVBwmenHn-AXGzGJ-fMcG_PrIDqOw&currency=USD"></script>
->>>>>>> b7e6f5b1eec792651d39af92f94888a752987a64
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
 		Livewire.on('pedidoCreado', (pedidoId) => {
