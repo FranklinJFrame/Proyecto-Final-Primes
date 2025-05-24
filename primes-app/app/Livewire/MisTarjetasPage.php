@@ -87,6 +87,13 @@ class MisTarjetasPage extends Component
             return;
         }
 
+        // Check if card number already exists in the system
+        $existingCard = DatosTarj::where('numero_tarjeta', $this->numero_tarjeta)->first();
+        if ($existingCard && ($this->modo === 'crear' || ($this->editId !== null && $existingCard->id !== $this->editId))) {
+            session()->flash('error', 'Este número de tarjeta ya está registrado en el sistema.');
+            return;
+        }
+
         // Si es la primera tarjeta, hacerla predeterminada
         if ($this->tarjetas->count() === 0) {
             $this->es_predeterminada = true;
@@ -127,6 +134,13 @@ class MisTarjetasPage extends Component
     public function update()
     {
         $this->validate();
+        
+        // Check if card number already exists in the system, excluding the current card being edited
+        $existingCard = DatosTarj::where('numero_tarjeta', $this->numero_tarjeta)->where('id', '!=', $this->editId)->first();
+        if ($existingCard) {
+            session()->flash('error', 'Este número de tarjeta ya está registrado en el sistema.');
+            return;
+        }
         
         $tarjeta = Auth::user()->tarjetas()->findOrFail($this->editId);
 
