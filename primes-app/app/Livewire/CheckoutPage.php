@@ -40,16 +40,7 @@ class CheckoutPage extends Component
     public $stripe_intent_id = null;
     public $stripe_client_secret = null;
     public $stripe_intent_status = null;
-    public $metodo_pago = 'paypal';
-    public $datos_transferencia = '';
-    public $datos_debito = '';
-    public $banco_transferencia = '';
-    public $cuenta_transferencia = '';
-    public $referencia_transferencia = '';
-    public $nombre_tarjeta = '';
-    public $numero_tarjeta = '';
-    public $cvc_tarjeta = '';
-    public $vencimiento_tarjeta = '';
+    public $metodo_pago = 'tarjeta';
     public $errores_pago = [];
     public $tarjetas = [];
     public $tarjeta_id = null;
@@ -68,10 +59,6 @@ class CheckoutPage extends Component
         $cantidad_total = $this->carrito->sum('cantidad');
         $this->envio = $cantidad_total * 700;
         $this->total = $this->subtotal + $this->itbis + $this->envio;
-        $this->nombre_tarjeta = '';
-        $this->numero_tarjeta = '';
-        $this->cvc_tarjeta = '';
-        $this->vencimiento_tarjeta = '';
         $this->tarjeta_id = null;
         if ($this->direcciones->count()) {
             $this->direccion_id = $this->direcciones->first()->id;
@@ -202,7 +189,7 @@ class CheckoutPage extends Component
             }
 
             if ($this->metodo_pago === 'tarjeta') {
-                if (!$this->tarjeta_id && (!$this->nombre_tarjeta || !$this->numero_tarjeta || !$this->cvc_tarjeta || !$this->vencimiento_tarjeta)) {
+                if (!$this->tarjeta_id) {
                     session()->flash('error', 'Por favor, selecciona o ingresa los datos de una tarjeta válida.');
                     return;
                 }
@@ -309,39 +296,10 @@ class CheckoutPage extends Component
 
     public function rellenarDatosTarjeta($id)
     {
-        $tarjeta = $this->tarjetas->where('id', $id)->first();
+        $tarjeta = Auth::user()->tarjetas()->find($id);
         if ($tarjeta) {
-            $this->nombre_tarjeta = $tarjeta->nombre_tarjeta;
-            $this->numero_tarjeta = $tarjeta->numero_tarjeta;
-            $this->cvc_tarjeta = $tarjeta->cvc;
-            $this->vencimiento_tarjeta = $tarjeta->vencimiento;
+            $this->tarjeta_id = $tarjeta->id;
         }
-    }
-
-    public function addNuevaTarjeta()
-    {
-        // Validar que los campos no estén vacíos
-        if (empty($this->nombre_tarjeta) || empty($this->numero_tarjeta) || empty($this->cvc_tarjeta) || empty($this->vencimiento_tarjeta)) {
-            session()->flash('error', 'Completa todos los datos de la tarjeta antes de añadir.');
-            return;
-        }
-        $user = Auth::user();
-        // Verificar si ya existe una tarjeta con ese número para este usuario
-        if ($user->tarjetas()->where('numero_tarjeta', $this->numero_tarjeta)->exists()) {
-            session()->flash('error', 'Esta tarjeta ya está registrada.');
-            return;
-        }
-        $tarjeta = $user->tarjetas()->create([
-            'metodo_pago_id' => 2, // Asume que 2 es el id de 'Tarjeta (débito/crédito)' en metodos_pago
-            'nombre_tarjeta' => $this->nombre_tarjeta,
-            'numero_tarjeta' => $this->numero_tarjeta,
-            'cvc' => $this->cvc_tarjeta,
-            'vencimiento' => $this->vencimiento_tarjeta,
-            'alias' => 'Tarjeta (***' . substr($this->numero_tarjeta, -3) . ')',
-        ]);
-        $this->tarjetas = $user->tarjetas()->get();
-        $this->tarjeta_id = $tarjeta->id;
-        $this->rellenarDatosTarjeta($tarjeta->id);
     }
 
     public function render()

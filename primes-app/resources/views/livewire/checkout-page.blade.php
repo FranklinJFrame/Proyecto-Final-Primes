@@ -75,25 +75,6 @@
 					</div>
 					<div class="space-y-4">
 
-						<div class="bg-gray-700/50 rounded-lg p-6">
-							<div class="space-y-6">
-								<div>
-									<label class="block text-sm font-medium text-gray-300 mb-2">Número de Tarjeta</label>
-									<input type="text" wire:model="card_number" maxlength="16" class="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="1234 5678 9012 3456">
-								</div>
-								<div class="grid grid-cols-2 gap-6">
-									<div>
-										<label class="block text-sm font-medium text-gray-300 mb-2">Fecha de Vencimiento</label>
-										<input type="text" wire:model="card_expiry" maxlength="5" class="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="MM/YY">
-									</div>
-									<div>
-										<label class="block text-sm font-medium text-gray-300 mb-2">CVC</label>
-										<input type="text" wire:model="card_cvc" maxlength="4" class="w-full px-4 py-3 bg-gray-600 border border-gray-500 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500" placeholder="123">
-									</div>
-								</div>
-							</div>
-						</div>
-
 						@if($metodo_pago === 'paypal')
 							<div class="bg-gray-700/50 rounded-lg p-4 flex flex-col items-center">
 								<div id="paypal-button-container"></div>
@@ -125,34 +106,12 @@
 									</div>
 								@endif
 								<div class="mt-6">
-									<div class="bg-gray-700/50 rounded-lg p-4 space-y-3 mb-4">
-										<label class="block text-gray-300">Nombre en la tarjeta:</label>
-										<input type="text" wire:model.defer="nombre_tarjeta" class="w-full bg-gray-600 rounded-md p-3 border border-gray-500 text-white @if(isset($errores_pago['nombre_tarjeta'])) border-red-500 @endif" placeholder="Nombre completo">
-										@if(isset($errores_pago['nombre_tarjeta']))
-											<div class="text-red-400 text-xs mt-1">{{ $errores_pago['nombre_tarjeta'] }}</div>
-										@endif
-										<label class="block text-gray-300">Número de tarjeta:</label>
-										<input type="text" wire:model.defer="numero_tarjeta" maxlength="19" class="w-full bg-gray-600 rounded-md p-3 border border-gray-500 text-white @if(isset($errores_pago['numero_tarjeta'])) border-red-500 @endif" placeholder="0000 0000 0000 0000">
-										@if(isset($errores_pago['numero_tarjeta']))
-											<div class="text-red-400 text-xs mt-1">{{ $errores_pago['numero_tarjeta'] }}</div>
-										@endif
-										<label class="block text-gray-300">CVC:</label>
-										<input type="text" wire:model.defer="cvc_tarjeta" maxlength="4" class="w-full bg-gray-600 rounded-md p-3 border border-gray-500 text-white @if(isset($errores_pago['cvc_tarjeta'])) border-red-500 @endif" placeholder="CVC">
-										@if(isset($errores_pago['cvc_tarjeta']))
-											<div class="text-red-400 text-xs mt-1">{{ $errores_pago['cvc_tarjeta'] }}</div>
-										@endif
-										<label class="block text-gray-300">Fecha de vencimiento:</label>
-										<input type="text" wire:model.defer="vencimiento_tarjeta" maxlength="5" class="w-full bg-gray-600 rounded-md p-3 border border-gray-500 text-white @if(isset($errores_pago['vencimiento_tarjeta'])) border-red-500 @endif" placeholder="MM/AA" oninput="this.value = this.value.replace(/[^0-9\/]/g, '').replace(/(\d{2})(\d{1,2})/, '$1/$2');">
-										@if(isset($errores_pago['vencimiento_tarjeta']))
-											<div class="text-red-400 text-xs mt-1">{{ $errores_pago['vencimiento_tarjeta'] }}</div>
-										@endif
-									</div>
-									<button type="button" wire:click="addNuevaTarjeta" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+									<a href="{{ route('cuenta') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
 										<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
 										</svg>
-										Añadir tarjeta
-									</button>
+										Gestionar tarjetas en mi cuenta
+									</a>
 								</div>
 						</div>
 						@elseif($metodo_pago === 'pce')
