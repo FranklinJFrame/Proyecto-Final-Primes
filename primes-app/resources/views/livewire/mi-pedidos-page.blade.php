@@ -139,46 +139,34 @@
                         </div>
 
                         <!-- Acciones del pedido -->
-                        <div class="mt-6 flex flex-wrap gap-4 items-center justify-between border-t border-gray-700 pt-6">
-                            <div class="flex items-center gap-4">
-                                @if($pedido->estado === 'entregado')
-                                    <button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-700/30 hover:bg-gray-700/50 transition-colors">
-                                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                        <span class="text-sm font-medium">Escribir reseña</span>
-                                    </button>
-                                @endif
-                                <button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-700/30 hover:bg-gray-700/50 transition-colors">
-                                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        <div class="mt-6 flex flex-wrap gap-4 items-center border-t border-gray-700 pt-6">
+                            <button wire:click="comprarDeNuevo({{ $pedido->id }})" class="px-6 py-3 rounded-lg bg-blue-600 text-white font-bold shadow hover:bg-blue-700 border-2 border-blue-400 transition-all">
+                                <svg class="w-5 h-5 inline-block mr-2 align-middle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                </svg>
+                                Comprar de nuevo
+                            </button>
+                            <button class="px-6 py-3 rounded-lg bg-gray-700 text-white font-bold shadow border-2 border-gray-400 hover:bg-gray-800 transition-all">
+                                <svg class="w-5 h-5 inline-block mr-2 align-middle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Descargar factura
+                            </button>
+                            @if($pedido->estado === 'entregado')
+                                <button wire:click="solicitarDevolucion({{ $pedido->id }})" class="px-6 py-3 rounded-lg bg-yellow-500 text-gray-900 font-bold shadow border-2 border-yellow-400 hover:bg-yellow-600 transition-all">
+                                    <svg class="w-5 h-5 inline-block mr-2 align-middle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4a2 2 0 012 2v2H7V5a2 2 0 012-2z"/>
                                     </svg>
-                                    <span class="text-sm font-medium">Descargar factura</span>
+                                    Solicitar devolución
                                 </button>
-                                <button class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-700/30 hover:bg-gray-700/50 transition-colors">
-                                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                            @endif
+                            @if(in_array($pedido->estado, ['nuevo','procesando']))
+                                <button wire:click="cancelarPedido({{ $pedido->id }})" class="px-6 py-3 rounded-lg bg-red-600 text-white font-bold shadow border-2 border-red-400 hover:bg-red-700 transition-all">
+                                    <svg class="w-5 h-5 inline-block mr-2 align-middle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                     </svg>
-                                    <span class="text-sm font-medium">Comprar de nuevo</span>
+                                    Cancelar pedido
                                 </button>
-                            </div>
-                            @if($pedido->estado !== 'entregado')
-                                <div class="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500/10">
-                                    <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                                    <span class="text-sm font-medium text-blue-400">
-                                        @switch($pedido->estado)
-                                            @case('nuevo')
-                                                Preparando tu pedido
-                                                @break
-                                            @case('procesando')
-                                                En proceso de empaque
-                                                @break
-                                            @case('enviado')
-                                                En camino a tu dirección
-                                                @break
-                                        @endswitch
-                                    </span>
-                                </div>
                             @endif
                         </div>
                     </div>
@@ -227,4 +215,4 @@
             </div>
         </div>
     </div>
-</div> 
+</div>

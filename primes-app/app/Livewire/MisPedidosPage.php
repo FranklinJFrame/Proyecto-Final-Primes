@@ -55,6 +55,39 @@ class MisPedidosPage extends Component
         $this->redirect('/cart');
     }
 
+    public function cancelarPedido($pedidoId)
+    {
+        $pedido = Auth::user()->pedidos()->find($pedidoId);
+        if (!$pedido) {
+            session()->flash('error', 'Pedido no encontrado.');
+            return;
+        }
+        if (!in_array($pedido->estado, ['nuevo', 'procesando'])) {
+            session()->flash('error', 'Solo puedes cancelar pedidos que no han sido procesados o enviados.');
+            return;
+        }
+        $pedido->estado = 'cancelado';
+        $pedido->save();
+        session()->flash('success', 'Pedido cancelado correctamente.');
+    }
+
+    public function solicitarDevolucion($pedidoId)
+    {
+        $pedido = Auth::user()->pedidos()->find($pedidoId);
+        if (!$pedido) {
+            session()->flash('error', 'Pedido no encontrado.');
+            return;
+        }
+        if ($pedido->estado !== 'entregado') {
+            session()->flash('error', 'Solo puedes solicitar devolución de pedidos entregados.');
+            return;
+        }
+        // Aquí podrías crear una tabla/modelo de devoluciones, o simplemente marcar el pedido como "devolucion_solicitada"
+        $pedido->notas = ($pedido->notas ? $pedido->notas."\n" : '') . '[Devolución solicitada el ' . now()->format('d/m/Y') . ']';
+        $pedido->save();
+        session()->flash('success', 'Solicitud de devolución enviada. Nuestro equipo te contactará.');
+    }
+
     public function render()
     {
         $pedidos = Auth::user()->pedidos()

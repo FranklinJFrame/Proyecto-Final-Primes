@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Notifications\CustomResetPassword;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -84,5 +85,33 @@ class User extends Authenticatable implements MustVerifyEmail
     public function tarjetas(): HasMany
     {
         return $this->hasMany(\App\Models\DatosTarj::class, 'user_id');
+    }
+
+    /**
+     * Get the card details for the user.
+     */
+    public function datosTarjetas(): HasMany
+    {
+        return $this->hasMany(DatosTarj::class, 'user_id');
+    }
+
+    /**
+     * Get the default card for the user.
+     */
+    public function defaultDatosTarjeta(): HasOne
+    {
+        return $this->hasOne(DatosTarj::class, 'user_id')
+                    ->where('es_predeterminada', true)
+                    ->with('metodoPago');
+    }
+
+    /**
+     * Get any card for the user (fallback if no default).
+     */
+    public function anyDatosTarjeta(): HasOne
+    {
+        return $this->hasOne(DatosTarj::class, 'user_id')
+                    ->latestOfMany()
+                    ->with('metodoPago');
     }
 }

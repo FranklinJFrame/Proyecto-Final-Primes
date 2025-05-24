@@ -32,6 +32,10 @@ class Pedidos extends Model
         'stripe_payment_intent',
     ];
 
+    // Estados del pedido para devoluciones
+    const ESTADO_PROCESO_DEVOLUCION = 'proceso de devolucion';
+    const ESTADO_REEMBOLSADO = 'reembolsado';
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -45,5 +49,13 @@ class Pedidos extends Model
     public function direccion(): HasOne
     {
         return $this->hasOne(Direccion::class);
+    }
+
+    /**
+     * Get the devoluciones for the pedido.
+     */
+    public function devoluciones(): HasMany
+    {
+        return $this->hasMany(Devolucion::class, 'pedido_id');
     }
 }

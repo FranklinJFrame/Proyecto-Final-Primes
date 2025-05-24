@@ -1,0 +1,44 @@
+<!-- <x-app-layout> -->
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+            <h2 class="text-2xl font-bold mb-6">Pagar con PayPal</h2>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2">Resumen del Pedido</h3>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-gray-600">Pedido #{{ $pedido->id }}</span>
+                        <span class="font-medium">{{ number_format($pedido->total_general, 2) }} {{ $pedido->moneda }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <div id="paypal-button-container"></div>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+    <script src="https://www.paypal.com/sdk/js?client-id={{ config('services.paypal.client_id') }}&currency={{ $pedido->moneda }}"></script>
+    <script>
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: '{{ number_format($pedido->total_general, 2, '.', '') }}'
+                        }
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    // Aquí deberías enviar los detalles del pago a tu servidor
+                    console.log('Transaction completed by ' + details.payer.name.given_name);
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
+    @endpush
+<!-- </x-app-layout> --> 

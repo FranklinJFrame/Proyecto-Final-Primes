@@ -36,7 +36,10 @@ class CheckoutPage extends Component
     public $total = 0;
     public $stripeError = '';
     public $editando_direccion = false;
-    public $stripeIntent = null;
+    // public $stripeIntent = null; // NO USAR OBJETO COMPLEJO EN PROPIEDAD PUBLICA
+    public $stripe_intent_id = null;
+    public $stripe_client_secret = null;
+    public $stripe_intent_status = null;
     public $metodo_pago = 'paypal';
     public $datos_transferencia = '';
     public $datos_debito = '';
@@ -142,7 +145,7 @@ class CheckoutPage extends Component
             Stripe::setApiKey(config('services.stripe.secret'));
             
             $amount = intval($this->total * 100);
-            $this->stripeIntent = PaymentIntent::create([
+            $paymentIntent = PaymentIntent::create([
                 'amount' => $amount,
                 'currency' => 'dop',
                 'payment_method_types' => ['card'],
@@ -152,6 +155,11 @@ class CheckoutPage extends Component
                     'total_items' => $this->carrito->sum('cantidad'),
                 ],
             ]);
+
+            $this->stripe_intent_id = $paymentIntent->id;
+            $this->stripe_client_secret = $paymentIntent->client_secret;
+            $this->stripe_intent_status = $paymentIntent->status;
+            // NO GUARDAR $this->stripeIntent = $paymentIntent;
         } catch (\Exception $e) {
             $this->stripeError = $e->getMessage();
             return null;

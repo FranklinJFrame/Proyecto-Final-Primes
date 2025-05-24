@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DatosTarj extends Model
 {
@@ -13,12 +14,13 @@ class DatosTarj extends Model
 
     protected $fillable = [
         'user_id',
+        'metodo_pago_id',
         'nombre_tarjeta',
         'numero_tarjeta',
-        'vencimiento',
         'cvc',
-        'tipo_tarjeta',
-        'es_predeterminada'
+        'vencimiento',
+        'alias',
+        'es_predeterminada',
     ];
 
     protected $hidden = [
@@ -29,15 +31,43 @@ class DatosTarj extends Model
         'es_predeterminada' => 'boolean',
     ];
 
-    public function user()
+    /**
+     * Get the user that owns the card data.
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // Mutador para enmascarar el número de tarjeta
-    public function getNumeroTarjetaEnmascaradoAttribute()
+    public function metodoPago(): BelongsTo
     {
-        $numero = $this->numero_tarjeta;
-        return str_repeat('*', strlen($numero) - 4) . substr($numero, -4);
+        return $this->belongsTo(MetodoPago::class, 'metodo_pago_id');
+    }
+
+    /**
+     * Accessor para obtener solo los últimos 4 dígitos del número de tarjeta.
+     * Esto NO evita que el número completo esté en la base de datos.
+     * Es solo para visualización más segura.
+     */
+    public function getNumeroTarjetaOfuscadoAttribute(): ?string
+    {
+        if ($this->numero_tarjeta) {
+            return '**** **** **** ' . substr($this->numero_tarjeta, -4);
+        }
+        return null;
+    }
+
+    /**
+     * Accessor para el tipo de tarjeta (basado en el nombre o alias).
+     * Puedes expandir esto si tienes una forma más concreta de determinar el tipo.
+     */
+    public function getTipoTarjetaAttribute(): ?string
+    {
+        // Prioriza el nombre del método de pago si la relación está cargada y existe
+        if ($this->metodoPago) {
+            return $this->metodoPago->nombre;
+        }
+        // Fallback al alias o nombre en tarjeta si no hay método de pago específico
+        return $this->alias ?? $this->nombre_tarjeta ?? 'Tarjeta Desconocida';
     }
 } 

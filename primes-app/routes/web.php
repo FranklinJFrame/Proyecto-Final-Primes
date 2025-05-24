@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\PedidoAdminController;
 use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\DevolucionController;
 //primes-app\app\Livewire\HomePage.php
 Route::get('/', HomePage::class);
 
@@ -112,6 +113,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/pedido/realizar', \App\Livewire\RealizarPedido::class)->name('pedido.realizar');
     Route::get('/pedidos/{pedido}', [App\Http\Controllers\PedidoController::class, 'show'])->name('pedidos.show');
+
+    // Rutas para Devoluciones (Cliente)
+    Route::get('/pedidos/{pedido}/devolucion/crear', [DevolucionController::class, 'create'])->name('devoluciones.create');
+    Route::post('/devoluciones', [DevolucionController::class, 'store'])->name('devoluciones.store');
+
+    // Ruta para Cancelar Pedido (Cliente)
+    Route::post('/pedidos/{pedido}/cancelar', [PedidoController::class, 'cancelar'])->name('pedidos.cancelar');
 });
 
 // Webhooks de pago (no requieren autenticación)
