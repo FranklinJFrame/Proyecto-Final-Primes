@@ -41,16 +41,22 @@ class LatestPedidos extends BaseWidget
                ->color(fn(string $state):string => match ($state) {
                 'nuevo' => 'info',
                 'procesando' => 'warning',
-                'enviado' => 'success',
+                'enviado' => 'primary',
                 'entregado' => 'success',
                 'cancelado' => 'danger',
+                'proceso de devolucion' => 'warning',
+                'reembolsado' => 'success',
+                default => 'gray',
                }) 
                ->icon(fn(string $state):string => match ($state) {
                 'nuevo' => 'heroicon-o-sparkles',
                 'procesando' => 'heroicon-m-arrow-path',
                 'enviado' => 'heroicon-m-truck',
                 'entregado' => 'heroicon-m-check-badge',
-                'cancelado' => 'heroicon-m-x-circle',
+                'cancelado' => 'heroicon-o-x-circle',
+                'proceso de devolucion' => 'heroicon-o-arrow-uturn-left',
+                'reembolsado' => 'heroicon-o-receipt-refund',
+                default => 'heroicon-o-question-mark-circle',
                })
                ->sortable(),
 
