@@ -230,6 +230,10 @@ class CheckoutPage extends Component
                     'precio_unitario' => $item->precio_unitario,
                     'precio_total' => $item->precio_unitario * $item->cantidad,
                 ]);
+                // Decrementar stock del producto
+                if ($item->producto) {
+                    $item->producto->decrement('cantidad', $item->cantidad);
+                }
             }
 
             // Limpiar el carrito

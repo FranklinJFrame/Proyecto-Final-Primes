@@ -25,6 +25,31 @@
       </div>
     </div>
     
+    <!-- Tracking visual tipo Amazon -->
+    @php
+        $estado = strtolower($pedido->estado ?? 'nuevo');
+        $posiciones = [
+            'nuevo' => '0%',
+            'procesando' => '20%',
+            'enviado' => '60%',
+            'entregado' => '85%',
+        ];
+        $posicionCamion = $posiciones[$estado] ?? '0%';
+    @endphp
+    <div class="relative w-full max-w-xl mx-auto h-32 my-8 bg-white rounded-xl shadow-lg border border-gray-200">
+        <!-- Línea de ruta -->
+        <div class="absolute top-1/2 left-0 w-full h-2 bg-gray-300 rounded-full" style="transform: translateY(-50%);"></div>
+        <!-- Casa (meta) -->
+        <div class="absolute top-1/2 right-0 -translate-y-1/2">
+            <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Casa" width="48" height="48" class="drop-shadow-lg" loading="lazy">
+        </div>
+        <!-- Camión -->
+        <div class="absolute top-1/2" style="left: {{ $posicionCamion }}; transform: translate(-50%, -50%); transition: left 1s cubic-bezier(.4,2,.6,1);">
+            <img src="https://cdn-icons-png.flaticon.com/512/44/44266.png" alt="Camión" width="64" height="40" class="drop-shadow-lg" loading="lazy">
+        </div>
+    </div>
+    <!-- Fin tracking visual -->
+
     @if(now()->gt(Carbon::parse($pedido->created_at)->addWeekdays(5)) && $pedido->estado != 'entregado' && $pedido->notas)
     <div class="bg-red-100 border border-red-300 px-6 py-4 rounded-lg text-red-900 mt-4">
       <strong>Motivo del retraso:</strong> {{ $pedido->notas }}
