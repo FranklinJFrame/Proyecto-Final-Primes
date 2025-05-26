@@ -101,13 +101,10 @@
         </div>
         <div class="flex flex-wrap items-center justify-between gap-4 mt-8">
             <a href="{{ url('/admin/pedidos') }}" class="px-6 py-3 text-blue-600 border border-blue-600 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition">Volver a pedidos</a>
-            <form method="POST" action="{{ route('factura.pdf', $pedido->id) }}">
-                @csrf
-                <button type="submit" class="px-6 py-3 bg-green-600 rounded-lg text-white font-semibold hover:bg-green-700 transition flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-                    Descargar PDF
-                </button>
-            </form>
+            <a href="{{ route('factura.pdf.get', $pedido->id) }}" target="_blank" class="px-6 py-3 bg-green-600 rounded-lg text-white font-semibold hover:bg-green-700 transition flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                Descargar PDF
+            </a>
         </div>
     </div>
 </div>

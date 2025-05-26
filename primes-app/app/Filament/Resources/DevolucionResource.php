@@ -34,9 +34,12 @@ class DevolucionResource extends Resource
 {
     protected static ?string $model = Devolucion::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-archive-box-arrow-down'; // Icono más apropiado
-    protected static ?string $navigationGroup = 'Shop'; // Agrupar con otros recursos de tienda
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-uturn-left';
+    protected static ?string $navigationGroup = 'Tienda';
     protected static ?int $navigationSort = 4;
+    protected static ?string $navigationLabel = 'Devoluciones';
+    protected static ?string $modelLabel = 'Devolución';
+    protected static ?string $pluralModelLabel = 'Devoluciones';
 
     public static function form(Form $form): Form
     {
@@ -44,10 +47,10 @@ class DevolucionResource extends Resource
             ->schema([
                 Forms\Components\Group::make()
                     ->schema([
-                        Section::make('Información de Pago (Referencial)')
+                        Section::make('Información del Cliente')
                             ->schema([
                                 Placeholder::make('cliente_nombre_placeholder')
-                                    ->label('Cliente')
+                                    ->label('Nombre del Cliente')
                                     ->content(function (?Devolucion $record): string {
                                         if (!$record) {
                                             Log::info('DevolucionResource: Record es null para cliente.');
@@ -71,12 +74,12 @@ class DevolucionResource extends Resource
                                         return 'Nombre no disponible (ver logs)';
                                     }),
                                 View::make('filament.fields.display-card-info')
-                                    ->label('Tarjeta Utilizada (Datos Guardados por el Cliente)')
+                                    ->label('Método de Pago')
                                     ->columnSpanFull(),
                             ])->columns(1)
-                            ->description('Información referencial basada en datos guardados por el cliente.'),
+                            ->description('Información del cliente que realizó la compra'),
                         
-                        Section::make('Detalles de la Devolución')
+                        Section::make('Detalles de la Solicitud')
                             ->schema([
                                 Placeholder::make('pedido_id_display')
                                     ->label('ID Pedido')
@@ -111,13 +114,13 @@ class DevolucionResource extends Resource
 
                             ])->columns(2),
                         
-                        Forms\Components\Section::make('Productos Devueltos')
-                            ->description('Productos incluidos en esta solicitud de devolución.')
+                        Forms\Components\Section::make('Artículos a Devolver')
+                            ->description('Lista de productos que el cliente desea devolver')
                             ->schema([
                                 // Mostrar los productos de la devolución de forma no editable
                                 ViewField::make('devolucionProductos.productos')
                                     ->label('')
-                                    ->view('filament.fields.devolucion-productos-view') // Necesitarás crear esta vista blade
+                                    ->view('filament.fields.devolucion-productos-view')
                                     ->columnSpanFull(),
                             ]),
 
@@ -125,13 +128,14 @@ class DevolucionResource extends Resource
                 
                 Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\Section::make('Estado de la Devolución')
+                        Forms\Components\Section::make('Estado de la Solicitud')
                             ->schema([
                                 Select::make('estado')
+                                    ->label('Estado')
                                     ->options([
-                                        'pendiente' => 'Pendiente',
-                                        'aprobada' => 'Aprobada',
-                                        'rechazada' => 'Rechazada',
+                                        'pendiente' => '🕒 En Revisión',
+                                        'aprobada' => '✅ Aprobada',
+                                        'rechazada' => '❌ Rechazada',
                                     ])
                                     ->required()
                                     ->reactive()
@@ -176,8 +180,8 @@ class DevolucionResource extends Resource
                                         }
                                     }),
                                 Textarea::make('admin_notes')
-                                    ->label('Notas del Administrador')
-                                    ->helperText('Notas internas para esta devolución.')
+                                    ->label('Observaciones')
+                                    ->helperText('Notas internas sobre la evaluación de la devolución')
                                     ->columnSpanFull(),
                             ]),
                     ])->columnSpan(['lg' => 1]),
@@ -188,34 +192,62 @@ class DevolucionResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id')->sortable()->searchable(),
-                TextColumn::make('pedido.id')->label('Pedido ID')->sortable()->searchable(),
-                TextColumn::make('user.name')->label('Cliente')->sortable()->searchable(),
-                TextColumn::make('motivo')->label('Motivo')->limit(50)->tooltip(fn (Devolucion $record): string => $record->motivo ?? 'N/A'),
+                TextColumn::make('id')
+                    ->label('Solicitud #')
+                    ->formatStateUsing(fn ($state) => str_pad($state, 6, '0', STR_PAD_LEFT))
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('pedido.id')
+                    ->label('Pedido #')
+                    ->formatStateUsing(fn ($state) => str_pad($state, 6, '0', STR_PAD_LEFT))
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('user.name')
+                    ->label('Cliente')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('motivo')
+                    ->label('Motivo')
+                    ->limit(50)
+                    ->tooltip(fn (Devolucion $record): string => $record->motivo ?? 'N/A'),
                 TextColumn::make('estado')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'pendiente' => '🕒 En Revisión',
+                        'aprobada' => '✅ Aprobada',
+                        'rechazada' => '❌ Rechazada',
+                        default => $state,
+                    })
                     ->colors([
                         'warning' => 'pendiente',
                         'success' => 'aprobada',
                         'danger' => 'rechazada',
                     ])
                     ->sortable(),
-                TextColumn::make('created_at')->label('Fecha Solicitud')->dateTime()->sortable(),
+                TextColumn::make('created_at')
+                    ->label('Fecha')
+                    ->dateTime('d/m/Y H:i')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('estado')
+                    ->label('Filtrar por Estado')
                     ->options([
-                        'pendiente' => 'Pendiente',
-                        'aprobada' => 'Aprobada',
-                        'rechazada' => 'Rechazada',
-                    ]),
+                        'pendiente' => '🕒 En Revisión',
+                        'aprobada' => '✅ Aprobada',
+                        'rechazada' => '❌ Rechazada',
+                    ])
+                    ->multiple()
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 // Podrías añadir una acción para ver el pedido asociado rápidamente
                 Action::make('Ver Pedido')
+                    ->label('Ver Pedido Original')
                     ->url(fn (Devolucion $record): string => filled($record->pedido_id) ? route('filament.admin.resources.pedidos.edit', $record->pedido_id) : '#')
-                    ->icon('heroicon-o-eye')
+                    ->icon('heroicon-o-shopping-bag')
+                    ->color('success')
                     ->openUrlInNewTab()
                     ->disabled(fn (Devolucion $record): bool => !filled($record->pedido_id)),
             ])

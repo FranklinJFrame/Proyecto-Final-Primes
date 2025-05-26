@@ -35,8 +35,7 @@
                                         <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Imagen</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
                                         <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Comprado</th>
-                                        <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">A Devolver</th>
-                                        <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Seleccionar</th>
+                                        <th scope="col" class="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad a Devolver</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -54,15 +53,17 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $item->producto->nombre ?? 'Producto no disponible' }}</td>
                                             <td class="px-4 py-3 whitespace-nowrap text-sm text-center text-gray-600">{{ $item->cantidad }}</td>
                                             <td class="px-4 py-3 whitespace-nowrap text-sm">
-                                                <input type="number" name="productos_a_devolver[{{ $index }}][cantidad]" min="0" max="{{ $item->cantidad }}" value="{{ old('productos_a_devolver.'.$index.'.cantidad', 0) }}" 
-                                                       class="w-20 text-center shadow-sm appearance-none border border-gray-300 rounded-md py-2 px-3 text-gray-700 bg-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cantidad-devolver"
-                                                       data-item-id="{{ $item->id }}">
-                                                <input type="hidden" name="productos_a_devolver[{{ $index }}][pedido_producto_id]" value="{{ $item->id }}">
-                                            </td>
-                                            <td class="px-4 py-3 whitespace-nowrap text-center text-sm">
-                                                <input type="checkbox" name="productos_a_devolver[{{ $index }}][seleccionar]" value="1" 
-                                                       class="form-checkbox h-5 w-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 producto-seleccionar"
-                                                       data-item-id="{{ $item->id }}" {{ old('productos_a_devolver.'.$index.'.seleccionar') ? 'checked' : '' }}>
+                                                <div class="flex items-center justify-center">
+                                                    <input type="number" 
+                                                           name="productos_a_devolver[{{ $index }}][cantidad]" 
+                                                           min="0" 
+                                                           max="{{ $item->cantidad }}" 
+                                                           value="{{ old('productos_a_devolver.'.$index.'.cantidad', 0) }}" 
+                                                           class="w-20 text-center shadow-sm appearance-none border border-gray-300 rounded-md py-2 px-3 text-gray-700 bg-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cantidad-devolver"
+                                                           data-item-id="{{ $item->id }}"
+                                                           title="Ingresa la cantidad que deseas devolver (0-{{ $item->cantidad }})">
+                                                    <input type="hidden" name="productos_a_devolver[{{ $index }}][pedido_producto_id]" value="{{ $item->id }}">
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -102,49 +103,35 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const checkboxes = document.querySelectorAll('.producto-seleccionar');
     const cantidadesInputs = document.querySelectorAll('.cantidad-devolver');
 
-    checkboxes.forEach(checkbox => {
-        const itemId = checkbox.dataset.itemId;
-        const cantidadInput = document.querySelector(`.cantidad-devolver[data-item-id='${itemId}']`);
-        
-        if (checkbox.checked) {
-            cantidadInput.min = '1';
-        } else {
-            cantidadInput.min = '0';
-        }
-
-        checkbox.addEventListener('change', function() {
-            if (this.checked) {
-                cantidadInput.min = '1';
-                if (parseInt(cantidadInput.value) === 0 || cantidadInput.value === '') {
-                     cantidadInput.value = '1'; 
-                }
-            } else {
-                cantidadInput.value = '0';
-                cantidadInput.min = '0';
-            }
-        });
-    });
-
     cantidadesInputs.forEach(input => {
-        const itemId = input.dataset.itemId;
-        const checkbox = document.querySelector(`.producto-seleccionar[data-item-id='${itemId}']`);
+        const maxCantidad = parseInt(input.max);
         
         input.addEventListener('input', function() {
-            if (parseInt(this.value) > 0) {
-                checkbox.checked = true;
-                input.min = '1';
-            } else {
-                checkbox.checked = false;
-                this.value = '0';
-                input.min = '0';
+            let valor = parseInt(this.value) || 0;
+            
+            // Asegurar que el valor esté entre 0 y la cantidad máxima
+            if (valor < 0) {
+                valor = 0;
+            } else if (valor > maxCantidad) {
+                valor = maxCantidad;
             }
+            
+            this.value = valor;
         });
-        if (input.value === '') {
+
+        // Asegurar que siempre haya un valor válido
+        if (input.value === '' || isNaN(input.value)) {
             input.value = '0';
         }
+        
+        // Prevenir valores no numéricos
+        input.addEventListener('keypress', function(e) {
+            if (!/[0-9]/.test(e.key)) {
+                e.preventDefault();
+            }
+        });
     });
 });
 </script>

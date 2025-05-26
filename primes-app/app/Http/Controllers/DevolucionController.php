@@ -49,12 +49,18 @@ class DevolucionController extends Controller
     {
         $request->validate([
             'pedido_id' => 'required|exists:pedidos,id',
-            'productos_a_devolver' => 'required|array', // Esperamos un array de productos
+            'productos_a_devolver' => 'required|array',
             'productos_a_devolver.*.pedido_producto_id' => 'required|exists:pedido_productos,id',
-            'productos_a_devolver.*.cantidad' => 'required|integer|min:1',
+            'productos_a_devolver.*.cantidad' => 'integer|min:0',
             'motivo' => 'required|string|max:1000',
             'imagenes_devolucion' => 'nullable|array',
-            'imagenes_devolucion.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // Validar cada imagen
+            'imagenes_devolucion.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+        ], [
+            'productos_a_devolver.required' => 'Debes especificar los productos a devolver.',
+            'motivo.required' => 'Por favor, indica el motivo de la devolución.',
+            'motivo.max' => 'El motivo de la devolución no debe exceder los 1000 caracteres.',
+            'imagenes_devolucion.*.image' => 'Los archivos adjuntos deben ser imágenes.',
+            'imagenes_devolucion.*.max' => 'Las imágenes no deben exceder 2MB.'
         ]);
 
         $pedido = Pedidos::findOrFail($request->pedido_id);
@@ -69,24 +75,29 @@ class DevolucionController extends Controller
             return redirect()->back()->withErrors(['estado' => 'Solo se pueden devolver productos de pedidos entregados.'])->withInput();
         }
         
-        // Iniciar transacción de base de datos por si algo falla
-        
         try {
+            // Filter products with quantity > 0
+            $productosADevolver = collect($request->productos_a_devolver)->filter(function ($producto) {
+                return isset($producto['cantidad']) && $producto['cantidad'] > 0;
+            });
+
+            if ($productosADevolver->isEmpty()) {
+                return redirect()->back()->withErrors(['error' => 'Debes especificar al menos un producto para devolver con una cantidad mayor a 0.'])->withInput();
+            }
             
             $devolucion = Devolucion::create([
                 'pedido_id' => $pedido->id,
                 'user_id' => Auth::id(),
                 'motivo' => $request->motivo,
-                'estado' => 'pendiente', // Estado inicial
+                'estado' => 'pendiente'
             ]);
 
-            foreach ($request->productos_a_devolver as $productoData) {
+            foreach ($productosADevolver as $productoData) {
                 $pedidoProducto = PedidoProducto::findOrFail($productoData['pedido_producto_id']);
                 
-                // Validar que la cantidad a devolver no exceda la cantidad comprada
+                // Validate return quantity against purchased quantity
                 if ($productoData['cantidad'] > $pedidoProducto->cantidad) {
-                    // Podrías manejar este error de forma más específica
-                    throw new \Exception("La cantidad a devolver del producto {$pedidoProducto->producto->nombre} excede la cantidad comprada.");
+                    throw new \Exception("La cantidad a devolver del producto {$pedidoProducto->producto->nombre} no puede ser mayor a la cantidad comprada ({$pedidoProducto->cantidad}).");
                 }
 
                 $devolucion->devolucionProductos()->create([
@@ -96,36 +107,23 @@ class DevolucionController extends Controller
             }
 
             // Manejar la subida de imágenes si se proporcionan
-            $rutasImagenesGuardadas = []; // Para guardar en la BD
+            $rutasImagenesGuardadas = [];
             if ($request->hasFile('imagenes_devolucion')) {
                 foreach ($request->file('imagenes_devolucion') as $imagen) {
-                    // Guardar en storage/app/public/devoluciones/{devolucion_id}/{nombre_archivo_unico}
-                    // Asegúrate de ejecutar `php artisan storage:link`
-                    // Forma corregida: especificar el disco 'public' y la ruta dentro de ese disco.
                     $path = $imagen->store('devoluciones/' . $devolucion->id, 'public');
-                    // $path ahora será 'devoluciones/ID/nombre_archivo.ext', que es lo que queremos.
-                    $rutasImagenesGuardadas[] = $path; 
+                    $rutasImagenesGuardadas[] = $path;
                 }
                 $devolucion->imagenes_adjuntas = $rutasImagenesGuardadas;
-                // $devolucion->save(); // Se guarda junto con el estado del pedido más abajo
             }
 
-            // Cambiar estado del pedido a 'proceso de devolucion' y guardar devolución con imágenes
+            // Cambiar estado del pedido y guardar devolución
             $pedido->estado = Pedidos::ESTADO_PROCESO_DEVOLUCION;
             $pedido->save();
-            $devolucion->save(); // Ahora guardamos la devolución después de asignar imágenes si las hay
+            $devolucion->save();
 
-            // Confirmar transacción
-            
-
-            // Redirigir al usuario a una página de confirmación o a sus pedidos
-            // con un mensaje de éxito.
             return redirect()->route('pedidos.index')->with('success', 'Solicitud de devolución enviada correctamente.');
 
         } catch (\Exception $e) {
-            // Revertir transacción
-            
-            // Redirigir con error
             return redirect()->back()->withErrors(['error' => 'Hubo un problema al procesar tu solicitud: ' . $e->getMessage()])->withInput();
         }
     }

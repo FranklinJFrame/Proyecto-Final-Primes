@@ -54,8 +54,8 @@ class FacturaController extends Controller
     /**
      * Alias para generarPDF para mantener compatibilidad con las rutas existentes
      */
-    public function descargar($pedido)
+    public function descargar($pedido, Request $request)
     {
-        return $this->generarPDF($pedido);
+        return $this->generarPDF($pedido, $request);
     }
 }

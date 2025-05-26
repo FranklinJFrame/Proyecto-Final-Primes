@@ -25,44 +25,10 @@
                         <span class="text-gray-400 block text-sm">Email:</span>
                         <span class="text-white">{{ auth()->user()->email }}</span>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <span class="text-gray-400 block text-sm">Teléfono:</span>
-                            <span class="text-white">{{ auth()->user()->telefono ?? 'No definido' }}</span>
-                        </div>
-                        @if(!auth()->user()->telefono)
-                            <button wire:click="$set('mostrarFormularioTelefono', true)" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                </svg>
-                                Agregar
-                            </button>
-                        @else
-                            <button wire:click="$set('mostrarFormularioTelefono', true)" class="text-blue-400 hover:text-blue-300 text-sm">
-                                Editar
-                            </button>
-                        @endif
+                    <div>
+                        <span class="text-gray-400 block text-sm">Teléfono:</span>
+                        <span class="text-white">{{ auth()->user()->telefono ?? 'No definido' }}</span>
                     </div>
-
-                    @if($mostrarFormularioTelefono)
-                        <div class="mt-4 p-4 bg-gray-700/50 rounded-lg">
-                            <form wire:submit.prevent="updateTelefono" class="space-y-4">
-                                <div>
-                                    <label class="text-gray-300 text-sm mb-1 block">Número de teléfono</label>
-                                    <input wire:model.defer="telefono_nuevo" type="text" class="w-full bg-gray-600 border-gray-500 rounded-md text-white focus:border-blue-500 focus:ring-blue-500" required>
-                                    @error('telefono_nuevo') <span class="text-red-400 text-sm">{{ $message }}</span> @enderror
-                                </div>
-                                <div class="flex justify-end gap-2">
-                                    <button type="button" wire:click="$set('mostrarFormularioTelefono', false)" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                                        Cancelar
-                                    </button>
-                                    <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                        Guardar
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    @endif
 
                     <!-- Información de cuenta -->
                     <div class="pt-4 border-t border-gray-700">
@@ -319,40 +285,24 @@
                         <div class="space-y-4">
                             @foreach($tarjetas->take(2) as $tarjeta)
                                 <div class="bg-gray-700/50 rounded-lg p-4 hover:bg-gray-700 transition-all duration-300">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex-1">
-                                            <div class="flex justify-between">
-                                                <div class="font-bold text-white">{{ $tarjeta->nombre_tarjeta }}</div>
-                                                @if($tarjeta->es_predeterminada)
-                                                    <div class="text-xs text-blue-400">Predeterminada</div>
-                                                @endif
-                                            </div>
-                                            <div class="mt-2">
-                                                <div class="mb-1">
-                                                    <span class="text-gray-300 text-sm">Número:</span>
-                                                    <span class="text-white">**** **** **** {{ substr($tarjeta->numero_tarjeta, -4) }}</span>
-                                                </div>
-                                                <div class="mb-1">
-                                                    <span class="text-gray-300 text-sm">Vence:</span>
-                                                    <span class="text-white">{{ $tarjeta->vencimiento }}</span>
-                                                </div>
-                                                <div>
-                                                    <span class="text-gray-300 text-sm">Tipo:</span>
-                                                    <span class="text-white">{{ ucfirst($tarjeta->tipo_tarjeta) }}</span>
-                                                </div>
-                                            </div>
+                                    <div class="flex justify-between">
+                                        <div class="font-bold text-white">{{ $tarjeta->nombre_tarjeta }}</div>
+                                        @if($tarjeta->es_predeterminada)
+                                            <div class="text-xs text-blue-400">Predeterminada</div>
+                                        @endif
+                                    </div>
+                                    <div class="mt-2">
+                                        <div class="mb-1">
+                                            <span class="text-gray-300 text-sm">Número:</span>
+                                            <span class="text-white">**** **** **** {{ substr($tarjeta->numero_tarjeta, -4) }}</span>
                                         </div>
-                                        <div class="flex gap-2 ml-4">
-                                            <button wire:click="editTarjeta({{ $tarjeta->id }})" class="p-2 text-yellow-400 hover:text-yellow-300 focus:outline-none" title="Editar tarjeta">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                </svg>
-                                            </button>
-                                            <button wire:click="deleteTarjeta({{ $tarjeta->id }})" class="p-2 text-red-400 hover:text-red-300 focus:outline-none" title="Eliminar tarjeta" onclick="return confirm('¿Estás seguro de eliminar esta tarjeta?')">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </button>
+                                        <div class="mb-1">
+                                            <span class="text-gray-300 text-sm">Vence:</span>
+                                            <span class="text-white">{{ $tarjeta->vencimiento }}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-300 text-sm">Tipo:</span>
+                                            <span class="text-white">{{ ucfirst($tarjeta->tipo_tarjeta) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -372,73 +322,6 @@
                             <a href="{{ route('tarjetas') }}" class="inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                 Añadir tarjeta
                             </a>
-                        </div>
-                    @endif
-
-                    @if($mostrarFormularioTarjeta)
-                        <div class="mt-4 bg-gray-700/50 rounded-lg p-5">
-                            <h3 class="text-lg font-semibold text-white mb-4">{{ $tarjeta_modo === 'crear' ? 'Nueva Tarjeta' : 'Editar Tarjeta' }}</h3>
-                            
-                            <form wire:submit.prevent="{{ $tarjeta_modo === 'crear' ? 'saveTarjeta' : 'updateTarjeta' }}" class="space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <!-- Nombre en la tarjeta -->
-                                    <div class="md:col-span-2">
-                                        <label class="text-gray-300 text-sm mb-1 block">Nombre en la tarjeta</label>
-                                        <input wire:model.defer="nombre_tarjeta" type="text" class="w-full bg-gray-600 border-gray-500 rounded-md text-white focus:border-blue-500 focus:ring-blue-500" required>
-                                        @error('nombre_tarjeta') <span class="text-red-400 text-sm">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <!-- Número de tarjeta -->
-                                    <div class="md:col-span-2">
-                                        <label class="text-gray-300 text-sm mb-1 block">Número de tarjeta</label>
-                                        <input wire:model.defer="numero_tarjeta" type="text" class="w-full bg-gray-600 border-gray-500 rounded-md text-white focus:border-blue-500 focus:ring-blue-500" required>
-                                        @error('numero_tarjeta') <span class="text-red-400 text-sm">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <!-- Vencimiento -->
-                                    <div>
-                                        <label class="text-gray-300 text-sm mb-1 block">Vencimiento (MM/YY)</label>
-                                        <input wire:model.defer="vencimiento" type="text" placeholder="MM/YY" class="w-full bg-gray-600 border-gray-500 rounded-md text-white focus:border-blue-500 focus:ring-blue-500" required>
-                                        @error('vencimiento') <span class="text-red-400 text-sm">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <!-- CVC -->
-                                    <div>
-                                        <label class="text-gray-300 text-sm mb-1 block">CVC</label>
-                                        <input wire:model.defer="cvc" type="text" class="w-full bg-gray-600 border-gray-500 rounded-md text-white focus:border-blue-500 focus:ring-blue-500" required>
-                                        @error('cvc') <span class="text-red-400 text-sm">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <!-- Tipo de tarjeta -->
-                                    <div class="md:col-span-2">
-                                        <label class="text-gray-300 text-sm mb-1 block">Tipo de tarjeta</label>
-                                        <select wire:model.defer="tipo_tarjeta" class="w-full bg-gray-600 border-gray-500 rounded-md text-white focus:border-blue-500 focus:ring-blue-500">
-                                            <option value="">Selecciona un tipo</option>
-                                            <option value="visa">Visa</option>
-                                            <option value="mastercard">Mastercard</option>
-                                            <option value="amex">American Express</option>
-                                        </select>
-                                        @error('tipo_tarjeta') <span class="text-red-400 text-sm">{{ $message }}</span> @enderror
-                                    </div>
-
-                                    <!-- Predeterminada -->
-                                    <div class="md:col-span-2">
-                                        <label class="flex items-center space-x-3">
-                                            <input wire:model.defer="es_predeterminada" type="checkbox" class="rounded bg-gray-600 border-gray-500 text-blue-500 focus:ring-blue-500">
-                                            <span class="text-gray-300">Establecer como tarjeta predeterminada</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="flex justify-end gap-2">
-                                    <button type="button" wire:click="resetTarjetaForm" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                                        Cancelar
-                                    </button>
-                                    <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                        {{ $tarjeta_modo === 'crear' ? 'Guardar' : 'Actualizar' }}
-                                    </button>
-                                </div>
-                            </form>
                         </div>
                     @endif
                 </div>

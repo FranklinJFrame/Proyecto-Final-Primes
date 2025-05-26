@@ -410,7 +410,7 @@ class PedidosResource extends Resource
                 Action::make('ver_factura')
                     ->label('Descargar PDF')
                     ->icon('heroicon-o-document-text')
-                    ->url(fn ($record) => route('factura.pdf', $record->id))
+                    ->url(fn ($record) => route('factura.pdf.get', $record->id))
                     ->openUrlInNewTab()
                     ->color('primary'),
                 Tables\Actions\ActionGroup::make([
