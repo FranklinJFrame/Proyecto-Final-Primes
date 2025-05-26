@@ -29,6 +29,8 @@ use App\Models\DatosTarj; // Import DatosTarj model
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Placeholder;
 use Illuminate\Support\Facades\Log; // <--- IMPORTANTE: Añadir esto
+use Illuminate\Support\Facades\Mail;
+use App\Mail\DevolucionEstadoMail;
 
 class DevolucionResource extends Resource
 {
@@ -136,6 +138,7 @@ class DevolucionResource extends Resource
                                         'pendiente' => '🕒 En Revisión',
                                         'aprobada' => '✅ Aprobada',
                                         'rechazada' => '❌ Rechazada',
+                                        'recibido' => '🟢 Recibido',
                                     ])
                                     ->required()
                                     ->reactive()
@@ -143,39 +146,76 @@ class DevolucionResource extends Resource
                                         $pedido = $record->pedido;
                                         if (!$pedido) return;
 
-                                        // Guardar el estado actual del pedido antes de cualquier cambio, si no es uno de los estados de devolución
-                                        // Esto es una simplificación. Una solución más robusta podría tener un campo dedicado para el estado previo.
                                         $estadoOriginalPedido = $pedido->estado;
 
+                                        // --- Actualización de estado del pedido según la devolución ---
                                         if ($state === 'aprobada') {
                                             $pedido->estado = Pedidos::ESTADO_REEMBOLSADO;
                                             $pedido->save();
-                                            // TODO: Disparar evento/notificación para procesar el reembolso real.
                                         } elseif ($state === 'rechazada') {
                                             if ($estadoOriginalPedido === Pedidos::ESTADO_REEMBOLSADO) {
-                                                // Si previamente estaba reembolsado y ahora se rechaza, vuelve a proceso para revisión.
                                                 $pedido->estado = Pedidos::ESTADO_PROCESO_DEVOLUCION;
                                             } elseif ($estadoOriginalPedido === Pedidos::ESTADO_PROCESO_DEVOLUCION || $estadoOriginalPedido === 'entregado') {
-                                                // Si estaba en proceso o entregado y se rechaza la solicitud,
-                                                // el pedido debería volver a 'entregado' (asumiendo que esa es la meta final si no hay devolución)
-                                                // o al estado anterior si tuviéramos forma de saberlo con certeza.
-                                                // Por ahora, si la solicitud es rechazada y no estaba reembolsado, lo ponemos como 'entregado'.
-                                                // Esto asume que 'entregado' es el estado base antes de una devolución.
-                                                // Si el pedido estaba en 'proceso de devolucion' por esta solicitud, y se rechaza, no tiene sentido que siga en 'proceso de devolucion'
-                                                $pedido->estado = 'entregado'; 
+                                                $pedido->estado = 'entregado';
                                             }
                                             $pedido->save();
                                         } elseif ($state === 'pendiente') {
-                                            // Si se vuelve a poner como pendiente desde aprobada/reembolsado
                                             if ($estadoOriginalPedido === Pedidos::ESTADO_REEMBOLSADO) {
                                                 $pedido->estado = Pedidos::ESTADO_PROCESO_DEVOLUCION;
                                                 $pedido->save();
-                                            }
-                                            // Si estaba rechazada y vuelve a pendiente, y el pedido estaba 'entregado', podría volver a 'proceso de devolucion'.
-                                            // Pero si ya está en 'proceso de devolucion', no hacer nada.
-                                            elseif ($estadoOriginalPedido === 'entregado') {
-                                                $pedido->estado = Pedidos::ESTADO_PROCESO_DEVOLUCION; 
+                                            } elseif ($estadoOriginalPedido === 'entregado') {
+                                                $pedido->estado = Pedidos::ESTADO_PROCESO_DEVOLUCION;
                                                 $pedido->save();
+                                            }
+                                        } else if ($state === 'recibido') {
+                                            // Estado personalizado: producto recibido físicamente
+                                            // Aquí podrías agregar lógica extra si lo necesitas
+                                        }
+
+                                        // --- Notificación por correo al usuario y soporte ---
+                                        $user = $record->user;
+                                        $soporte = 'franklin1903rp@protonmail.com';
+
+                                        // Limpiar admin_notes si el estado NO es 'rechazada' ni 'recibido'
+                                        if (!in_array($state, ['rechazada', 'recibido'])) {
+                                            $record->admin_notes = null;
+                                            $record->save();
+                                        }
+
+                                        $adminMsg = '';
+                                        if (in_array($state, ['rechazada', 'recibido']) && !empty($record->admin_notes)) {
+                                            $adminMsg = "\n\nMensaje del administrador: {$record->admin_notes}";
+                                        }
+
+                                        if ($user && $user->email) {
+                                            $titulo = '';
+                                            $mensaje = '';
+                                            if ($state === 'pendiente') {
+                                                $titulo = 'Tu solicitud de devolución está en proceso de revisión';
+                                                $mensaje = "Hemos recibido tu solicitud de devolución. Nuestro equipo la está revisando y te notificaremos cuando tengamos una actualización.";
+                                            } elseif ($state === 'recibido') {
+                                                $titulo = 'Tu producto ha sido recibido y está en proceso de revisión';
+                                                $mensaje = "Tu producto ha sido recibido por nuestro equipo. Ahora estamos analizando el estado del producto y verificando si cumple con los requisitos para la aprobación de la devolución." . $adminMsg;
+                                            } elseif ($state === 'aprobada') {
+                                                $titulo = '¡Tu devolución ha sido aprobada!';
+                                                $mensaje = "¡Tu devolución ha sido aprobada! Pronto recibirás instrucciones para el reembolso o cambio de producto.\n\nGracias por confiar en nosotros.";
+                                            } elseif ($state === 'rechazada') {
+                                                $titulo = 'Tu devolución no se ha podido completar';
+                                                $mensaje = "Lamentablemente, tu devolución no ha sido aprobada." . $adminMsg . "\n\nSi tienes dudas, contáctanos respondiendo a este correo.";
+                                            }
+                                            if ($titulo && $mensaje) {
+                                                // Notifica al usuario
+                                                \Mail::to($user->email)->send(new \App\Mail\DevolucionEstadoMail($record, $titulo, $mensaje, $soporte));
+                                                // Notifica a soporte si es nueva o rechazada
+                                                if ($state === 'pendiente' || $state === 'rechazada') {
+                                                    $tituloSoporte = $state === 'pendiente'
+                                                        ? 'Nueva solicitud de devolución recibida'
+                                                        : 'Devolución rechazada - requiere atención';
+                                                    $mensajeSoporte = $state === 'pendiente'
+                                                        ? "Se ha recibido una nueva solicitud de devolución de {$user->name} (ID: #" . str_pad($record->id, 6, '0', STR_PAD_LEFT) . ")."
+                                                        : "La devolución de {$user->name} (ID: #" . str_pad($record->id, 6, '0', STR_PAD_LEFT) . ") ha sido rechazada. Motivo: {$record->admin_notes}";
+                                                    \Mail::to($soporte)->send(new \App\Mail\DevolucionEstadoMail($record, $tituloSoporte, $mensajeSoporte, $user->email));
+                                                }
                                             }
                                         }
                                     }),
@@ -216,12 +256,14 @@ class DevolucionResource extends Resource
                         'pendiente' => '🕒 En Revisión',
                         'aprobada' => '✅ Aprobada',
                         'rechazada' => '❌ Rechazada',
+                        'recibido' => '🟢 Recibido',
                         default => $state,
                     })
                     ->colors([
                         'warning' => 'pendiente',
                         'success' => 'aprobada',
                         'danger' => 'rechazada',
+                        'success' => 'recibido',
                     ])
                     ->sortable(),
                 TextColumn::make('created_at')
@@ -236,6 +278,7 @@ class DevolucionResource extends Resource
                         'pendiente' => '🕒 En Revisión',
                         'aprobada' => '✅ Aprobada',
                         'rechazada' => '❌ Rechazada',
+                        'recibido' => '🟢 Recibido',
                     ])
                     ->multiple()
                     ->searchable(),

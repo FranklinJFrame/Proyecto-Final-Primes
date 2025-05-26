@@ -28,6 +28,12 @@ class Devolucion extends Model
         'imagenes_adjuntas' => 'array',
     ];
 
+    // Estados posibles de la devolución
+    const ESTADO_PENDIENTE = 'pendiente';
+    const ESTADO_APROBADA = 'aprobada';
+    const ESTADO_RECHAZADA = 'rechazada';
+    const ESTADO_RECIBIDO = 'recibido';
+
     /**
      * Get the pedido that owns the devolucion.
      */
