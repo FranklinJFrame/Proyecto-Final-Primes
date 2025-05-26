@@ -21,6 +21,9 @@ class MiCuentaPage extends Component
     public $codigo_postal = '';
     public $modo = 'crear';
     public $mostrarFormulario = false;
+    public $telefono_usuario = ''; // For user's main phone
+    public $mostrarFormularioTelefono = false; // Controls visibility of phone edit form
+    public $telefono_nuevo = ''; // For the new phone number input
     
     // --- TARJETAS ---
     public $tarjeta_editId = null;
@@ -36,11 +39,12 @@ class MiCuentaPage extends Component
     protected $rules = [
         'nombre' => 'required',
         'apellido' => 'required',
-        'telefono' => 'required',
         'direccion_calle' => 'required',
         'ciudad' => 'required',
         'estado' => 'required',
         'codigo_postal' => 'required',
+        'telefono_usuario' => 'nullable|string|max:20', // Retained for updateUserProfile, if used for other fields
+        'telefono_nuevo' => 'nullable|string|max:20', // Validation for the new phone input
     ];
 
     protected $tarjeta_rules = [
@@ -71,6 +75,8 @@ class MiCuentaPage extends Component
     {
         $this->loadDirecciones();
         $this->loadTarjetas();
+        $this->telefono_usuario = Auth::user()->telefono;
+        $this->telefono_nuevo = Auth::user()->telefono;   // Initialize the phone edit form field
     }
 
     public function loadDirecciones()
@@ -285,5 +291,39 @@ class MiCuentaPage extends Component
             'direcciones' => $this->direcciones,
             'tarjetas' => $this->tarjetas,
         ]);
+    }
+
+    // Method to update user's profile information (e.g., phone)
+    public function updateUserProfile()
+    {
+        $this->validate([
+            'telefono_usuario' => 'nullable|string|max:20', 
+            // Add other fields like 'nombre_usuario' if you add them to this form
+        ]);
+
+        $user = Auth::user();
+        $user->telefono = $this->telefono_usuario;
+        $user->save();
+
+        session()->flash('success', 'Perfil actualizado correctamente.');
+        $this->mostrarFormularioTelefono = false; // Optionally hide form on success
+    }
+
+    // Method specifically for the phone update form shown in the error
+    public function updateTelefono()
+    {
+        $this->validate([
+            'telefono_nuevo' => 'nullable|string|max:20', // Validation for the new phone input
+        ]);
+
+        $user = Auth::user();
+        $user->telefono = $this->telefono_nuevo;
+        $user->save();
+
+        // Update telefono_usuario as well if you want them to be in sync immediately
+        $this->telefono_usuario = $this->telefono_nuevo;
+
+        session()->flash('success', 'Teléfono actualizado correctamente.');
+        $this->mostrarFormularioTelefono = false; // Hide the phone edit form
     }
 }
