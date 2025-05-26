@@ -121,7 +121,8 @@ class DevolucionController extends Controller
             $pedido->save();
             $devolucion->save();
 
-            return redirect()->route('pedidos.index')->with('success', 'Solicitud de devolución enviada correctamente.');
+            // Redirigir a mis pedidos con mensaje de éxito
+            return redirect()->route('pedidos')->with('success', '¡Tu solicitud de devolución se ha enviado correctamente!');
 
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Hubo un problema al procesar tu solicitud: ' . $e->getMessage()])->withInput();
