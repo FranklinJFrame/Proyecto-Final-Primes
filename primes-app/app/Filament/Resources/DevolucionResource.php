@@ -288,4 +288,10 @@ class DevolucionResource extends Resource
             'devolucionProductos.pedidoProducto.producto'
         ]);
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        // Solo devoluciones pendientes (no vistas)
+        return (string) static::getModel()::where('estado', 'pendiente')->count();
+    }
 }

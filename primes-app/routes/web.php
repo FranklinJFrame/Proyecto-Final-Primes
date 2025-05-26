@@ -125,3 +125,6 @@ Route::middleware(['auth'])->group(function () {
 // Webhooks de pago (no requieren autenticación)
 Route::post('/webhooks/stripe', [App\Http\Controllers\PaymentController::class, 'stripeWebhook'])->name('webhooks.stripe');
 Route::post('/webhooks/paypal', [App\Http\Controllers\PaymentController::class, 'paypalWebhook'])->name('webhooks.paypal');
+
+// Ruta API para resumen de devoluciones en el dashboard
+Route::middleware(['auth'])->get('/api/devoluciones/resumen-dashboard', [DevolucionController::class, 'resumenDashboard']);

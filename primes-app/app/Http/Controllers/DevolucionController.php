@@ -159,4 +159,18 @@ class DevolucionController extends Controller
     {
         //
     }
+
+    /**
+     * Devuelve el número de devoluciones pendientes y las creadas hoy.
+     */
+    public function resumenDashboard()
+    {
+        $pendientes = \App\Models\Devolucion::where('estado', 'pendiente')->count();
+        $hoy = now()->toDateString();
+        $recientesHoy = \App\Models\Devolucion::whereDate('created_at', $hoy)->count();
+        return response()->json([
+            'pendientes' => $pendientes,
+            'recientes_hoy' => $recientesHoy,
+        ]);
+    }
 }
