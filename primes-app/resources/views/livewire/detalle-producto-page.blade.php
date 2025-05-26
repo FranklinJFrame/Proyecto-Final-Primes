@@ -61,11 +61,16 @@
         </div>
       </div>
       <div class="mt-8 flex flex-col gap-4">
+        @if(!$producto->en_stock || $producto->cantidad <= 0)
+          <div class="p-4 mb-2 bg-red-700/80 text-white text-center rounded-lg font-bold text-lg border border-red-400 animate-pulse">
+            Sin stock disponible
+          </div>
+        @endif
         <div class="flex items-center gap-4">
           <label class="text-white font-semibold">Cantidad:</label>
-          <input type="number" min="1" value="1" class="w-20 px-2 py-1 rounded bg-gray-800 text-white border border-blue-500/20 focus:border-blue-500 outline-none">
+          <input type="number" min="1" value="1" class="w-20 px-2 py-1 rounded bg-gray-800 text-white border border-blue-500/20 focus:border-blue-500 outline-none" @if(!$producto->en_stock || $producto->cantidad <= 0) disabled @endif>
         </div>
-        <button class="w-full py-4 bg-blue-500 rounded-lg text-xl font-bold text-white hover:bg-blue-600 transition-colors shadow-lg">Agregar al carrito</button>
+        <button class="w-full py-4 bg-blue-500 rounded-lg text-xl font-bold text-white hover:bg-blue-600 transition-colors shadow-lg" @if(!$producto->en_stock || $producto->cantidad <= 0) disabled style="background:#6b7280;cursor:not-allowed;opacity:0.7;" @endif>Agregar al carrito</button>
       </div>
     </div>
   </div>
