@@ -3,15 +3,28 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Producto;
-use Filament\Tables;
-use Filament\Tables\Table;
+use Filament\Notifications\Notification;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
 
 class LowStockProductos extends BaseWidget
 {
     protected int | string | array $columnSpan = 'full';
+
+    public function mount(): void
+    {
+        $count = Producto::where('cantidad', '<=', 5)->count();
+        if ($count > 0) {
+            Notification::make()
+                ->title('¡Atención!')
+                ->body("Hay {$count} producto(s) con stock menor o igual a 5.")
+                ->danger()
+                ->persistent()
+                ->send();
+        }
+    }
 
     public function table(Table $table): Table
     {
@@ -29,7 +42,7 @@ class LowStockProductos extends BaseWidget
                     ->searchable()
                     ->limit(30)
                     ->wrap()
-                    ->grow(false), // Hace que no ocupe todo el ancho
+                    ->grow(false),
                 TextColumn::make('cantidad')->label('Stock')->sortable(),
                 TextColumn::make('categoria.nombre')->label('Categoría')->sortable(),
                 TextColumn::make('marca.nombre')->label('Marca')->sortable(),
