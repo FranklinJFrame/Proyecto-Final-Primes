@@ -21,7 +21,15 @@ class LowStockProductos extends BaseWidget
                 ->title('¡Atención!')
                 ->body("Hay {$count} producto(s) con stock menor o igual a 5.")
                 ->danger()
-                ->persistent()
+                ->duration(300000) // 5 minutos (300,000 milisegundos)
+                ->icon('heroicon-o-exclamation-triangle')
+                ->actions([
+                    \Filament\Notifications\Actions\Action::make('ver')
+                        ->label('Ver productos con bajo stock')
+                        ->url(route('filament.admin.resources.productos.low-stock'))
+                        ->button()
+                        ->color('danger')
+                ])
                 ->send();
         }
     }

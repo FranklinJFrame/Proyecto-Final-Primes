@@ -385,6 +385,7 @@ class ProductoResource extends Resource
             'index' => Pages\ListProductos::route('/'),
             'create' => Pages\CreateProducto::route('/create'),
             'edit' => Pages\EditProducto::route('/{record}/edit'),
+            'low-stock' => Pages\LowStockProductos::route('/low-stock'),
         ];
     }
 }
