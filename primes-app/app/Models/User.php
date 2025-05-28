@@ -114,4 +114,10 @@ class User extends Authenticatable implements MustVerifyEmail
                     ->latestOfMany()
                     ->with('metodoPago');
     }
+
+    // Reseñas hechas por el usuario
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(\App\Models\ProductoReview::class);
+    }
 }

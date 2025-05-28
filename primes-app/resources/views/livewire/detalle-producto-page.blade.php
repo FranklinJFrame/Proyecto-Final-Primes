@@ -74,6 +74,85 @@
       </div>
     </div>
   </div>
+
+  {{-- Reseñas de producto --}}
+  <div class="max-w-3xl mx-auto mt-12 bg-gray-900/90 rounded-2xl shadow-xl p-8 border border-blue-500/20">
+    <h2 class="text-2xl font-bold text-blue-400 mb-6 flex items-center gap-2">
+      <svg class="w-7 h-7 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+      Reseñas de clientes
+    </h2>
+    @if($reviews->isEmpty())
+      <p class="text-gray-300">Este producto aún no tiene reseñas.</p>
+    @else
+      <div class="space-y-6">
+        @foreach($reviews as $review)
+          <div class="bg-gray-800/80 rounded-xl p-4 border border-blue-500/10" x-data="{ edit: false, rating: {{ $review->rating }}, comentario: @js($review->comentario) }">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="font-bold text-white">{{ $review->user->name }}</span>
+              <span class="flex items-center">
+                @for($i=1; $i<=5; $i++)
+                  <svg class="w-5 h-5 @if($i <= $review->rating) text-yellow-400 @else text-gray-500 @endif" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                @endfor
+              </span>
+              @if(Auth::check() && Auth::id() === $review->user_id)
+                <button class="ml-2 text-blue-400 hover:underline text-xs" @click="edit = !edit">Editar</button>
+                <form method="POST" action="{{ route('producto.review.destroy', [$producto->id, $review->id]) }}" class="inline" onsubmit="return confirm('¿Eliminar reseña?')">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="ml-2 text-red-400 hover:underline text-xs">Eliminar</button>
+                </form>
+              @endif
+            </div>
+            <template x-if="!edit">
+              <div class="text-gray-200" x-text="comentario"></div>
+            </template>
+            <template x-if="edit">
+              <form method="POST" action="{{ route('producto.review.update', [$producto->id, $review->id]) }}" class="space-y-2 mt-2">
+                @csrf
+                @method('PUT')
+                <div class="flex items-center gap-1">
+                  <template x-for="i in 5" :key="i">
+                    <svg @click="rating = i; $refs.rating.value = i" :class="{'text-yellow-400': i <= rating, 'text-gray-500': i > rating}" class="w-6 h-6 cursor-pointer transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                  </template>
+                  <input type="hidden" name="rating" x-ref="rating" :value="rating" required>
+                </div>
+                <textarea name="comentario" x-model="comentario" rows="2" class="w-full rounded bg-gray-800 text-white border border-blue-500/20 focus:border-blue-500 outline-none p-2" required maxlength="1000"></textarea>
+                <div class="flex gap-2">
+                  <button type="submit" class="py-1 px-4 bg-blue-500 rounded-lg text-sm font-bold text-white hover:bg-blue-600 transition-colors shadow">Guardar</button>
+                  <button type="button" class="py-1 px-4 bg-gray-700 rounded-lg text-sm font-bold text-white hover:bg-gray-600 transition-colors shadow" @click="edit = false">Cancelar</button>
+                </div>
+              </form>
+            </template>
+          </div>
+        @endforeach
+      </div>
+    @endif
+
+    {{-- Formulario de nueva reseña --}}
+    @if($puedeComentar && Auth::check())
+      <div class="mt-10">
+        <h3 class="text-lg font-bold text-white mb-2">Deja tu reseña</h3>
+        <form method="POST" action="{{ route('producto.review', $producto->id) }}" class="space-y-4">
+          @csrf
+          <div>
+            <label class="block text-gray-300 mb-1">Calificación:</label>
+            <div class="flex items-center gap-1" x-data="{rating: 0}" x-init="rating = 0">
+              <template x-for="i in 5" :key="i">
+                <svg @click="rating = i; $refs.rating.value = i" :class="{'text-yellow-400': i <= rating, 'text-gray-500': i > rating}" class="w-8 h-8 cursor-pointer transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+              </template>
+              <input type="hidden" name="rating" x-ref="rating" required>
+            </div>
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">Comentario:</label>
+            <textarea name="comentario" rows="3" class="w-full rounded bg-gray-800 text-white border border-blue-500/20 focus:border-blue-500 outline-none p-2" required maxlength="1000"></textarea>
+          </div>
+          <button type="submit" class="py-2 px-6 bg-blue-500 rounded-lg text-lg font-bold text-white hover:bg-blue-600 transition-colors shadow-lg">Enviar reseña</button>
+        </form>
+        <p class="text-gray-400 text-xs mt-2">Tu reseña será visible una vez que sea aprobada por un administrador.</p>
+      </div>
+    @endif
+  </div>
   <style>
     .bg-gray-800/80::-webkit-scrollbar {
       width: 8px;

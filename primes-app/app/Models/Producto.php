@@ -72,4 +72,10 @@ class Producto extends Model
     {
         return $this->hasMany(ProductosCompatible::class);
     }
+
+    // Reseñas del producto
+    public function reviews()
+    {
+        return $this->hasMany(\App\Models\ProductoReview::class);
+    }
 }

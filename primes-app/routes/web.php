@@ -21,6 +21,7 @@ use App\Http\Controllers\FacturaController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\DevolucionController;
+use App\Http\Controllers\ProductoReviewController;
 //primes-app\app\Livewire\HomePage.php
 Route::get('/', HomePage::class);
 
@@ -96,6 +97,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings/profile', function() {
         return redirect('/mi-cuenta');
     });
+    Route::post('/products/{producto}/review', [\App\Http\Controllers\ProductoReviewController::class, 'store'])->name('producto.review');
+    Route::put('/products/{producto}/review/{review}', [\App\Http\Controllers\ProductoReviewController::class, 'update'])->name('producto.review.update');
+    Route::delete('/products/{producto}/review/{review}', [\App\Http\Controllers\ProductoReviewController::class, 'destroy'])->name('producto.review.destroy');
 });
 
 // Ruta de factura accesible tanto por GET como por POST
