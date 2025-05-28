@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\Producto;
 use Filament\Notifications\Notification;
+use Filament\Notifications\Actions\Action;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
@@ -16,19 +17,21 @@ class LowStockProductos extends BaseWidget
     public function mount(): void
     {
         $count = Producto::where('cantidad', '<=', 5)->count();
+        
         if ($count > 0) {
             Notification::make()
                 ->title('¡Atención!')
                 ->body("Hay {$count} producto(s) con stock menor o igual a 5.")
                 ->danger()
-                ->duration(300000) // 5 minutos (300,000 milisegundos)
                 ->icon('heroicon-o-exclamation-triangle')
+                ->persistent()
                 ->actions([
-                    \Filament\Notifications\Actions\Action::make('ver')
+                    Action::make('ver')
                         ->label('Ver productos con bajo stock')
-                        ->url(route('filament.admin.resources.productos.low-stock'))
                         ->button()
-                        ->color('danger')
+                        ->url(route('filament.admin.resources.productos.low-stock'))
+                        ->openUrlInNewTab(false)
+                        ->color('danger'),
                 ])
                 ->send();
         }
@@ -50,7 +53,10 @@ class LowStockProductos extends BaseWidget
                     ->searchable()
                     ->limit(30)
                     ->wrap()
-                    ->grow(false),
+                    ->grow(false)
+                    ->extraAttributes(fn ($record) => [
+                        'class' => 'bg-green-100 dark:bg-green-900/40 font-semibold'
+                    ]),
                 TextColumn::make('cantidad')->label('Stock')->sortable(),
                 TextColumn::make('categoria.nombre')->label('Categoría')->sortable(),
                 TextColumn::make('marca.nombre')->label('Marca')->sortable(),
