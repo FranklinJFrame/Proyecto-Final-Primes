@@ -37,14 +37,15 @@ class MiCuentaPage extends Component
     public $mostrarFormularioTarjeta = false;
 
     protected $rules = [
-        'nombre' => 'required',
-        'apellido' => 'required',
-        'direccion_calle' => 'required',
-        'ciudad' => 'required',
-        'estado' => 'required',
-        'codigo_postal' => 'required',
-        'telefono_usuario' => 'nullable|string|max:20', // Retained for updateUserProfile, if used for other fields
-        'telefono_nuevo' => 'nullable|string|max:20', // Validation for the new phone input
+        'nombre' => 'required|string|min:2|max:255',
+        'apellido' => 'required|string|min:2|max:255',
+        'direccion_calle' => 'required|string|min:5|max:255',
+        'ciudad' => 'required|string|min:2|max:100',
+        'estado' => 'required|in:Distrito Nacional,Santo Domingo,Santiago,La Vega,San Cristóbal,Puerto Plata,Duarte,La Romana,San Pedro de Macorís,La Altagracia,Peravia,Azua,Barahona,San Juan,Monseñor Nouel,Monte Plata,Valverde,Sánchez Ramírez,Espaillat,María Trinidad Sánchez,Hermanas Mirabal,Samaná,Bahoruco,El Seibo,Hato Mayor,Independencia,Pedernales,Elías Piña,Monte Cristi,Dajabón,San José de Ocoa,Santiago Rodríguez',
+        'codigo_postal' => 'required|numeric|digits_between:4,6',
+        'telefono' => 'required|regex:/^[0-9\-\+\s\(\)]+$/|min:10|max:20',
+        'telefono_usuario' => 'nullable|string|max:20',
+        'telefono_nuevo' => 'nullable|string|max:20',
     ];
 
     protected $tarjeta_rules = [
@@ -69,6 +70,23 @@ class MiCuentaPage extends Component
         'cvc.max' => 'El CVC no debe exceder 4 dígitos',
         'tipo_tarjeta.required' => 'El tipo de tarjeta es obligatorio',
         'tipo_tarjeta.in' => 'Tipo de tarjeta no válido',
+    ];
+
+    protected $messages = [
+        'nombre.required' => 'El nombre es obligatorio.',
+        'nombre.min' => 'El nombre debe tener al menos 2 caracteres.',
+        'apellido.required' => 'El apellido es obligatorio.',
+        'apellido.min' => 'El apellido debe tener al menos 2 caracteres.',
+        'telefono.required' => 'El teléfono es obligatorio.',
+        'telefono.regex' => 'El teléfono no es válido.',
+        'direccion_calle.required' => 'La dirección es obligatoria.',
+        'direccion_calle.min' => 'La dirección debe tener al menos 5 caracteres.',
+        'ciudad.required' => 'La ciudad es obligatoria.',
+        'estado.required' => 'Debes seleccionar una provincia válida.',
+        'estado.in' => 'La provincia seleccionada no es válida.',
+        'codigo_postal.required' => 'El código postal es obligatorio.',
+        'codigo_postal.numeric' => 'El código postal debe ser numérico.',
+        'codigo_postal.digits_between' => 'El código postal debe tener entre 4 y 6 dígitos.',
     ];
 
     public function mount()
@@ -117,7 +135,7 @@ class MiCuentaPage extends Component
 
     public function save()
     {
-        $this->validate();
+        $this->validate($this->rules, $this->messages);
         
         if ($this->direcciones->count() >= 3 && $this->modo === 'crear') {
             session()->flash('error', 'Solo puedes tener un máximo de 3 direcciones.');

@@ -11,7 +11,41 @@
         <input wire:model.defer="telefono" type="text" placeholder="Teléfono" class="input-form" required>
         <input wire:model.defer="direccion_calle" type="text" placeholder="Dirección" class="input-form md:col-span-2" required>
         <input wire:model.defer="ciudad" type="text" placeholder="Ciudad" class="input-form" required>
-        <input wire:model.defer="estado" type="text" placeholder="Estado" class="input-form" required>
+        <select wire:model.defer="estado" class="input-form" required>
+            <option value="">Selecciona una provincia</option>
+            <option value="Distrito Nacional">Distrito Nacional</option>
+            <option value="Santo Domingo">Santo Domingo</option>
+            <option value="Santiago">Santiago</option>
+            <option value="La Vega">La Vega</option>
+            <option value="San Cristóbal">San Cristóbal</option>
+            <option value="Puerto Plata">Puerto Plata</option>
+            <option value="Duarte">Duarte</option>
+            <option value="La Romana">La Romana</option>
+            <option value="San Pedro de Macorís">San Pedro de Macorís</option>
+            <option value="La Altagracia">La Altagracia</option>
+            <option value="Peravia">Peravia</option>
+            <option value="Azua">Azua</option>
+            <option value="Barahona">Barahona</option>
+            <option value="San Juan">San Juan</option>
+            <option value="Monseñor Nouel">Monseñor Nouel</option>
+            <option value="Monte Plata">Monte Plata</option>
+            <option value="Valverde">Valverde</option>
+            <option value="Sánchez Ramírez">Sánchez Ramírez</option>
+            <option value="Espaillat">Espaillat</option>
+            <option value="María Trinidad Sánchez">María Trinidad Sánchez</option>
+            <option value="Hermanas Mirabal">Hermanas Mirabal</option>
+            <option value="Samaná">Samaná</option>
+            <option value="Bahoruco">Bahoruco</option>
+            <option value="El Seibo">El Seibo</option>
+            <option value="Hato Mayor">Hato Mayor</option>
+            <option value="Independencia">Independencia</option>
+            <option value="Pedernales">Pedernales</option>
+            <option value="Elías Piña">Elías Piña</option>
+            <option value="Monte Cristi">Monte Cristi</option>
+            <option value="Dajabón">Dajabón</option>
+            <option value="San José de Ocoa">San José de Ocoa</option>
+            <option value="Santiago Rodríguez">Santiago Rodríguez</option>
+        </select>
         <input wire:model.defer="codigo_postal" type="text" placeholder="Código Postal" class="input-form" required>
         <div class="flex gap-2 mt-2 md:col-span-2">
           <button type="submit" class="px-6 py-2 bg-blue-600 text-white font-bold rounded hover:bg-blue-700 transition">{{ $modo === 'crear' ? 'Agregar' : 'Actualizar' }}</button>

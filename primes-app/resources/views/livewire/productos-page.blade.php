@@ -127,7 +127,7 @@
                       </p>
                     </div>
                     <div class="flex justify-center p-4 border-t border-blue-500/20">
-                      @livewire('add-to-cart-button', ['productoId' => $producto->id], key('add-to-cart-'.$producto->id))
+                      @livewire('add-to-cart-button', ['productoId' => $producto->id, 'showCantidadInput' => false], key('add-to-cart-'.$producto->id))
                     </div>
                   </div>
                 </div>

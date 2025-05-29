@@ -45,6 +45,41 @@ class CheckoutPage extends Component
     public $tarjetas = [];
     public $tarjeta_id = null;
     public $direccion_seleccionada = null;
+    public $provinciasRD = [
+        'Distrito Nacional' => 250,
+        'Santo Domingo' => 250,
+        'Santiago' => 350,
+        'La Vega' => 350,
+        'San Cristóbal' => 300,
+        'Puerto Plata' => 400,
+        'Duarte' => 350,
+        'La Romana' => 400,
+        'San Pedro de Macorís' => 400,
+        'La Altagracia' => 500,
+        'Peravia' => 350,
+        'Azua' => 400,
+        'Barahona' => 500,
+        'San Juan' => 500,
+        'Monseñor Nouel' => 350,
+        'Monte Plata' => 350,
+        'Valverde' => 400,
+        'Sánchez Ramírez' => 350,
+        'Espaillat' => 400,
+        'María Trinidad Sánchez' => 400,
+        'Hermanas Mirabal' => 400,
+        'Samaná' => 500,
+        'Bahoruco' => 500,
+        'El Seibo' => 500,
+        'Hato Mayor' => 500,
+        'Independencia' => 600,
+        'Pedernales' => 700,
+        'Elías Piña' => 600,
+        'Monte Cristi' => 500,
+        'Dajabón' => 500,
+        'San José de Ocoa' => 400,
+        'Santiago Rodríguez' => 500,
+        'San Juan' => 500,
+    ];
 
     protected $listeners = ['paypalPagoExitoso' => 'pagoPaypalExitoso'];
 
@@ -56,15 +91,16 @@ class CheckoutPage extends Component
         $this->tarjetas = $user->tarjetas()->get();
         $this->subtotal = $this->carrito->sum(fn($item) => $item->precio_unitario * $item->cantidad);
         $this->itbis = round($this->subtotal * 0.18, 2);
-        $cantidad_total = $this->carrito->sum('cantidad');
-        $this->envio = $cantidad_total * 700;
-        $this->total = $this->subtotal + $this->itbis + $this->envio;
-        $this->tarjeta_id = null;
+        $this->envio = 0;
         if ($this->direcciones->count()) {
             $this->direccion_id = $this->direcciones->first()->id;
-        } else {
-            $this->crear_nueva = true;
+            $dir = $this->direcciones->first();
+            if (isset($this->provinciasRD[$dir->estado])) {
+                $this->envio = $this->provinciasRD[$dir->estado];
+            }
         }
+        $this->total = $this->subtotal + $this->itbis + $this->envio;
+        $this->tarjeta_id = null;
         $this->createPaymentIntent();
     }
 
@@ -195,6 +231,18 @@ class CheckoutPage extends Component
                 }
             }
 
+            // Validar stock antes de crear el pedido
+            $agotados = [];
+            foreach ($this->carrito as $item) {
+                if ($item->producto->cantidad < $item->cantidad) {
+                    $agotados[] = $item->producto->nombre;
+                }
+            }
+            if (count($agotados) > 0) {
+                session()->flash('error', 'Los siguientes productos se agotaron durante el proceso de checkout: ' . implode(', ', $agotados));
+                return;
+            }
+
             // Crear el pedido
             $pedido = Pedidos::create([
                 'user_id' => $user->id,
@@ -300,6 +348,17 @@ class CheckoutPage extends Component
         if ($tarjeta) {
             $this->tarjeta_id = $tarjeta->id;
         }
+    }
+
+    public function updatedDireccionSeleccionada($id)
+    {
+        $direccion = $this->direcciones->firstWhere('id', $id);
+        if ($direccion && isset($this->provinciasRD[$direccion->estado])) {
+            $this->envio = $this->provinciasRD[$direccion->estado];
+        } else {
+            $this->envio = 0;
+        }
+        $this->total = $this->subtotal + $this->itbis + $this->envio;
     }
 
     public function render()

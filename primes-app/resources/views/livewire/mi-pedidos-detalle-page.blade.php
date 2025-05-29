@@ -360,17 +360,26 @@
             </div>
           </div>
 
-          {{-- Botón para Solicitar Devolución --}}
-          @if($pedido->estado === 'entregado')
-            <a href="{{ route('devoluciones.create', $pedido->id) }}"
-               class="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500 mb-3 mt-4">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 2a.75.75 0 01.75.75v6.5h6.5a.75.75 0 010 1.5h-6.5v6.5a.75.75 0 01-1.5 0v-6.5h-6.5a.75.75 0 010-1.5h6.5v-6.5A.75.75 0 0110 2zM8.293 13.207a1 1 0 010-1.414L10.586 10 8.293 7.707a1 1 0 111.414-1.414l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                <path d="M4.5 2.5a.5.5 0 00-.5.5v14a.5.5 0 00.5.5h11a.5.5 0 00.5-.5v-14a.5.5 0 00-.5-.5h-11zM3 3a2 2 0 012-2h10a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V3z" />
-                <path d="M7 7h6v2H7V7zm0 4h6v2H7v-2z"/>
+          @if($pedido->estado === 'entregado' && (!$devoluciones || $devoluciones->count() === 0))
+          <form action="{{ route('devoluciones.create', $pedido->id) }}" method="GET" class="mt-6">
+            <button type="submit" class="w-full py-3 rounded-lg bg-yellow-500 text-gray-900 font-bold text-lg shadow-lg hover:bg-yellow-600 transition-all flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4a2 2 0 012 2v2H7V5a2 2 0 012-2z"/>
               </svg>
-              Solicitar Devolución
-            </a>
+              Solicitar devolución
+            </button>
+          </form>
+          @endif
+
+          @if(in_array($pedido->estado, ['nuevo', 'procesando']))
+          <form wire:submit.prevent="cancelarPedido({{ $pedido->id }})" class="mt-6">
+            <button type="submit" class="w-full py-3 rounded-lg bg-red-600 text-white font-bold text-lg shadow-lg hover:bg-red-700 transition-all flex items-center justify-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Cancelar pedido
+            </button>
+          </form>
           @endif
         </div>
       </div>
@@ -379,5 +388,57 @@
     <div class="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       {{-- ... existing code ... --}}
     </div>
+
+    {{-- Sección de reseñas de productos comprados --}}
+    @if($pedido->estado === 'entregado')
+      <div class="mt-12 bg-gray-900/90 rounded-2xl shadow-xl p-8 border border-blue-500/20">
+        <h2 class="text-2xl font-bold text-blue-400 mb-6 flex items-center gap-2">
+          <svg class="w-7 h-7 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+          Reseñar productos de este pedido
+        </h2>
+        @php
+          $productosYaResenados = Auth::user()->reviews->pluck('producto_id')->toArray();
+          $productosParaResenar = $pedido->productos->filter(function($item) use ($productosYaResenados) {
+            return $item->producto && !in_array($item->producto->id, $productosYaResenados);
+          });
+        @endphp
+        @if($productosParaResenar->isEmpty())
+          <p class="text-gray-300">Ya has reseñado todos los productos de este pedido.</p>
+        @else
+          <div class="space-y-8">
+            @foreach($productosParaResenar as $item)
+              <div class="bg-gray-800/80 rounded-xl p-6 border border-blue-500/10">
+                <div class="flex items-center gap-4 mb-4">
+                  @if($item->producto && isset($item->producto->imagenes[0]))
+                    <img src="{{ url('storage', $item->producto->imagenes[0]) }}" alt="{{ $item->producto->nombre }}" class="w-16 h-16 object-cover rounded-lg border border-gray-700">
+                  @endif
+                  <div>
+                    <div class="font-bold text-white text-lg">{{ $item->producto->nombre }}</div>
+                    <div class="text-gray-400 text-sm">Cantidad: {{ $item->cantidad }}</div>
+                  </div>
+                </div>
+                <form method="POST" action="{{ route('producto.review', $item->producto->id) }}" class="space-y-4">
+                  @csrf
+                  <div>
+                    <label class="block text-gray-300 mb-1">Calificación:</label>
+                    <div class="flex items-center gap-1" x-data="{rating: 0}" x-init="rating = 0">
+                      <template x-for="i in 5" :key="i">
+                        <svg @click="rating = i; $refs.rating.value = i" :class="{'text-yellow-400': i <= rating, 'text-gray-500': i > rating}" class="w-8 h-8 cursor-pointer transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
+                      </template>
+                      <input type="hidden" name="rating" x-ref="rating" required>
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-gray-300 mb-1">Comentario:</label>
+                    <textarea name="comentario" rows="3" class="w-full rounded bg-gray-800 text-white border border-blue-500/20 focus:border-blue-500 outline-none p-2" required maxlength="1000"></textarea>
+                  </div>
+                  <button type="submit" class="py-2 px-6 bg-blue-500 rounded-lg text-lg font-bold text-white hover:bg-blue-600 transition-colors shadow-lg">Enviar reseña</button>
+                </form>
+              </div>
+            @endforeach
+          </div>
+        @endif
+      </div>
+    @endif
   </div>
 </div>

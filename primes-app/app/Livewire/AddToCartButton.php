@@ -12,6 +12,16 @@ class AddToCartButton extends Component
     public $productoId;
     public $cantidad = 1;
     public $feedback = null;
+    public $maxCantidad = 1;
+
+    public function mount($productoId, $maxCantidad = 1)
+    {
+        $this->productoId = $productoId;
+        $this->maxCantidad = $maxCantidad;
+        if ($this->cantidad > $this->maxCantidad) {
+            $this->cantidad = $this->maxCantidad;
+        }
+    }
 
     public function addToCart()
     {
@@ -20,8 +30,17 @@ class AddToCartButton extends Component
             return;
         }
         $producto = Producto::find($this->productoId);
-        if (!$producto || $producto->cantidad < $this->cantidad) {
-            $this->feedback = 'No hay suficiente stock.';
+        if (!$producto) {
+            $this->feedback = 'El producto ya no está disponible.';
+            return;
+        }
+        $this->cantidad = max(1, min($this->cantidad, $producto->cantidad));
+        if ($producto->cantidad <= 0) {
+            $this->feedback = 'Producto agotado: El producto se agotó después de agregarlo al carrito.';
+            return;
+        }
+        if ($this->cantidad > $producto->cantidad) {
+            $this->feedback = 'No puedes agregar más de la cantidad disponible.';
             return;
         }
         $carrito = CarritoProducto::firstOrCreate([
@@ -30,6 +49,10 @@ class AddToCartButton extends Component
         ], [
             'precio_unitario' => $producto->precio,
         ]);
+        if (($carrito->cantidad + $this->cantidad) > $producto->cantidad) {
+            $this->feedback = 'No puedes agregar más de la cantidad disponible en total (ya tienes parte en el carrito).';
+            return;
+        }
         $carrito->cantidad += $this->cantidad;
         $carrito->precio_unitario = $producto->precio;
         $carrito->save();

@@ -57,7 +57,7 @@ class MisPedidosPage extends Component
 
     public function cancelarPedido($pedidoId)
     {
-        $pedido = Auth::user()->pedidos()->find($pedidoId);
+        $pedido = Auth::user()->pedidos()->with('productos')->find($pedidoId);
         if (!$pedido) {
             session()->flash('error', 'Pedido no encontrado.');
             return;
@@ -66,9 +66,16 @@ class MisPedidosPage extends Component
             session()->flash('error', 'Solo puedes cancelar pedidos que no han sido procesados o enviados.');
             return;
         }
+        // Restaurar stock de los productos
+        foreach ($pedido->productos as $item) {
+            if ($item->producto) {
+                $item->producto->cantidad += $item->cantidad;
+                $item->producto->save();
+            }
+        }
         $pedido->estado = 'cancelado';
         $pedido->save();
-        session()->flash('success', 'Pedido cancelado correctamente.');
+        session()->flash('success', 'Pedido cancelado correctamente y stock restaurado.');
     }
 
     public function solicitarDevolucion($pedidoId)

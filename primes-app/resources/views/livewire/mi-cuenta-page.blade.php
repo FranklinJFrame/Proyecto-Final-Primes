@@ -168,7 +168,11 @@
                     @if($mostrarFormulario)
                         <div class="bg-gray-700/50 rounded-lg p-5 mb-4">
                             <h3 class="text-lg font-semibold text-white mb-4">{{ $modo === 'crear' ? 'Nueva Dirección' : 'Editar Dirección' }}</h3>
-                            
+                            @if($errors->any())
+                                <div class="bg-red-500/20 text-red-400 p-3 rounded-lg mb-4 border border-red-500/30 text-sm text-center">
+                                    Este dato no es válido para una dirección
+                                </div>
+                            @endif
                             <form wire:submit.prevent="{{ $modo === 'crear' ? 'save' : 'update' }}" class="space-y-4">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
@@ -193,7 +197,41 @@
                                     </div>
                                     <div>
                                         <label class="text-gray-300 text-sm mb-1 block">Estado</label>
-                                        <input wire:model.defer="estado" type="text" class="w-full bg-gray-600 border-gray-500 rounded-md text-white focus:border-blue-500 focus:ring-blue-500" required>
+                                        <select wire:model.defer="estado" class="w-full bg-gray-600 border-gray-500 rounded-md text-white focus:border-blue-500 focus:ring-blue-500" required>
+                                            <option value="">Selecciona una provincia</option>
+                                            <option value="Distrito Nacional">Distrito Nacional</option>
+                                            <option value="Santo Domingo">Santo Domingo</option>
+                                            <option value="Santiago">Santiago</option>
+                                            <option value="La Vega">La Vega</option>
+                                            <option value="San Cristóbal">San Cristóbal</option>
+                                            <option value="Puerto Plata">Puerto Plata</option>
+                                            <option value="Duarte">Duarte</option>
+                                            <option value="La Romana">La Romana</option>
+                                            <option value="San Pedro de Macorís">San Pedro de Macorís</option>
+                                            <option value="La Altagracia">La Altagracia</option>
+                                            <option value="Peravia">Peravia</option>
+                                            <option value="Azua">Azua</option>
+                                            <option value="Barahona">Barahona</option>
+                                            <option value="San Juan">San Juan</option>
+                                            <option value="Monseñor Nouel">Monseñor Nouel</option>
+                                            <option value="Monte Plata">Monte Plata</option>
+                                            <option value="Valverde">Valverde</option>
+                                            <option value="Sánchez Ramírez">Sánchez Ramírez</option>
+                                            <option value="Espaillat">Espaillat</option>
+                                            <option value="María Trinidad Sánchez">María Trinidad Sánchez</option>
+                                            <option value="Hermanas Mirabal">Hermanas Mirabal</option>
+                                            <option value="Samaná">Samaná</option>
+                                            <option value="Bahoruco">Bahoruco</option>
+                                            <option value="El Seibo">El Seibo</option>
+                                            <option value="Hato Mayor">Hato Mayor</option>
+                                            <option value="Independencia">Independencia</option>
+                                            <option value="Pedernales">Pedernales</option>
+                                            <option value="Elías Piña">Elías Piña</option>
+                                            <option value="Monte Cristi">Monte Cristi</option>
+                                            <option value="Dajabón">Dajabón</option>
+                                            <option value="San José de Ocoa">San José de Ocoa</option>
+                                            <option value="Santiago Rodríguez">Santiago Rodríguez</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label class="text-gray-300 text-sm mb-1 block">Código Postal</label>

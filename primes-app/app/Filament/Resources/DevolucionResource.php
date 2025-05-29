@@ -156,7 +156,7 @@ class DevolucionResource extends Resource
                                             if ($estadoOriginalPedido === Pedidos::ESTADO_REEMBOLSADO) {
                                                 $pedido->estado = Pedidos::ESTADO_PROCESO_DEVOLUCION;
                                             } elseif ($estadoOriginalPedido === Pedidos::ESTADO_PROCESO_DEVOLUCION || $estadoOriginalPedido === 'entregado') {
-                                                $pedido->estado = 'entregado';
+                                                $pedido->estado = 'entregado'; 
                                             }
                                             $pedido->save();
                                         } elseif ($state === 'pendiente') {
@@ -164,7 +164,7 @@ class DevolucionResource extends Resource
                                                 $pedido->estado = Pedidos::ESTADO_PROCESO_DEVOLUCION;
                                                 $pedido->save();
                                             } elseif ($estadoOriginalPedido === 'entregado') {
-                                                $pedido->estado = Pedidos::ESTADO_PROCESO_DEVOLUCION;
+                                                $pedido->estado = Pedidos::ESTADO_PROCESO_DEVOLUCION; 
                                                 $pedido->save();
                                             }
                                         } else if ($state === 'recibido') {

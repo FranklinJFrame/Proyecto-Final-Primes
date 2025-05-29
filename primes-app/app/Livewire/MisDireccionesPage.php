@@ -19,6 +19,30 @@ class MisDireccionesPage extends Component
     public $codigo_postal = '';
     public $modo = 'crear';
 
+    protected $rules = [
+        'nombre' => 'required|string|min:2|max:255',
+        'apellido' => 'required|string|min:2|max:255',
+        'telefono' => 'required|regex:/^[0-9\-\+\s\(\)]+$/|min:10|max:20',
+        'direccion_calle' => 'required|string|min:5|max:255',
+        'ciudad' => 'required|string|min:2|max:100',
+        'estado' => 'required|in:Distrito Nacional,Santo Domingo,Santiago,La Vega,San Cristóbal,Puerto Plata,Duarte,La Romana,San Pedro de Macorís,La Altagracia,Peravia,Azua,Barahona,San Juan,Monseñor Nouel,Monte Plata,Valverde,Sánchez Ramírez,Espaillat,María Trinidad Sánchez,Hermanas Mirabal,Samaná,Bahoruco,El Seibo,Hato Mayor,Independencia,Pedernales,Elías Piña,Monte Cristi,Dajabón,San José de Ocoa,Santiago Rodríguez',
+        'codigo_postal' => 'required|numeric|digits_between:4,6',
+    ];
+
+    protected $messages = [
+        'nombre.required' => 'El nombre es obligatorio.',
+        'apellido.required' => 'El apellido es obligatorio.',
+        'telefono.required' => 'El teléfono es obligatorio.',
+        'telefono.regex' => 'El teléfono no es válido.',
+        'direccion_calle.required' => 'La dirección es obligatoria.',
+        'ciudad.required' => 'La ciudad es obligatoria.',
+        'estado.required' => 'Debes seleccionar una provincia válida.',
+        'estado.in' => 'La provincia seleccionada no es válida.',
+        'codigo_postal.required' => 'El código postal es obligatorio.',
+        'codigo_postal.numeric' => 'El código postal debe ser numérico.',
+        'codigo_postal.digits_between' => 'El código postal debe tener entre 4 y 6 dígitos.',
+    ];
+
     public function mount()
     {
         $this->loadDirecciones();
@@ -44,15 +68,7 @@ class MisDireccionesPage extends Component
 
     public function save()
     {
-        $this->validate([
-            'nombre' => 'required',
-            'apellido' => 'required',
-            'telefono' => 'required',
-            'direccion_calle' => 'required',
-            'ciudad' => 'required',
-            'estado' => 'required',
-            'codigo_postal' => 'required',
-        ]);
+        $this->validate();
         Auth::user()->direccions()->create([
             'nombre' => $this->nombre,
             'apellido' => $this->apellido,
@@ -82,15 +98,7 @@ class MisDireccionesPage extends Component
 
     public function update()
     {
-        $this->validate([
-            'nombre' => 'required',
-            'apellido' => 'required',
-            'telefono' => 'required',
-            'direccion_calle' => 'required',
-            'ciudad' => 'required',
-            'estado' => 'required',
-            'codigo_postal' => 'required',
-        ]);
+        $this->validate();
         $dir = Auth::user()->direccions()->findOrFail($this->editId);
         $dir->update([
             'nombre' => $this->nombre,

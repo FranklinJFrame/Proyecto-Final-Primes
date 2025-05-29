@@ -38,4 +38,29 @@ class MiPedidosDetallePage extends Component
             'pedido' => $this->pedido,
         ])->title($this->title);
     }
+
+    public function cancelarPedido($pedidoId)
+    {
+        $pedido = Auth::user()->pedidos()->with('productos')->find($pedidoId);
+        if (!$pedido) {
+            session()->flash('error', 'Pedido no encontrado.');
+            return;
+        }
+        if (!in_array($pedido->estado, ['nuevo', 'procesando'])) {
+            session()->flash('error', 'Solo puedes cancelar pedidos que no han sido procesados o enviados.');
+            return;
+        }
+        // Restaurar stock de los productos
+        foreach ($pedido->productos as $item) {
+            if ($item->producto) {
+                $item->producto->cantidad += $item->cantidad;
+                $item->producto->save();
+            }
+        }
+        $pedido->estado = 'cancelado';
+        $pedido->save();
+        session()->flash('success', 'Pedido cancelado correctamente.');
+        // Redirigir a la lista de pedidos o recargar
+        return redirect()->route('pedidos');
+    }
 }

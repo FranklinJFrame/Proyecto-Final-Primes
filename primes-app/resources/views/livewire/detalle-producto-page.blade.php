@@ -66,11 +66,7 @@
             Sin stock disponible
           </div>
         @endif
-        <div class="flex items-center gap-4">
-          <label class="text-white font-semibold">Cantidad:</label>
-          <input type="number" min="1" value="1" class="w-20 px-2 py-1 rounded bg-gray-800 text-white border border-blue-500/20 focus:border-blue-500 outline-none" @if(!$producto->en_stock || $producto->cantidad <= 0) disabled @endif>
-        </div>
-        <button class="w-full py-4 bg-blue-500 rounded-lg text-xl font-bold text-white hover:bg-blue-600 transition-colors shadow-lg" @if(!$producto->en_stock || $producto->cantidad <= 0) disabled style="background:#6b7280;cursor:not-allowed;opacity:0.7;" @endif>Agregar al carrito</button>
+        @livewire('add-to-cart-button', ['productoId' => $producto->id, 'maxCantidad' => $producto->cantidad, 'showCantidadInput' => true], key('add-to-cart-'.$producto->id))
       </div>
     </div>
   </div>
@@ -125,31 +121,6 @@
             </template>
           </div>
         @endforeach
-      </div>
-    @endif
-
-    {{-- Formulario de nueva reseña --}}
-    @if($puedeComentar && Auth::check())
-      <div class="mt-10">
-        <h3 class="text-lg font-bold text-white mb-2">Deja tu reseña</h3>
-        <form method="POST" action="{{ route('producto.review', $producto->id) }}" class="space-y-4">
-          @csrf
-          <div>
-            <label class="block text-gray-300 mb-1">Calificación:</label>
-            <div class="flex items-center gap-1" x-data="{rating: 0}" x-init="rating = 0">
-              <template x-for="i in 5" :key="i">
-                <svg @click="rating = i; $refs.rating.value = i" :class="{'text-yellow-400': i <= rating, 'text-gray-500': i > rating}" class="w-8 h-8 cursor-pointer transition-colors duration-200" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z"/></svg>
-              </template>
-              <input type="hidden" name="rating" x-ref="rating" required>
-            </div>
-          </div>
-          <div>
-            <label class="block text-gray-300 mb-1">Comentario:</label>
-            <textarea name="comentario" rows="3" class="w-full rounded bg-gray-800 text-white border border-blue-500/20 focus:border-blue-500 outline-none p-2" required maxlength="1000"></textarea>
-          </div>
-          <button type="submit" class="py-2 px-6 bg-blue-500 rounded-lg text-lg font-bold text-white hover:bg-blue-600 transition-colors shadow-lg">Enviar reseña</button>
-        </form>
-        <p class="text-gray-400 text-xs mt-2">Tu reseña será visible una vez que sea aprobada por un administrador.</p>
       </div>
     @endif
   </div>
