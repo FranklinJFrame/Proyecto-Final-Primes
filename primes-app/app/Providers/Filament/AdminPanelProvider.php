@@ -53,7 +53,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                \App\Http\Middleware\RestrictAdminByIp::class,
+                \App\Http\Middleware\CheckFilamentAdmin::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
