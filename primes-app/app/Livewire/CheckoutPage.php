@@ -302,7 +302,7 @@ class CheckoutPage extends Component
             Mail::to($pedido->user->email)->send(new FacturaMail($pedido, $pdf->output()));
 
             // Redirigir usando la URL completa
-            return redirect()->route('success');
+            return redirect()->route('/success');
 
         } catch (\Exception $e) {
             \Log::error('Error al crear pedido: ' . $e->getMessage());
