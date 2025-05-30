@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'asset_url' => env('ASSET_URL', env('APP_URL')),
-    'domain' => env('FILAMENT_DOMAIN'),
-    'home_url' => env('FILAMENT_HOME_URL', '/'),
+    'asset_url' => 'https://proyecto-final-primes-production-96c3.up.railway.app',
+    'domain' => 'proyecto-final-primes-production-96c3.up.railway.app',
+    'home_url' => '/',
     'path' => env('FILAMENT_PATH', 'admin'),
     'middleware' => [
         'web',
