@@ -78,12 +78,4 @@ class Producto extends Model
     {
         return $this->hasMany(\App\Models\ProductoReview::class);
     }
-
-    public static function rules($id = null)
-    {
-        return [
-            'nombre' => 'required|string|max:255|unique:productos,nombre' . ($id ? ",$id" : ''),
-            // ... otras reglas si las necesitas ...
-        ];
-    }
 }

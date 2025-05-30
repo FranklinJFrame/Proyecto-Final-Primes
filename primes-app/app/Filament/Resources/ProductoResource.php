@@ -55,7 +55,6 @@ class ProductoResource extends Resource
                                     ->maxLength(255)
                                     ->disabled()
                                     ->dehydrated()
-                                    ->unique('productos', 'slug', ignoreRecord: true)
                                     ->columnSpan(['md' => 2]),
 
                                 Forms\Components\MarkdownEditor::make('descripcion')

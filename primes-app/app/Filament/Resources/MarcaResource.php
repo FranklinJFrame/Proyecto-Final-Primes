@@ -13,7 +13,6 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
-use Filament\Notifications\Notification;
 
 class MarcaResource extends Resource
 {
@@ -146,17 +145,7 @@ class MarcaResource extends Resource
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make()
                         ->requiresConfirmation()
-                        ->modalDescription('¿Estás seguro de que deseas eliminar esta marca? Esta acción no se puede deshacer.')
-                        ->before(function ($record, $action) {
-                            if ($record->productos()->count() > 0) {
-                                Notification::make()
-                                    ->title('No puedes eliminar una marca que tiene productos asignados.')
-                                    ->body('Elimina o reasigna los productos primero.')
-                                    ->danger()
-                                    ->send();
-                                $action->cancel();
-                            }
-                        }),
+                        ->modalDescription('¿Estás seguro de que deseas eliminar esta marca? Esta acción no se puede deshacer.'),
                 ])
                 ->link()
                 ->label('Acciones'),
