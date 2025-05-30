@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        URL::forceRootUrl('https://proyecto-final-primes-production-96c3.up.railway.app');
         URL::forceScheme('https');
     }
 }
