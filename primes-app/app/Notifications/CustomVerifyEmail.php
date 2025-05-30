@@ -12,8 +12,7 @@ class CustomVerifyEmail extends VerifyEmail
 {
     protected function verificationUrl($notifiable)
     {
-        // Replace this with your production URL
-        $productionUrl = 'https://your-production-domain.com';
+        $productionUrl = 'https://proyecto-final-primes-production-96c3.up.railway.app';
 
         if (static::$createUrlCallback) {
             return call_user_func(static::$createUrlCallback, $notifiable);
@@ -29,7 +28,7 @@ class CustomVerifyEmail extends VerifyEmail
         );
 
         // Replace localhost URL with production URL
-        return str_replace('http://127.0.0.1:8000', $productionUrl, $url);
+        return str_replace(['http://127.0.0.1:8000', 'http://localhost:8000'], $productionUrl, $url);
     }
 
     public function toMail($notifiable)
