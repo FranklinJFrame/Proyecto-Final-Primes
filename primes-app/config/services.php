@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -40,4 +39,7 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    'app' => [
+        'production_url' => env('PRODUCTION_URL', 'https://proyecto-final-primes-production-96c3.up.railway.app'),
+    ],
 ];

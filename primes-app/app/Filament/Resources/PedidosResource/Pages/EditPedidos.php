@@ -7,6 +7,9 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use App\Models\MetodosPago;
 // use App\Models\Pagos;
+use Filament\Notifications\Notification;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\Model;
 
 class EditPedidos extends EditRecord
 {
@@ -40,5 +43,68 @@ class EditPedidos extends EditRecord
         //     //     ]
         //     // );
         // }
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $record = $this->record;
+        $estadoActual = $record->estado;
+        $estadoNuevo = $data['estado'] ?? $estadoActual;
+        $orden = ['nuevo', 'procesando', 'enviado', 'entregado', 'cancelado'];
+        $posActual = array_search($estadoActual, $orden);
+        $posNuevo = array_search($estadoNuevo, $orden);
+
+        // --- Validación de devolución activa ---
+        $devolucionActiva = $record->devoluciones()
+            ->whereIn('estado', ['pendiente', 'proceso de devolucion'])
+            ->exists();
+        if ($devolucionActiva && $estadoActual !== $estadoNuevo) {
+            Notification::make()
+                ->title('Pedido en disputa')
+                ->body('El pedido tiene una devolución activa que impide cambios de estado.')
+                ->danger()
+                ->send();
+            throw ValidationException::withMessages([
+                'estado' => 'El pedido tiene una devolución activa que impide cambios de estado.'
+            ]);
+        }
+        // --- Fin validación devolución activa ---
+
+        $transicionesValidas = [
+            'nuevo' => ['procesando', 'cancelado'],
+            'procesando' => ['enviado', 'cancelado'],
+            'enviado' => ['entregado'],
+            // No se puede volver atrás ni saltar estados
+        ];
+
+        if ($estadoActual !== $estadoNuevo) {
+            if (!isset($transicionesValidas[$estadoActual]) || !in_array($estadoNuevo, $transicionesValidas[$estadoActual])) {
+                Notification::make()
+                    ->title('Transición de estado no permitida')
+                    ->body('No puedes cambiar el estado de ' . ucfirst($estadoActual) . ' a ' . ucfirst($estadoNuevo) . '. Sigue el flujo lógico del pedido.')
+                    ->danger()
+                    ->send();
+                throw ValidationException::withMessages([
+                    'estado' => 'Transición de estado no permitida.'
+                ]);
+            }
+        }
+        return $data;
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        try {
+            return parent::handleRecordUpdate($record, $data);
+        } catch (\Illuminate\Database\QueryException $e) {
+            Notification::make()
+                ->title('Error de conexión')
+                ->body('Pérdida de conexión al intentar guardar cambios. Intenta de nuevo.')
+                ->danger()
+                ->send();
+            throw ValidationException::withMessages([
+                'general' => 'Pérdida de conexión al intentar guardar cambios.'
+            ]);
+        }
     }
 }
