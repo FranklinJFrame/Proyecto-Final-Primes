@@ -10,12 +10,15 @@ class RestrictAdminByIp
 {
     // List of allowed IPs
     protected $allowedIps = [
-        '10.0.0.9',
+        '100.64.0.2',
         // Add more as needed
     ];
 
     public function handle(Request $request, Closure $next): Response
     {
-        die('Your IP: ' . $request->ip());
+        if (!in_array($request->ip(), $this->allowedIps)) {
+            abort(403, 'Access denied');
+        }
+        return $next($request);
     }
 }
