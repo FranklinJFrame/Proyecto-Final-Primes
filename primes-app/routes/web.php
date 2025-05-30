@@ -22,7 +22,6 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\ProductoReviewController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
 //primes-app\app\Livewire\HomePage.php
 Route::get('/', HomePage::class);
 
@@ -134,10 +133,3 @@ Route::post('/webhooks/paypal', [App\Http\Controllers\PaymentController::class, 
 
 // Ruta API para resumen de devoluciones en el dashboard
 Route::middleware(['auth'])->get('/api/devoluciones/resumen-dashboard', [DevolucionController::class, 'resumenDashboard']);
-
-// Authentication Routes
-Route::middleware('guest')->group(function () {
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
-});
