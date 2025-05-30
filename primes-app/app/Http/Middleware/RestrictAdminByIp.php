@@ -16,6 +16,9 @@ class RestrictAdminByIp
 
     public function handle(Request $request, Closure $next): Response
     {
-        abort(403, 'Your IP: ' . $request->ip());
+        if (!in_array($request->ip(), $this->allowedIps)) {
+            abort(403, 'Access denied');
+        }
+        return $next($request);
     }
 }
