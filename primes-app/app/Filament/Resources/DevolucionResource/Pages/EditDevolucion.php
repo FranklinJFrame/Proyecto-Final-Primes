@@ -5,8 +5,6 @@ namespace App\Filament\Resources\DevolucionResource\Pages;
 use App\Filament\Resources\DevolucionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Notifications\Notification;
-use Illuminate\Validation\ValidationException;
 
 class EditDevolucion extends EditRecord
 {
@@ -73,25 +71,5 @@ class EditDevolucion extends EditRecord
                 }
             }
         }
-    }
-
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        $record = $this->record;
-        $estadoActual = $record->estado;
-        $estadoNuevo = $data['estado'] ?? $estadoActual;
-
-        // No permitir pasar de 'pendiente' a 'aprobada' sin pasar por 'recibido'
-        if ($estadoActual === 'pendiente' && $estadoNuevo === 'aprobada') {
-            Notification::make()
-                ->title('No puedes aprobar la devolución sin confirmar la recepción del producto')
-                ->body('Primero debes cambiar el estado a "recibido" antes de aprobar el reembolso.')
-                ->danger()
-                ->send();
-            throw ValidationException::withMessages([
-                'estado' => 'No puedes aprobar la devolución sin confirmar la recepción del producto.'
-            ]);
-        }
-        return $data;
     }
 }
