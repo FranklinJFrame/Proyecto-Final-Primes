@@ -25,6 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'email_verified_at',
         'password',
+        'rol',
     ];
 
     /**
@@ -45,7 +46,24 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'rol' => 'string',
     ];
+
+    /**
+     * Verifica si el usuario es admin
+     */
+    public function isAdmin(): bool
+    {
+        return $this->rol === 'admin';
+    }
+
+    /**
+     * Verifica si el usuario es cliente
+     */
+    public function isCliente(): bool
+    {
+        return $this->rol === 'cliente';
+    }
 
     public function pedidos(): HasMany
     {

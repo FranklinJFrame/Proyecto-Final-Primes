@@ -109,8 +109,9 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Admin pedidos detalle y factura
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/pedidos/{pedido}', [PedidoAdminController::class, 'show'])->name('admin.pedidos.show');
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/pedidos/{pedido}', [PedidoAdminController::class, 'show'])->name('admin.pedidos.show');
+    // Aquí puedes agregar más rutas administrativas
 });
 
 // Rutas de pago

@@ -26,6 +26,7 @@ class RegisterPage extends Component
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
+            'rol' => 'cliente', // Asignar rol por defecto
         ]);
 
         event(new Registered($user));
