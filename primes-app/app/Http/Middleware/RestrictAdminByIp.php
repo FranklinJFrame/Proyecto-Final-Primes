@@ -10,7 +10,7 @@ class RestrictAdminByIp
 {
     // List of allowed IPs
     protected $allowedIps = [
-        //'127.0.0.1',
+        '10.0.0.9',
         //'::1',
         // Add more as needed
     ];
