@@ -16,6 +16,7 @@ class RestrictAdminByIp
 
     public function handle(Request $request, Closure $next): Response
     {
-        abort(403, 'Your IP: ' . $request->ip());
+        echo $request->ip();
+        exit;
     }
 }
