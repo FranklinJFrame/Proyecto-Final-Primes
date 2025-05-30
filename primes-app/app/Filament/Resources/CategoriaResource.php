@@ -169,7 +169,14 @@ class CategoriaResource extends Resource
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make()
                         ->requiresConfirmation()
-                        ->modalDescription('¿Estás seguro de que deseas eliminar esta categoría? Esta acción no se puede deshacer.'),
+                        ->modalDescription('¿Estás seguro de que deseas eliminar esta categoría? Esta acción no se puede deshacer.')
+                        ->before(function ($record) {
+                            if ($record->productos()->count() > 0) {
+                                throw new \Filament\Notifications\Notification(
+                                    'No puedes eliminar una categoría que tiene productos asignados. Elimina o reasigna los productos primero.'
+                                );
+                            }
+                        }),
                 ])
                 ->link()
                 ->label('Acciones'),

@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers\PedidosRelationManager;
+use Filament\Notifications\Notification;
 
 class UserResource extends Resource
 {
@@ -182,7 +183,17 @@ class UserResource extends Resource
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make()
                         ->requiresConfirmation()
-                        ->modalDescription('¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.'),
+                        ->modalDescription('¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.')
+                        ->before(function ($record, $action) {
+                            if ($record->pedidos()->count() > 0) {
+                                Notification::make()
+                                    ->title('No puedes eliminar un usuario con pedidos asignados.')
+                                    ->body('Elimina o reasigna los pedidos antes de eliminar este usuario.')
+                                    ->danger()
+                                    ->send();
+                                $action->cancel();
+                            }
+                        }),
                 ])
                 ->link()
                 ->label('Acciones'),
