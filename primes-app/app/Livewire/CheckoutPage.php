@@ -301,8 +301,9 @@ class CheckoutPage extends Component
             ]);
             Mail::to($pedido->user->email)->send(new FacturaMail($pedido, $pdf->output()));
 
-            // Redirigir usando la URL completa
-            return redirect('http://127.0.0.1:8000/success');
+            // Redirigir usando la URL completa, forzando la URL de producción
+            $productionUrl = 'https://proyecto-final-primes-production-96c3.up.railway.app';
+            return redirect()->away($productionUrl . '/success');
 
         } catch (\Exception $e) {
             \Log::error('Error al crear pedido: ' . $e->getMessage());
