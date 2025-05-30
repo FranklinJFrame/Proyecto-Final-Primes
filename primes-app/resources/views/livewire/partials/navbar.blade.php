@@ -76,7 +76,7 @@
                       <div class="absolute right-0 mt-2 w-48 bg-black border border-blue-500/20 rounded-lg shadow-lg py-2 user-dropdown-menu z-50">
                           <a href="/my-orders" class="block px-4 py-2 text-gray-300 hover:bg-blue-500/10 hover:text-blue-500 transition-colors">Mis pedidos</a>
                           <a href="/settings/profile" class="block px-4 py-2 text-gray-300 hover:bg-blue-500/10 hover:text-blue-500 transition-colors">Cuenta</a>
-                          @if($user->role === 'admin')
+                          @if($user->rol === 'admin')
                           <a href="/admin" class="block px-4 py-2 text-gray-300 hover:bg-blue-500/10 hover:text-blue-500 transition-colors">Panel Admin</a>
                           @endif
                           <form method="POST" action="/logout">
@@ -138,7 +138,7 @@
                   </div>
                   <a href="/my-orders" class="block px-3 py-2 text-gray-300 hover:bg-blue-500/10 hover:text-blue-500 transition-colors">Mis pedidos</a>
                   <a href="/settings/profile" class="block px-3 py-2 text-gray-300 hover:bg-blue-500/10 hover:text-blue-500 transition-colors">Cuenta</a>
-                  @if($user->role === 'admin')
+                  @if($user->rol === 'admin')
                   <a href="/admin" class="block px-3 py-2 text-gray-300 hover:bg-blue-500/10 hover:text-blue-500 transition-colors">Panel Admin</a>
                   @endif
                   <form method="POST" action="/logout">
