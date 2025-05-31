@@ -3,6 +3,14 @@
 @endphp
 
 <div class="min-h-screen bg-black text-white flex flex-col items-center py-16">
+    @if (session('message'))
+        <div class="w-full max-w-2xl mb-4">
+            <div class="bg-green-500 text-white p-4 rounded-lg">
+                {{ session('message') }}
+            </div>
+        </div>
+    @endif
+
     <div class="w-full max-w-2xl bg-gray-900 rounded-2xl shadow-2xl p-8 border border-blue-500/20">
         <h2 class="text-3xl font-bold mb-8 text-center cyber-glitch-text">Mi Cuenta</h2>
         <div class="flex flex-col md:flex-row gap-8">
