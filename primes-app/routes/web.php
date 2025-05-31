@@ -143,7 +143,15 @@ Route::middleware(['auth'])->group(function () {
         return view('auth.verify-email');
     })->name('verification.notice');
 
-    Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
-        ->middleware(['signed'])
-        ->name('verification.verify');
+    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        if ($request->user()->hasVerifiedEmail()) {
+            return redirect('/')->with('message', 'Email ya verificado');
+        }
+
+        if ($request->user()->markEmailAsVerified()) {
+            event(new Verified($request->user()));
+        }
+
+        return redirect('/')->with('message', 'Email verificado exitosamente');
+    })->middleware(['signed'])->name('verification.verify');
 });

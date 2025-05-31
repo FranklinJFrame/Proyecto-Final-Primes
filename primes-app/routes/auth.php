@@ -35,6 +35,10 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    // Remove or comment out these routes if they exist
+    // Route::get('/email/verify', ...)->name('verification.notice');
+    // Route::get('/email/verify/{id}/{hash}', ...)->name('verification.verify');
+
     Route::get('verify-email', EmailVerificationPromptController::class)
         ->name('verification.notice');
 
