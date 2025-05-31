@@ -23,7 +23,7 @@ use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\ProductoReviewController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use App\Http\Controllers\Auth\VerifyEmailController;
+use Illuminate\Auth\Events\Verified;
 
 //primes-app\app\Livewire\HomePage.php
 Route::get('/', HomePage::class);
@@ -137,21 +137,8 @@ Route::post('/webhooks/paypal', [App\Http\Controllers\PaymentController::class, 
 // Ruta API para resumen de devoluciones en el dashboard
 Route::middleware(['auth'])->get('/api/devoluciones/resumen-dashboard', [DevolucionController::class, 'resumenDashboard']);
 
-// Email Verification Routes
-Route::middleware(['auth'])->group(function () {
-    Route::get('/email/verify', function () {
-        return view('auth.verify-email');
-    })->name('verification.notice');
 
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-        if ($request->user()->hasVerifiedEmail()) {
-            return redirect('/')->with('message', 'Email ya verificado');
-        }
 
-        if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
-        }
-
-        return redirect('/')->with('message', 'Email verificado exitosamente');
-    })->middleware(['signed'])->name('verification.verify');
-});
+Route::get('/email/verify/{id}/{hash}', [App\Http\Controllers\Auth\VerifyEmailController::class, '__invoke'])
+    ->middleware(['signed'])
+    ->name('verification.verify');
