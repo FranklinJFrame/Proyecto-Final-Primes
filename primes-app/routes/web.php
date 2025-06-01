@@ -137,7 +137,12 @@ Route::post('/webhooks/paypal', [App\Http\Controllers\PaymentController::class, 
 // Ruta API para resumen de devoluciones en el dashboard
 Route::middleware(['auth'])->get('/api/devoluciones/resumen-dashboard', [DevolucionController::class, 'resumenDashboard']);
 
-// Ruta de verificación de email (sin requerir autenticación)
+// Ruta de verificación de email (sin autenticación)
 Route::get('/email/verify/{id}/{hash}', [App\Http\Controllers\Auth\VerifyEmailController::class, '__invoke'])
     ->middleware('signed')
     ->name('verification.verify');
+
+// Ruta para reenviar el email de verificación
+Route::post('/email/verification-notification', [App\Http\Controllers\Auth\EmailVerificationNotificationController::class, 'store'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
