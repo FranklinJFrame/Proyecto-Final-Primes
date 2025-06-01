@@ -11,8 +11,7 @@ class CustomVerifyEmail extends VerifyEmail
 {
     protected function verificationUrl($notifiable)
     {
-        // Replace this with your production URL
-        $productionUrl = 'https://proyecto-final-primes-production-96c3.up.railway.app/';
+        $productionUrl = 'https://proyecto-final-primes-production-96c3.up.railway.app';
 
         if (static::$createUrlCallback) {
             return call_user_func(static::$createUrlCallback, $notifiable);
@@ -27,7 +26,7 @@ class CustomVerifyEmail extends VerifyEmail
             ]
         );
 
-        // Replace localhost URL with production URL
-        return str_replace('https://proyecto-final-primes-production-96c3.up.railway.app/', $productionUrl, $url);
+        // Replace the app URL with the production URL
+        return str_replace(config('app.url'), $productionUrl, $url);
     }
 }

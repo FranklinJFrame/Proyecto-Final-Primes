@@ -140,5 +140,5 @@ Route::middleware(['auth'])->get('/api/devoluciones/resumen-dashboard', [Devoluc
 
 
 Route::get('/email/verify/{id}/{hash}', [App\Http\Controllers\Auth\VerifyEmailController::class, '__invoke'])
-    ->middleware(['signed'])
+    ->middleware(['web', 'signed'])
     ->name('verification.verify');
