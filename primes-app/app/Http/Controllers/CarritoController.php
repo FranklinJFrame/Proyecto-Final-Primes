@@ -17,6 +17,10 @@ class CarritoController extends Controller
     // Obtener todos los productos del carrito
     public function index()
     {
+        if (!Auth::user()->hasVerifiedEmail()) {
+            return response()->json(['error' => 'Debes verificar tu correo electrónico antes de usar el carrito.'], 403);
+        }
+
         $carrito = Auth::user()->carritoProductos()->with('producto')->get();
         $total = $carrito->sum(fn($item) => $item->precio_unitario * $item->cantidad);
         return response()->json(['carrito' => $carrito, 'total' => $total]);
@@ -25,6 +29,10 @@ class CarritoController extends Controller
     // Agregar producto al carrito
     public function add(Request $request)
     {
+        if (!Auth::user()->hasVerifiedEmail()) {
+            return response()->json(['error' => 'Debes verificar tu correo electrónico antes de agregar productos al carrito.'], 403);
+        }
+
         $request->validate([
             'producto_id' => 'required|exists:productos,id',
             'cantidad' => 'nullable|integer|min:1',
@@ -48,6 +56,10 @@ class CarritoController extends Controller
     // Remover producto del carrito
     public function remove(Request $request)
     {
+        if (!Auth::user()->hasVerifiedEmail()) {
+            return response()->json(['error' => 'Debes verificar tu correo electrónico antes de modificar el carrito.'], 403);
+        }
+
         $request->validate([
             'producto_id' => 'required|exists:productos,id',
         ]);
@@ -64,6 +76,10 @@ class CarritoController extends Controller
     // Incrementar cantidad
     public function increment(Request $request)
     {
+        if (!Auth::user()->hasVerifiedEmail()) {
+            return response()->json(['error' => 'Debes verificar tu correo electrónico antes de modificar el carrito.'], 403);
+        }
+
         $request->validate([
             'producto_id' => 'required|exists:productos,id',
         ]);
@@ -86,6 +102,10 @@ class CarritoController extends Controller
     // Decrementar cantidad
     public function decrement(Request $request)
     {
+        if (!Auth::user()->hasVerifiedEmail()) {
+            return response()->json(['error' => 'Debes verificar tu correo electrónico antes de modificar el carrito.'], 403);
+        }
+
         $request->validate([
             'producto_id' => 'required|exists:productos,id',
         ]);
@@ -108,6 +128,10 @@ class CarritoController extends Controller
     // Vaciar carrito
     public function clear()
     {
+        if (!Auth::user()->hasVerifiedEmail()) {
+            return response()->json(['error' => 'Debes verificar tu correo electrónico antes de modificar el carrito.'], 403);
+        }
+
         Auth::user()->carritoProductos()->delete();
         return response()->json(['success' => 'Carrito vaciado.']);
     }

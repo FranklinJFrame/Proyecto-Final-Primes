@@ -21,6 +21,6 @@ class VerifyEmailController extends Controller
             event(new Verified($request->user()));
         }
 
-        return redirect('/')->with('message', 'Email verificado exitosamente');
+        return redirect('/')->with('success', 'Email verificado exitosamente. Ahora puedes agregar productos al carrito.');
     }
 }

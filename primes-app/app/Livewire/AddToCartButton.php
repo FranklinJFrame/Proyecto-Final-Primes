@@ -29,30 +29,41 @@ class AddToCartButton extends Component
             $this->dispatch('showLoginAlert');
             return;
         }
+
+        if (!Auth::user()->hasVerifiedEmail()) {
+            $this->feedback = 'Debes verificar tu correo electrónico antes de agregar productos al carrito. Por favor, revisa tu bandeja de entrada.';
+            return;
+        }
+
         $producto = Producto::find($this->productoId);
         if (!$producto) {
             $this->feedback = 'El producto ya no está disponible.';
             return;
         }
+
         $this->cantidad = max(1, min($this->cantidad, $producto->cantidad));
         if ($producto->cantidad <= 0) {
             $this->feedback = 'Producto agotado: El producto se agotó después de agregarlo al carrito.';
             return;
         }
+
         if ($this->cantidad > $producto->cantidad) {
             $this->feedback = 'No puedes agregar más de la cantidad disponible.';
             return;
         }
+
         $carrito = CarritoProducto::firstOrCreate([
             'user_id' => Auth::id(),
             'producto_id' => $producto->id,
         ], [
             'precio_unitario' => $producto->precio,
         ]);
+
         if (($carrito->cantidad + $this->cantidad) > $producto->cantidad) {
             $this->feedback = 'No puedes agregar más de la cantidad disponible en total (ya tienes parte en el carrito).';
             return;
         }
+
         $carrito->cantidad += $this->cantidad;
         $carrito->precio_unitario = $producto->precio;
         $carrito->save();
