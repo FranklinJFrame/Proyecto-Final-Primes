@@ -11,13 +11,13 @@ class CustomVerifyEmail extends VerifyEmail
 {
     protected function verificationUrl($notifiable)
     {
-        $productionUrl = 'https://proyecto-final-primes-production-96c3.up.railway.app';
+        $baseUrl = 'https://proyecto-final-primes-production-96c3.up.railway.app';
 
         if (static::$createUrlCallback) {
             return call_user_func(static::$createUrlCallback, $notifiable);
         }
 
-        $url = URL::temporarySignedRoute(
+        $temporarySignedURL = URL::temporarySignedRoute(
             'verification.verify',
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
             [
@@ -26,7 +26,11 @@ class CustomVerifyEmail extends VerifyEmail
             ]
         );
 
-        // Replace the app URL with the production URL
-        return str_replace(config('app.url'), $productionUrl, $url);
+        // Extract the query parameters from the signed URL
+        $parsedUrl = parse_url($temporarySignedURL);
+        $queryParams = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
+
+        // Construct the new URL with the production base URL
+        return $baseUrl . '/email/verify/' . $notifiable->getKey() . '/' . sha1($notifiable->getEmailForVerification()) . $queryParams;
     }
 }
