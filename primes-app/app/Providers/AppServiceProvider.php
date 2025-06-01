@@ -20,11 +20,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+            config(['app.url' => 'https://proyecto-final-primes-production-96c3.up.railway.app']);
+        }
+        
         $url = 'https://proyecto-final-primes-production-96c3.up.railway.app';
         
         // Forzar HTTPS y URL base
         URL::forceRootUrl($url);
-        URL::forceScheme('https');
         
         // Forzar configuración de assets
         Config::set('app.url', $url);

@@ -13,12 +13,12 @@ class CustomVerifyEmail extends VerifyEmail
     protected function verificationUrl($notifiable)
     {
         try {
-            $baseUrl = 'https://proyecto-final-primes-production-96c3.up.railway.app';
-
             if (static::$createUrlCallback) {
                 return call_user_func(static::$createUrlCallback, $notifiable);
             }
 
+            $baseUrl = config('app.url', 'https://proyecto-final-primes-production-96c3.up.railway.app');
+            
             // Generate the signed URL
             $temporarySignedURL = URL::temporarySignedRoute(
                 'verification.verify',
@@ -29,12 +29,13 @@ class CustomVerifyEmail extends VerifyEmail
                 ]
             );
 
-            // Extract the query string from the signed URL
+            // Extract the path and query from the signed URL
             $parsedUrl = parse_url($temporarySignedURL);
-            $queryString = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
+            $path = $parsedUrl['path'] ?? '';
+            $query = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
 
-            // Construct the verification URL
-            $verificationUrl = $baseUrl . '/email/verify/' . $notifiable->getKey() . '/' . sha1($notifiable->getEmailForVerification()) . $queryString;
+            // Construct the full URL using the base URL
+            $verificationUrl = rtrim($baseUrl, '/') . $path . $query;
 
             Log::info('Generated verification URL', [
                 'user_id' => $notifiable->getKey(),

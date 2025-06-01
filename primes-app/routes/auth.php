@@ -32,6 +32,11 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.store');
+
+    // Ruta de verificación de email (sin autenticación)
+    Route::get('email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
+        ->middleware('signed')
+        ->name('verification.verify');
 });
 
 Route::middleware('auth')->group(function () {
