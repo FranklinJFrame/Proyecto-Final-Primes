@@ -28,7 +28,6 @@ class LowStockProductos extends BaseWidget
                 ->danger()
                 ->icon('heroicon-o-exclamation-triangle')
                 ->persistent()
-                ->autoDismiss(false)
                 ->actions([
                     Action::make('ver')
                         ->label('Ver productos con bajo stock')
