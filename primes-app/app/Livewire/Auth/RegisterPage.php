@@ -26,8 +26,13 @@ class RegisterPage extends Component
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
-            'rol' => 'cliente', // Asignar rol por defecto
+            'rol' => 'cliente',
+            'email_verified_at' => now(),
         ]);
+
+        // Marcar el correo como verificado
+        $user->markEmailAsVerified();
+        $user->save();
 
         event(new Registered($user));
         $user->sendEmailVerificationNotification();
