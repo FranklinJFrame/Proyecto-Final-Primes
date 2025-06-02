@@ -83,6 +83,7 @@ class CategoriaResource extends Resource
                                     ->label('Imagen')
                                     ->image()
                                     ->imageEditor()
+                                    ->disk('public')
                                     ->directory('categorias')
                                     ->imagePreviewHeight('250')
                                     ->maxSize(5120)

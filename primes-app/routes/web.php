@@ -145,9 +145,9 @@ Route::get('/verify-email', function () {
 // Rutas de verificación de correo - NO requiere autenticación para verificar
 Route::get('/verify-email/{id}/{hash}', [App\Http\Controllers\Auth\EmailVerificationController::class, 'verify'])
     ->middleware(['signed'])
-    ->name('verification.verify');
+    ->name('verification.verify.custom');
 
 // Ruta para reenviar el email de verificación
 Route::post('/email/verification-notification', [App\Http\Controllers\Auth\EmailVerificationController::class, 'resend'])
     ->middleware(['auth', 'throttle:6,1'])
-    ->name('verification.send');
+    ->name('verification.send.custom');

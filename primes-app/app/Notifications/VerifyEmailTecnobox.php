@@ -18,7 +18,7 @@ class VerifyEmailTecnobox extends LaravelVerifyEmail
             ->subject('Verifica tu correo | TECNOBOX')
             ->markdown('emails.verify-email-tecnobox', [
                 'url' => URL::temporarySignedRoute(
-                    'verification.verify',
+                    'verification.verify.custom',
                     now()->addMinutes(60),
                     [
                         'id' => $notifiable->getKey(),

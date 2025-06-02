@@ -44,7 +44,8 @@ class EmailVerificationController extends Controller
             Auth::login($user);
         }
         
-        return view('verify-email');
+        // Redireccionar al home con mensaje de éxito
+        return redirect('/')->with('success', 'Tu correo ha sido verificado exitosamente');
     }
 
     public function resend(Request $request)

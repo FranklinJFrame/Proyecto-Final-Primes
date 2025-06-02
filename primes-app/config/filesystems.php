@@ -40,7 +40,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => 'https://proyecto-final-primes-production-96c3.up.railway.app/storage',
+            'url' => env('ASSET_URL', 'https://proyecto-final-primes-production-96c3.up.railway.app').'/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
