@@ -236,6 +236,7 @@ class ProductoResource extends Resource
                                 Forms\Components\FileUpload::make('imagenes')
                                     ->label('Imágenes')
                                     ->multiple()
+                                    ->disk('cloudinary')
                                     ->directory('products')
                                     ->maxFiles(5)
                                     ->reorderable()

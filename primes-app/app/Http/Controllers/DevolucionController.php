@@ -110,8 +110,11 @@ class DevolucionController extends Controller
             $rutasImagenesGuardadas = [];
             if ($request->hasFile('imagenes_devolucion')) {
                 foreach ($request->file('imagenes_devolucion') as $imagen) {
-                    $path = $imagen->store('devoluciones/' . $devolucion->id, 'public');
-                    $rutasImagenesGuardadas[] = $path;
+                    // Subir a Cloudinary y guardar la URL
+                    $uploaded = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::upload($imagen->getRealPath(), [
+                        'folder' => 'devoluciones/' . $devolucion->id
+                    ]);
+                    $rutasImagenesGuardadas[] = $uploaded->getSecurePath();
                 }
                 $devolucion->imagenes_adjuntas = $rutasImagenesGuardadas;
             }
