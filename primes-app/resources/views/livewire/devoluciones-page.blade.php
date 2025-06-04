@@ -7,11 +7,7 @@
                     @if($devolucion->pedido && $devolucion->pedido->productos && count($devolucion->pedido->productos) > 0)
                         @php $item = $devolucion->pedido->productos->first(); @endphp
                         @if($item->producto && isset($item->producto->imagenes) && count($item->producto->imagenes) > 0)
-                            @php
-                                $imgSrc = $item->producto->imagenes[0];
-                                $isCloudinary = str_starts_with($imgSrc, 'http');
-                            @endphp
-                            <img src="{{ $isCloudinary ? $imgSrc : url('storage/' . $imgSrc) }}" alt="{{ $item->producto->nombre }}" class="w-20 h-20 object-cover rounded-md border border-gray-600">
+                            <img src="{{ url('storage', $item->producto->imagenes[0]) }}" alt="{{ $item->producto->nombre }}" class="w-20 h-20 object-cover rounded-md border border-gray-600">
                         @else
                             <div class="w-20 h-20 bg-gray-700 flex items-center justify-center rounded-md">
                                 <svg class="w-10 h-10 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

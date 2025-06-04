@@ -74,7 +74,6 @@ class MarcaResource extends Resource
                                     ->label('Logotipo')
                                     ->image()
                                     ->imageEditor()
-                                    ->disk('cloudinary')
                                     ->directory('marcas')
                                     ->imagePreviewHeight('250')
                                     ->maxSize(5120)

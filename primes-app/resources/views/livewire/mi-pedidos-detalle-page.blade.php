@@ -303,8 +303,9 @@
                                 <div class="mt-3 flex flex-wrap gap-3">
                                     @foreach($devolucion->imagenes_adjuntas as $img)
                                         @php
-                                            $isCloudinary = str_starts_with($img, 'http');
-                                            $imgUrl = $isCloudinary ? $img : url('storage/public/devoluciones/' . basename($img));
+                                            // Siempre mostrar desde public/devoluciones, sin importar el path guardado
+                                            $imgName = basename($img);
+                                            $imgUrl = url('storage/public/devoluciones/' . $imgName);
                                         @endphp
                                         <a href="{{ $imgUrl }}" target="_blank" class="block border border-blue-500 dark:border-blue-400 rounded-lg overflow-hidden shadow-lg hover:scale-105 transition-transform focus:outline-none focus:ring-2 focus:ring-blue-500">
                                             <img src="{{ $imgUrl }}" class="w-16 h-16 object-cover rounded-lg bg-gray-800 border border-gray-700" alt="Imagen adjunta">

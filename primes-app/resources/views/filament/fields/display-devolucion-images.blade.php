@@ -8,11 +8,8 @@
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-2">
         @foreach($imagenes as $index => $imgPath)
             @if(is_string($imgPath) && !empty($imgPath))
-                @php
-                    $isCloudinary = str_starts_with($imgPath, 'http');
-                @endphp
-                <a href="{{ $isCloudinary ? $imgPath : Illuminate\Support\Facades\Storage::disk('public')->url($imgPath) }}" target="_blank" class="block border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <img src="{{ $isCloudinary ? $imgPath : Illuminate\Support\Facades\Storage::disk('public')->url($imgPath) }}" 
+                <a href="{{ Illuminate\Support\Facades\Storage::disk('public')->url($imgPath) }}" target="_blank" class="block border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <img src="{{ Illuminate\Support\Facades\Storage::disk('public')->url($imgPath) }}" 
                          alt="Imagen adjunta {{ $index + 1 }}" 
                          class="w-full h-32 object-cover bg-gray-100 dark:bg-gray-700">
                 </a>
