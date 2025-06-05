@@ -236,7 +236,6 @@ class ProductoResource extends Resource
                                 Forms\Components\FileUpload::make('imagenes')
                                     ->label('Imágenes')
                                     ->multiple()
-                                    ->disk('cloudinary')
                                     ->directory('products')
                                     ->maxFiles(5)
                                     ->reorderable()
@@ -255,9 +254,9 @@ class ProductoResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('imagenes')
                     ->label('Imagen')
-                    ->getStateUsing(fn ($record) => is_array($record->imagenes) && isset($record->imagenes[0]) ? $record->imagenes[0] : null)
-                    ->circular()
-                    ->size(80),
+                    ->disk('public')
+                    ->size(80)
+                    ->circular(),
 
                 Tables\Columns\TextColumn::make('nombre')
                     ->label('Nombre')

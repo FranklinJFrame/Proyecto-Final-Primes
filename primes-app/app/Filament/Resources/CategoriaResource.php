@@ -83,7 +83,6 @@ class CategoriaResource extends Resource
                                     ->label('Imagen')
                                     ->image()
                                     ->imageEditor()
-                                    ->disk('cloudinary')
                                     ->directory('categorias')
                                     ->imagePreviewHeight('250')
                                     ->maxSize(5120)

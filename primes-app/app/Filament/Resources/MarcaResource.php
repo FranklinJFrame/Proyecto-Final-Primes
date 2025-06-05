@@ -74,7 +74,6 @@ class MarcaResource extends Resource
                                     ->label('Logotipo')
                                     ->image()
                                     ->imageEditor()
-                                    ->disk('cloudinary')
                                     ->directory('marcas')
                                     ->imagePreviewHeight('250')
                                     ->maxSize(5120)
@@ -93,9 +92,9 @@ class MarcaResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('imagen')
                     ->label('Logo')
-                    ->getStateUsing(fn ($record) => $record->imagen)
-                    ->circular()
-                    ->size(80),
+                    ->disk('public')
+                    ->size(80)
+                    ->circular(),
 
                 Tables\Columns\TextColumn::make('nombre')
                     ->label('Nombre')
