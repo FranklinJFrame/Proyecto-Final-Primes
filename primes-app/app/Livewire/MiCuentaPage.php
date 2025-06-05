@@ -136,11 +136,13 @@ class MiCuentaPage extends Component
     public function save()
     {
         $this->validate($this->rules, $this->messages);
+        
         if ($this->direcciones->count() >= 3 && $this->modo === 'crear') {
             session()->flash('error', 'Solo puedes tener un máximo de 3 direcciones.');
             return;
         }
-        $direccion = Auth::user()->direccions()->create([
+        
+        Auth::user()->direccions()->create([
             'nombre' => $this->nombre,
             'apellido' => $this->apellido,
             'telefono' => $this->telefono,
@@ -149,12 +151,7 @@ class MiCuentaPage extends Component
             'estado' => $this->estado,
             'codigo_postal' => $this->codigo_postal,
         ]);
-        // Sincroniza el teléfono del usuario si es diferente
-        if (Auth::user()->telefono !== $this->telefono) {
-            Auth::user()->telefono = $this->telefono;
-            Auth::user()->save();
-            $this->telefono_usuario = $this->telefono;
-        }
+        
         $this->resetForm();
         $this->loadDirecciones();
         session()->flash('success', 'Dirección guardada correctamente.');
@@ -178,6 +175,7 @@ class MiCuentaPage extends Component
     public function update()
     {
         $this->validate();
+        
         $dir = Auth::user()->direccions()->findOrFail($this->editId);
         $dir->update([
             'nombre' => $this->nombre,
@@ -188,12 +186,7 @@ class MiCuentaPage extends Component
             'estado' => $this->estado,
             'codigo_postal' => $this->codigo_postal,
         ]);
-        // Sincroniza el teléfono del usuario si es diferente
-        if (Auth::user()->telefono !== $this->telefono) {
-            Auth::user()->telefono = $this->telefono;
-            Auth::user()->save();
-            $this->telefono_usuario = $this->telefono;
-        }
+        
         $this->resetForm();
         $this->loadDirecciones();
         session()->flash('success', 'Dirección actualizada correctamente.');

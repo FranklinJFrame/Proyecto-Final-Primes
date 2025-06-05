@@ -82,7 +82,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function sendEmailVerificationNotification()
     {
-        $this->notify(new \App\Notifications\VerifyEmailTecnobox);
+        $this->notify(new \App\Notifications\CustomVerifyEmail);
     }
 
     public function cartItems(): HasMany
