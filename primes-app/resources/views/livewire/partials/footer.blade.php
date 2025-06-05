@@ -25,26 +25,25 @@
 
       <div class="col-span-1">
         <h4 class="font-semibold text-blue-400 cyber-glitch-text">Empresa</h4>
-
         <div class="mt-3 grid space-y-3">
-          <p><a class="inline-flex gap-x-2 text-gray-400 hover:text-blue-500 transition-colors" href="#">Sobre nosotros</a></p>
-          <p><a class="inline-flex gap-x-2 text-gray-400 hover:text-blue-500 transition-colors" href="#">Blog</a></p>
-          <p><a class="inline-flex gap-x-2 text-gray-400 hover:text-blue-500 transition-colors" href="#">Clientes</a></p>
+          <!-- Eliminado: Sobre nosotros, Blog, Clientes -->
         </div>
       </div>
       <!-- End Col -->
 
       <div class="col-span-2">
         <h4 class="font-semibold text-blue-400 cyber-glitch-text">Mantente actualizado</h4>
-
-        <form>
+        <form id="newsletter-form" onsubmit="event.preventDefault(); document.getElementById('newsletter-alert').classList.remove('hidden');">
           <div class="mt-4 flex flex-col items-center gap-2 sm:flex-row sm:gap-3 bg-gray-900/50 rounded-lg p-2 border border-blue-500/20">
             <div class="w-full">
-              <input type="text" id="hero-input" name="hero-input" class="py-3 px-4 block w-full border-transparent rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 bg-black/50 text-gray-400" placeholder="Ingresa tu email">
+              <input type="email" id="newsletter-email" name="newsletter-email" class="py-3 px-4 block w-full border-transparent rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 bg-black/50 text-gray-400" placeholder="Ingresa tu email" required>
             </div>
-            <a class="w-full sm:w-auto whitespace-nowrap p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-blue-500/20 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:border-blue-500/30 transition-all duration-200" href="#">
+            <button type="submit" class="w-full sm:w-auto whitespace-nowrap p-3 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-lg border border-blue-500/20 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 hover:border-blue-500/30 transition-all duration-200">
               Suscribirse
-            </a>
+            </button>
+          </div>
+          <div id="newsletter-alert" class="hidden mt-3 p-3 bg-green-600/10 border border-green-600/20 text-green-400 rounded-lg text-center">
+            ¡Gracias! Te mantendremos actualizado con nuestras novedades.
           </div>
         </form>
       </div>

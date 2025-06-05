@@ -14,6 +14,9 @@ class LowStockProductos extends BaseWidget
 {
     protected int | string | array $columnSpan = 'full';
 
+    protected static bool $shouldRegister = true;
+    protected static ?int $pollingInterval = 60; // Actualizar cada 60 segundos
+
     public function mount(): void
     {
         $count = Producto::where('cantidad', '<=', 5)->count();
