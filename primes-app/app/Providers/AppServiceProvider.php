@@ -5,8 +5,6 @@ namespace App\Providers;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
-use Livewire\Livewire;
-use Illuminate\Support\Facades\Route;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,7 +26,6 @@ class AppServiceProvider extends ServiceProvider
 
             // Forzar HTTPS
             URL::forceScheme('https');
-            URL::forceRootUrl($url);
 
             // Establecer URL base
             Config::set('app.url', $url);
@@ -38,14 +35,6 @@ class AppServiceProvider extends ServiceProvider
 
             // Configurar URL pública del filesystem
             Config::set('filesystems.disks.public.url', $url . '/storage');
-
-            // Configurar Livewire para usar HTTPS
-            Livewire::setUpdateMethod('POST');
-            Livewire::setUpdateRoute(function ($handle) {
-                return Route::post('/livewire/update', $handle)
-                    ->middleware('web')
-                    ->name('livewire.update');
-            });
         }
     }
 }
