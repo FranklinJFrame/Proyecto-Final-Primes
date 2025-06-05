@@ -24,12 +24,6 @@ use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\ProductoReviewController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Auth\Events\Verified;
-use Filament\Facades\Filament;
-
-// Configuración de Filament
-Filament::serving(function () {
-    Filament::registerViteTheme('resources/css/filament/admin/theme.css');
-});
 
 //primes-app\app\Livewire\HomePage.php
 Route::get('/', HomePage::class);
