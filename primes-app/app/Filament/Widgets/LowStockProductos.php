@@ -46,7 +46,7 @@ class LowStockProductos extends BaseWidget
             ->columns([
                 ImageColumn::make('imagenes.0')
                     ->label('Imagen')
-                    ->disk('public')
+                    ->getStateUsing(fn ($record) => is_array($record->imagenes) && isset($record->imagenes[0]) ? $record->imagenes[0] : null)
                     ->size(40),
                 TextColumn::make('nombre')
                     ->label('Producto')

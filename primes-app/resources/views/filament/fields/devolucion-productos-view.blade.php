@@ -10,10 +10,11 @@
                             @php
                                 $imagenes = $itemDevuelto->pedidoProducto->producto->imagenes ?? [];
                                 $imgSrc = (!empty($imagenes) && isset($imagenes[0]))
-                                    ? url('storage', $imagenes[0])
+                                    ? $imagenes[0]
                                     : asset('img/default-product.jpg');
+                                $isCloudinary = str_starts_with($imgSrc, 'http');
                             @endphp
-                            <img src="{{ $imgSrc }}"
+                            <img src="{{ $isCloudinary ? $imgSrc : url('storage/' . $imgSrc) }}"
                                  alt="{{ $itemDevuelto->pedidoProducto->producto->nombre ?? 'Producto' }}"
                                  class="w-16 h-16 rounded-md object-cover bg-gray-600"
                                  loading="lazy"
