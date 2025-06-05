@@ -1,0 +1,10 @@
+[build]
+command = "composer install && php artisan key:generate && php artisan storage:link"
+
+[deploy]
+command = "composer install && php artisan migrate && php artisan storage:link"
+
+[env]
+APP_ENV = "production"
+APP_DEBUG = "false"
+APP_URL = "https://proyecto-final-primes-production-96c3.up.railway.app"
