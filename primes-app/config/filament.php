@@ -17,7 +17,6 @@ return [
             'scripts' => true,
         ],
         'url' => env('APP_URL', 'https://proyecto-final-primes-production-96c3.up.railway.app'),
-        'path' => 'build',
     ],
     'layout' => [
         'sidebar' => [
@@ -28,8 +27,4 @@ return [
         ],
     ],
     'default_filesystem_disk' => 'public',
-    'vite' => [
-        'enabled' => true,
-        'path' => 'build',
-    ],
 ];
