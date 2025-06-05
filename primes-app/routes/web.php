@@ -24,6 +24,7 @@ use App\Http\Controllers\DevolucionController;
 use App\Http\Controllers\ProductoReviewController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Auth\Events\Verified;
+use App\Http\Controllers\Auth\VerifyEmailController;
 
 //primes-app\app\Livewire\HomePage.php
 Route::get('/', HomePage::class);
@@ -137,7 +138,10 @@ Route::post('/webhooks/paypal', [App\Http\Controllers\PaymentController::class, 
 // Ruta API para resumen de devoluciones en el dashboard
 Route::middleware(['auth'])->get('/api/devoluciones/resumen-dashboard', [DevolucionController::class, 'resumenDashboard']);
 
-// Ruta para reenviar el email de verificación
-Route::post('/email/verification-notification', [App\Http\Controllers\Auth\EmailVerificationNotificationController::class, 'store'])
-    ->middleware(['auth', 'throttle:6,1'])
-    ->name('verification.send');
+
+
+// Ruta de verificación de email (debe estar activa)
+Route::get('/verify/{id}/{hash}', \App\Http\Controllers\Auth\VerifyEmailController::class)
+    ->middleware(['signed', 'throttle:6,1'])
+    ->name('verification.verify');
+
