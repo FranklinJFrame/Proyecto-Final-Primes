@@ -352,12 +352,21 @@
           {{-- Datos de la Tarjeta --}}
           <div class="mt-6 pt-6 border-t border-gray-700">
             <h3 class="text-md font-semibold text-white mb-3">Datos de la Tarjeta</h3>
-            <div class="bg-gray-700 rounded-lg p-4 text-white space-y-2">
-              <div><span class="font-semibold">Cliente:</span> Franklin</div>
-              <div><span class="font-semibold">Tipo Tarjeta:</span> paypal</div>
-              <div><span class="font-semibold">Terminación:</span> **** **** **** 4435</div>
-              <div><span class="font-semibold">Nombre en Tarjeta:</span> Angel Espinal</div>
-            </div>
+            @php
+                $tarjeta = $datosTarjetaPredeterminada;
+            @endphp
+            @if($tarjeta)
+                <div class="bg-gray-700 rounded-lg p-4 text-white space-y-2">
+                    <div><span class="font-semibold">Cliente:</span> {{ $pedido->user->name }}</div>
+                    <div><span class="font-semibold">Tipo Tarjeta:</span> {{ $tarjeta->tipo_tarjeta }}</div>
+                    <div><span class="font-semibold">Terminación:</span> {{ $tarjeta->numero_tarjeta_ofuscado }}</div>
+                    <div><span class="font-semibold">Nombre en Tarjeta:</span> {{ $tarjeta->nombre_tarjeta }}</div>
+                </div>
+            @else
+                <div class="bg-gray-700 rounded-lg p-4 text-white">
+                    <span>No hay tarjeta registrada para este usuario.</span>
+                </div>
+            @endif
           </div>
 
           @if($pedido->estado === 'entregado' && (!$devoluciones || $devoluciones->count() === 0))
