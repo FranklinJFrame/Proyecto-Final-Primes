@@ -79,7 +79,7 @@ class MarcaResource extends Resource
                                     ->maxSize(5120)
                                     ->helperText('Formato: JPG, PNG. Máximo 5MB.')
                                     ->columnSpanFull()
-                                    ->autosave(),
+                                    ->live(),
                             ])
                             ->columnSpan(['lg' => 1]),
                     ])

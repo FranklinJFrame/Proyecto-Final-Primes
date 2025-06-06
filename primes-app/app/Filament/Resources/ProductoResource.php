@@ -241,7 +241,7 @@ class ProductoResource extends Resource
                                     ->reorderable()
                                     ->imageEditor()
                                     ->columnSpanFull()
-                                    ->autosave(),
+                                    ->live(),
                             ])
                             ->columnSpan('full'),
                     ])
