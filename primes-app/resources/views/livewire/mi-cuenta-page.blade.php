@@ -98,96 +98,48 @@
                 <!-- Mis Direcciones -->
                 <div class="bg-[#18181b] rounded-2xl p-8 border border-[#23232a] shadow-lg flex flex-col">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold text-gray-200 flex items-center gap-2">
-                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        <h2 class="text-xl font-bold text-gray-200 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                             Mis Direcciones
                         </h2>
                         <div>
                             @if($direcciones->count() < 3)
-                                <button wire:click="nuevaDireccion" class="inline-flex items-center px-6 py-3 rounded-xl bg-blue-600 text-white text-base font-semibold hover:bg-blue-700 transition-all duration-200 shadow-lg"><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>Nueva</button>
+                                <button wire:click="nuevaDireccion" class="inline-flex items-center px-4 py-2 rounded-xl border border-gray-600 text-xs font-medium text-gray-200 hover:bg-gray-800 transition-all duration-200"><svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>Nueva</button>
                             @endif
                         </div>
                     </div>
-
-                    @if($mostrarFormulario)
-                        <div class="bg-[#23232a] rounded-xl p-8 mb-8">
-                            <h3 class="text-xl font-bold mb-6 text-white">{{ $modo === 'crear' ? 'Nueva Dirección' : 'Editar Dirección' }}</h3>
-                            @if($errors->any())
-                                <div class="bg-red-600/20 text-red-400 p-4 rounded-xl mb-6 border border-red-500/30 text-base text-center">
-                                    {{ $errors->first() }}
-                                </div>
-                            @endif
-                            <form wire:submit.prevent="{{ $modo === 'crear' ? 'save' : 'update' }}">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label class="text-gray-300 text-base mb-2 block">Nombre</label>
-                                        <input wire:model.defer="nombre" type="text" class="w-full bg-[#18181b] border border-gray-600 rounded-xl text-white text-lg px-4 py-3 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300" required>
-                                    </div>
-                                    <div>
-                                        <label class="text-gray-300 text-base mb-2 block">Apellido</label>
-                                        <input wire:model.defer="apellido" type="text" class="w-full bg-[#18181b] border border-gray-600 rounded-xl text-white text-lg px-4 py-3 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300" required>
-                                    </div>
-                                    <div>
-                                        <label class="text-gray-300 text-base mb-2 block">Teléfono</label>
-                                        <input wire:model.defer="telefono" type="text" class="w-full bg-[#18181b] border border-gray-600 rounded-xl text-white text-lg px-4 py-3 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300" required>
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <label class="text-gray-300 text-base mb-2 block">Dirección</label>
-                                        <input wire:model.defer="direccion_calle" type="text" class="w-full bg-[#18181b] border border-gray-600 rounded-xl text-white text-lg px-4 py-3 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300" required>
-                                    </div>
-                                    <div>
-                                        <label class="text-gray-300 text-base mb-2 block">Ciudad</label>
-                                        <input wire:model.defer="ciudad" type="text" class="w-full bg-[#18181b] border border-gray-600 rounded-xl text-white text-lg px-4 py-3 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300" required>
-                                    </div>
-                                    <div>
-                                        <label class="text-gray-300 text-base mb-2 block">Estado</label>
-                                        <input wire:model.defer="estado" type="text" class="w-full bg-[#18181b] border border-gray-600 rounded-xl text-white text-lg px-4 py-3 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300" required>
-                                    </div>
-                                    <div>
-                                        <label class="text-gray-300 text-base mb-2 block">Código Postal</label>
-                                        <input wire:model.defer="codigo_postal" type="text" class="w-full bg-[#18181b] border border-gray-600 rounded-xl text-white text-lg px-4 py-3 focus:border-blue-500 focus:ring-blue-500 transition-all duration-300" required>
-                                    </div>
-                                </div>
-                                <div class="flex justify-end gap-4 mt-8">
-                                    <button type="button" wire:click="resetForm" class="px-6 py-3 border border-gray-600 rounded-xl text-gray-300 text-base hover:bg-gray-800 transition-all duration-200">Cancelar</button>
-                                    <button type="submit" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl text-base font-semibold shadow-lg transition-all duration-200">{{ $modo === 'crear' ? 'Guardar' : 'Actualizar' }}</button>
-                                </div>
-                            </form>
-                        </div>
-                    @endif
-
                     <div class="space-y-4">
                         @if($direcciones->count() > 0)
                             @foreach($direcciones as $dir)
-                                <div class="bg-[#23232a] rounded-xl p-6">
+                                <div class="bg-[#23232a] rounded-xl p-5">
                                     <div class="flex justify-between">
-                                        <div class="font-bold text-white text-lg">{{ $dir->nombre }} {{ $dir->apellido }}</div>
-                                        <div class="text-base text-gray-400">{{ $loop->index === 0 ? 'Principal' : 'Alternativa ' . $loop->index }}</div>
+                                        <div class="font-semibold text-white text-base">{{ $dir->nombre }} {{ $dir->apellido }}</div>
+                                        <div class="text-xs text-gray-400">{{ $loop->index === 0 ? 'Principal' : 'Alternativa ' . $loop->index }}</div>
                                     </div>
                                     <div class="mt-3 space-y-2">
                                         <div class="bg-[#18181b] rounded-lg p-3">
-                                            <span class="text-gray-500 text-base">Dirección:</span>
-                                            <span class="text-gray-200 block mt-1 text-lg">{{ $dir->direccion_calle }}</span>
+                                            <span class="text-gray-500 text-xs">Dirección:</span>
+                                            <span class="text-gray-200 block mt-1">{{ $dir->direccion_calle }}</span>
                                         </div>
                                         <div class="bg-[#18181b] rounded-lg p-3">
-                                            <span class="text-gray-500 text-base">Ciudad:</span>
-                                            <span class="text-gray-200 block mt-1 text-lg">{{ $dir->ciudad }}, {{ $dir->estado }}, {{ $dir->codigo_postal }}</span>
+                                            <span class="text-gray-500 text-xs">Ciudad:</span>
+                                            <span class="text-gray-200 block mt-1">{{ $dir->ciudad }}, {{ $dir->estado }}, {{ $dir->codigo_postal }}</span>
                                         </div>
                                         <div class="bg-[#18181b] rounded-lg p-3">
-                                            <span class="text-gray-500 text-base">Teléfono:</span>
-                                            <span class="text-gray-200 block mt-1 text-lg">{{ $dir->telefono }}</span>
+                                            <span class="text-gray-500 text-xs">Teléfono:</span>
+                                            <span class="text-gray-200 block mt-1">{{ $dir->telefono }}</span>
                                         </div>
                                     </div>
-                                    <div class="mt-4 flex justify-end gap-2">
-                                        <button wire:click="edit({{ $dir->id }})" class="px-5 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl text-base font-semibold shadow transition-all duration-200 flex items-center gap-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>Editar</button>
-                                        <button wire:click="delete({{ $dir->id }})" class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-base font-semibold shadow transition-all duration-200 flex items-center gap-1"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>Eliminar</button>
+                                    <div class="mt-3 flex justify-end gap-2">
+                                        <button wire:click="edit({{ $dir->id }})" class="px-4 py-2 border border-gray-600 text-xs text-gray-200 rounded-xl hover:bg-gray-800 transition-all duration-200 flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>Editar</button>
+                                        <button wire:click="delete({{ $dir->id }})" class="px-4 py-2 border border-gray-600 text-xs text-gray-200 rounded-xl hover:bg-gray-800 transition-all duration-200 flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>Eliminar</button>
                                     </div>
                                 </div>
                             @endforeach
                         @else
                             <div class="bg-[#23232a] rounded-xl p-8 text-center">
-                                <p class="text-gray-400 mb-4 text-lg">No tienes direcciones registradas.</p>
-                                <button wire:click="nuevaDireccion" class="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-blue-600 text-white text-base font-semibold hover:bg-blue-700 transition-all duration-200 shadow-lg">Añadir dirección</button>
+                                <p class="text-gray-400 mb-4 text-base">No tienes direcciones registradas.</p>
+                                <button wire:click="nuevaDireccion" class="inline-flex items-center justify-center px-5 py-2 rounded-xl border border-gray-600 text-xs font-medium text-gray-200 hover:bg-gray-800 transition-all duration-200">Añadir dirección</button>
                             </div>
                         @endif
                     </div>
