@@ -21,16 +21,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Forzar HTTPS solo si se detecta que la app corre detrás de proxy
+        // Forzar HTTPS en producción
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
+            URL::forceRootUrl('https://proyecto-final-primes-production-96c3.up.railway.app');
 
             $url = 'https://proyecto-final-primes-production-96c3.up.railway.app';
 
             Config::set('app.url', $url);
             Config::set('app.asset_url', $url);
 
-            // Configurar URLs de Filament (esto sí se puede hacer aquí)
+            // Configurar URLs de Filament
             Config::set('filament.asset_url', $url);
             Config::set('filament.domain', parse_url($url, PHP_URL_HOST));
             Config::set('filament.path', 'admin');

@@ -4,6 +4,8 @@ return [
     'class_namespace' => 'App\\Livewire',
     'view_path' => resource_path('views/livewire'),
     'layout' => 'layouts.app',
+    'asset_url' => env('APP_URL', 'https://proyecto-final-primes-production-96c3.up.railway.app'),
+    'app_url' => env('APP_URL', 'https://proyecto-final-primes-production-96c3.up.railway.app'),
     'temporary_file_upload' => [
         'disk' => 'local',
         'rules' => ['required', 'file', 'max:12288'],
