@@ -233,13 +233,13 @@ class ProductoResource extends Resource
                             ->icon('heroicon-o-photo')
                             ->collapsible()
                             ->schema([
-                                Forms\Components\Textarea::make('imagenes')
-                                    ->label('URLs de Imágenes')
-                                    ->rows(3)
-                                    ->helperText('Las URLs se llenan automáticamente al subir imágenes.')
-                                    ->columnSpanFull()
-                                    ->hidden(), // Oculto, lo llenaremos con JS
-                                Forms\Components\View::make('filament.fields.uploadthing-productos')
+                                Forms\Components\FileUpload::make('imagenes')
+                                    ->label('Imágenes')
+                                    ->multiple()
+                                    ->directory('products')
+                                    ->maxFiles(5)
+                                    ->reorderable()
+                                    ->imageEditor()
                                     ->columnSpanFull(),
                             ])
                             ->columnSpan('full'),
