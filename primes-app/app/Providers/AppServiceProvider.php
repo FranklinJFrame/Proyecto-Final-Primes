@@ -44,7 +44,7 @@ class AppServiceProvider extends ServiceProvider
             Config::set('livewire.app_url', $url);
             Config::set('livewire.middleware_group', ['web']);
             Config::set('livewire.temporary_file_upload', [
-                'disk' => 'local',
+                'disk' => 'public',
                 'rules' => ['required', 'file', 'max:12288'],
                 'directory' => 'livewire-tmp',
                 'middleware' => ['web'],
