@@ -240,7 +240,8 @@ class ProductoResource extends Resource
                                     ->maxFiles(5)
                                     ->reorderable()
                                     ->imageEditor()
-                                    ->columnSpanFull(),
+                                    ->columnSpanFull()
+                                    ->autosave(),
                             ])
                             ->columnSpan('full'),
                     ])
