@@ -42,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
             // Configurar URLs de Livewire
             Config::set('livewire.asset_url', $url);
             Config::set('livewire.app_url', $url);
-            Config::set('livewire.middleware_group', ['web']);
+            Config::set('livewire.middleware_group', ['web', 'admin']);
             Config::set('livewire.temporary_file_upload', [
                 'disk' => 'public',
                 'rules' => ['required', 'file', 'max:12288'],
