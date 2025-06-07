@@ -28,17 +28,12 @@
                         gaming sin precedentes.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <a href="{{ url('/products/' . (\App\Models\Producto::find(22)?->slug ?? '')) }}" 
+                        <a href="{{ url('/productos?categoria=tarjetas-graficas') }}" 
                             class="neon-button inline-flex items-center px-6 py-3 rounded-md text-white transition-all duration-300 transform hover:scale-110">
-                             Comprar Ahora
+                             Conoce nuestras nuevas tarjetas gráficas
                              <svg class="ml-2 -mr-1 w-5 h-5 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
                                  <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                              </svg>
-                         </a>
-                         
-                         <a href="{{ url('/products/' . (\App\Models\Producto::find(22)?->slug ?? '')) }}" 
-                            class="cyber-button inline-flex items-center px-6 py-3 rounded-md text-gray-300 border border-gray-700 hover:border-blue-500 transition-all duration-300 transform hover:scale-110">
-                             Ver Especificaciones
                          </a>
                     </div>
                 </div>
@@ -49,7 +44,7 @@
                     $productoPortada = $destacados->firstWhere('id', 22) ?? \App\Models\Producto::find(22);
                 @endphp
                 <div class="relative group perspective-1000 h-[800px] parallax-container">
-                    <a href="{{ $productoPortada ? url('/products/'.$productoPortada->slug) : '#' }}">
+                    <a href="{{ url('/productos?categoria=tarjetas-graficas') }}">
                     <div class="relative transform transition-all duration-700 ease-out hover:rotate-y-12 card-container h-full"
                          x-ref="parallaxImage"
                          @scroll.window="handleScroll()">
