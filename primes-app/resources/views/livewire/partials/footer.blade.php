@@ -24,7 +24,7 @@
       <!-- End Col -->
 
       <div class="col-span-1">
-        <h4 class="font-semibold text-blue-400 cyber-glitch-text">Empresa</h4>
+        
         <div class="mt-3 grid space-y-3">
           <!-- Eliminado: Sobre nosotros, Blog, Clientes -->
         </div>
