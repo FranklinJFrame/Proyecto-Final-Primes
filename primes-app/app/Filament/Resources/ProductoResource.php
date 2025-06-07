@@ -256,7 +256,7 @@ class ProductoResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('imagenes')
                     ->label('Imagen')
-                    ->disk('public')
+                    ->disk('cloudinary')
                     ->size(80)
                     ->circular(),
 

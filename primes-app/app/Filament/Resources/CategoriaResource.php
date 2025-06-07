@@ -102,7 +102,7 @@ class CategoriaResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('imagen')
                     ->label('Imagen')
-                    ->disk('public')
+                    ->disk('cloudinary')
                     ->size(80)
                     ->circular(),
 

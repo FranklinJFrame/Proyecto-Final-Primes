@@ -94,7 +94,7 @@ class MarcaResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('imagen')
                     ->label('Logo')
-                    ->disk('public')
+                    ->disk('cloudinary')
                     ->size(80)
                     ->circular(),
 
