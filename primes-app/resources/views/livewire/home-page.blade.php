@@ -28,7 +28,7 @@
                         gaming sin precedentes.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <a href="{{ url('/productos?categoria=tarjetas-graficas') }}" 
+                        <a href="{{ url('/products?categoria=tarjetas-graficas') }}" 
                             class="neon-button inline-flex items-center px-6 py-3 rounded-md text-white transition-all duration-300 transform hover:scale-110">
                              Conoce nuestras nuevas tarjetas gráficas
                              <svg class="ml-2 -mr-1 w-5 h-5 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
@@ -44,7 +44,7 @@
                     $productoPortada = $destacados->firstWhere('id', 22) ?? \App\Models\Producto::find(22);
                 @endphp
                 <div class="relative group perspective-1000 h-[800px] parallax-container">
-                    <a href="{{ url('/productos?categoria=tarjetas-graficas') }}">
+                    <a href="{{ url('/products?categoria=tarjetas-graficas') }}">
                     <div class="relative transform transition-all duration-700 ease-out hover:rotate-y-12 card-container h-full"
                          x-ref="parallaxImage"
                          @scroll.window="handleScroll()">
