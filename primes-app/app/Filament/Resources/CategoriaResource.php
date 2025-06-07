@@ -103,7 +103,6 @@ class CategoriaResource extends Resource
                 Tables\Columns\ImageColumn::make('imagen')
                     ->label('Imagen')
                     ->disk('cloudinary')
-                    ->directory('categorias')
                     ->size(80)
                     ->circular(),
 
