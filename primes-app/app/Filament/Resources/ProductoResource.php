@@ -256,7 +256,7 @@ class ProductoResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('imagenes')
                     ->label('Imagen')
-                    ->url(fn ($record) => is_array($record->imagenes) ? $record->imagenes[0] : $record->imagenes)
+                    ->disk('cloudinary')
                     ->size(80)
                     ->circular(),
 
