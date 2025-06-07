@@ -102,8 +102,7 @@ class CategoriaResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('imagen')
                     ->label('Imagen')
-                    ->disk('cloudinary')
-                    ->directory('categorias')
+                    ->url(fn ($record) => $record->imagen)
                     ->size(80)
                     ->circular(),
 
